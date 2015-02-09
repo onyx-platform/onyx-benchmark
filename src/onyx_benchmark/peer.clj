@@ -17,8 +17,8 @@
 
   (def n-peers (Integer/parseInt n-peers))
   
-  (defn my-inc [{:keys [n] :as segment}]
-    (prn n)
+  (defn my-inc [state {:keys [n] :as segment}]
+    (swap! state inc)
     (assoc segment :n (inc n)))
 
   (def ports (atom 49999))
@@ -28,6 +28,21 @@
 
   (defmethod l-ext/inject-lifecycle-resources :no-op
     [_ _] {:core.async/out-chan (chan (dropping-buffer 1))})
+
+  (defmethod l-ext/inject-lifecycle-resources :inc
+    [_ _]
+    (let [state (atom 0)]
+      (future
+        (try
+          (loop []
+            (Thread/sleep 1000)
+            (prn "-> " @state " <-")
+            (reset! state 0)
+            (recur))
+          (catch Exception e
+            (.printStackTrace e))))
+      {:bench/state state
+       :onyx.core/params [state]}))
 
   (onyx.api/start-peers! (Integer/parseInt n-peers) peer-config)
 
