@@ -1,6 +1,7 @@
 (ns onyx-benchmark.peer
   (:require [clojure.core.async :refer [chan dropping-buffer <!!]]
             [clojure.data.fressian :as fressian]
+            [riemann.client :as r]
             [onyx.peer.task-lifecycle-extensions :as l-ext]
             [onyx.peer.pipeline-extensions :as p-ext]
             [onyx.plugin.bench-plugin]
@@ -29,18 +30,21 @@
     [_ _] {:core.async/out-chan (chan (dropping-buffer 1))})
 
   (defmethod l-ext/inject-lifecycle-resources :inc
-    [_ _]
-    (let [state (atom 0)]
+    [_ event]
+    (let [state (atom 0)
+          client (r/tcp-client {:host (:bench/riemann (:onyx.core/params event))})]
       (future
         (try
           (loop []
             (Thread/sleep 1000)
             (prn "-> " @state " <-")
+            (r/send-event client {:service "onyx" :state "ok" :metric @state :tags ["benchmark"]})
             (reset! state 0)
             (recur))
           (catch Exception e
             (.printStackTrace e))))
-      {:bench/state state}))
+      {:bench/state state
+       :bench/riemann client}))
 
   (defmethod l-ext/close-temporal-resources :inc
     [_ event]

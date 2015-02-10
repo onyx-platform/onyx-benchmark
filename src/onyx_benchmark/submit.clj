@@ -7,7 +7,7 @@
             [onyx.plugin.core-async]
             [onyx.api]))
 
-(defn -main [id zk-addr batch-size & args]
+(defn -main [id zk-addr riemann-host batch-size & args]
   (let [batch-size (Integer/parseInt batch-size)]
 
     (def peer-config
@@ -28,6 +28,7 @@
         :onyx/fn :onyx-benchmark.peer/my-inc
         :onyx/type :function
         :onyx/consumption :concurrent
+        :bench/riemann riemann-host
         :onyx/batch-size batch-size}
 
        {:onyx/name :no-op
