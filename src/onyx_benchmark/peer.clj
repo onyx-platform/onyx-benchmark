@@ -32,7 +32,7 @@
   (defmethod l-ext/inject-lifecycle-resources :inc
     [_ event]
     (let [state (atom 0)
-          client (r/tcp-client {:host (:bench/riemann (:onyx.core/params event))})]
+          client (r/tcp-client {:host (:bench/riemann (:onyx.core/task-map event))})]
       (future
         (try
           (loop []
