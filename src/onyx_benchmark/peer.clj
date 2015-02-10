@@ -17,8 +17,7 @@
 
   (def n-peers (Integer/parseInt n-peers))
   
-  (defn my-inc [state {:keys [n] :as segment}]
-    (swap! state inc)
+  (defn my-inc [{:keys [n] :as segment}]
     (assoc segment :n (inc n)))
 
   (def ports (atom 49999))
@@ -41,8 +40,12 @@
             (recur))
           (catch Exception e
             (.printStackTrace e))))
-      {:bench/state state
-       :onyx.core/params [state]}))
+      {:bench/state state}))
+
+  (defmethod l-ext/close-temporal-resources :inc
+    [_ event]
+    (swap! (:bench/state event) + (count (:onyx.core/decompressed event)))
+    {})
 
   (onyx.api/start-peers! (Integer/parseInt n-peers) peer-config)
 
