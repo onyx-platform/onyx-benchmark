@@ -1,0 +1,8 @@
+source "https://api.berkshelf.com"
+
+metadata
+
+cookbook "apt"
+cookbook "java"
+cookbook "git"
+cookbook "lein", git: "https://github.com/MichaelDrogalis/chef-leiningen.git", branch: "patch-1"
