@@ -9,6 +9,7 @@ DEPENDENCIES
   onyx-benchmark
     path: .
     metadata: true
+  zookeeper
 
 GRAPH
   apt (2.6.1)
@@ -29,6 +30,7 @@ GRAPH
     git (>= 0.0.0)
     java (>= 0.0.0)
     lein (>= 0.0.0)
+    zookeeper (>= 0.0.0)
   runit (1.5.14)
     build-essential (>= 0.0.0)
     yum (~> 3.0)
@@ -38,3 +40,7 @@ GRAPH
   yum (3.5.2)
   yum-epel (0.6.0)
     yum (~> 3.0)
+  zookeeper (2.5.1)
+    build-essential (>= 2.0.2)
+    java (>= 0.0.0)
+    runit (>= 0.0.0)

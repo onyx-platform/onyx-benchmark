@@ -5,4 +5,5 @@ metadata
 cookbook "apt"
 cookbook "java"
 cookbook "git"
+cookbook "zookeeper"
 cookbook "lein", git: "https://github.com/MichaelDrogalis/chef-leiningen.git", branch: "patch-1"

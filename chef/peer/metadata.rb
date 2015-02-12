@@ -9,4 +9,5 @@ version          '0.1.0'
 depends "apt"
 depends "java"
 depends "git"
+depends "zookeeper"
 depends "lein"
