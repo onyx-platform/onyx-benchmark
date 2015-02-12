@@ -6,4 +6,5 @@ node.default['lein']['user'] = 'vagrant'
 node.default['lein']['group'] = 'vagrant'
 node.default['lein']['home'] = '/home/vagrant'
 
+node.default['zookeeper']['user'] = 'vagrant'
 
