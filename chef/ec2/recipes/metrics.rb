@@ -18,8 +18,8 @@ end
 
 execute "DEBIAN_FRONTEND=noninteractive apt-get -q -y --force-yes install graphite-carbon"
 
-execute "su -c \"echo 'CREATE USER graphite WITH PASSWORD \"password\";' | psql\" postgres"
-execute "su -c \"echo 'CREATE DATABASE graphite WITH OWNER graphite;' | psql\" postgres"
+execute 'su -c "psql -c \\"CREATE USER graphite WITH PASSWORD \'password\'\\"" postgres'
+execute 'su -c "psql -c \\"CREATE DATABASE graphite WITH OWNER graphite\\"" postgres'
 
 template "/etc/graphite/local_settings.py" do
   source "graphite/local_settings.py"
