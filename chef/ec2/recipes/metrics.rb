@@ -18,8 +18,8 @@ end
 
 execute "DEBIAN_FRONTEND=noninteractive apt-get -q -y --force-yes install graphite-carbon"
 
-execute 'su -c "psql -c \\"CREATE USER graphite WITH PASSWORD \'password\'\\"" postgres'
-execute 'su -c "psql -c \\"CREATE DATABASE graphite WITH OWNER graphite\\"" postgres'
+execute 'set -e su -c "psql -c \\"CREATE USER graphite WITH PASSWORD \'password\'\\"" postgres'
+execute 'set -e su -c "psql -c \\"CREATE DATABASE graphite WITH OWNER graphite\\"" postgres'
 
 template "/etc/graphite/local_settings.py" do
   source "graphite/local_settings.py"
@@ -68,4 +68,22 @@ execute "a2dissite 000-default"
 execute "cp /usr/share/graphite-web/apache2-graphite.conf /etc/apache2/sites-available"
 execute "a2ensite apache2-graphite"
 execute "service apache2 reload"
+
+include_recipe "grafana::default"
+include_recipe "elasticsearch::default"
+
+remote_file "/home/vagrant/riemann.tar.bz2" do
+  action :create_if_missing
+  source "https://aphyr.com/riemann/riemann-0.2.8.tar.bz2"
+end
+
+execute "tar -xvf /home/vagrant/riemann.tar.bz2 -C /home/vagrant"
+
+template "/home/vagrant/riemann-0.2.8/etc/riemann.config" do
+  source "riemann/riemann.config"
+  owner "vagrant"
+  group "vagrant"
+end
+
+execute "/home/vagrant/riemann-0.2.8/bin/riemann /home/vagrant/riemann-0.2.8/etc/riemann.config &"
 

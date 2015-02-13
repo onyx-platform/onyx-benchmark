@@ -8,3 +8,4 @@ node.default['lein']['home'] = '/home/vagrant'
 
 node.default['zookeeper']['user'] = 'vagrant'
 
+node.default['grafana']['webserver_port'] = '8080'
