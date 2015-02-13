@@ -1,6 +1,8 @@
 {
   "temp_dir":"/tmp",
   "run_list": [
+      "recipe[onyx-benchmark::peer]",
+      "recipe[onyx-benchmark::zk]",
       "recipe[onyx-benchmark::metrics]"
   ]
 }
