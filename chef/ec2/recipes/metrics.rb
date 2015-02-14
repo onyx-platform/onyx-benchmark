@@ -18,11 +18,11 @@ end
 
 execute "DEBIAN_FRONTEND=noninteractive apt-get -q -y --force-yes install graphite-carbon"
 
-execute "set -e psql -c \"CREATE USER graphite WITH PASSWORD 'password'\"" do
+execute "psql -c \"CREATE USER graphite WITH PASSWORD 'password'\"" do
   user "postgres"
 end
 
-execute "set -e psql -c \"CREATE DATABASE graphite WITH OWNER graphite\"" do
+execute "psql -c \"CREATE DATABASE graphite WITH OWNER graphite\"" do
   user "postgres"
 end
 
