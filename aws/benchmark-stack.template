@@ -175,7 +175,8 @@
                 "ImageId" : { "Fn::FindInMap": [ "AWSRegionPlatform2AMI", { "Ref": "AWS::Region" }, "64HVM"]},
                 "InstanceType" : { "Ref": "ZooKeeperInstanceType" },
                 "KeyName" : { "Ref": "KeyName" },
-                "SecurityGroups" : [ { "Ref": "OnyxSecurityGroup" } ]
+                "SecurityGroups" : [ { "Ref": "OnyxSecurityGroup" } ],
+                "SpotPrice" : { "Ref" : "ZooKeeperSpotPrice" }
             }
         },
         "MetricsNode":
@@ -186,7 +187,8 @@
                 "ImageId" : { "Fn::FindInMap": [ "AWSRegionPlatform2AMI", { "Ref": "AWS::Region" }, "64HVM"]},
                 "InstanceType" : { "Ref": "MetricsInstanceType" },
                 "KeyName" : { "Ref": "KeyName" },
-                "SecurityGroups" : [ { "Ref": "OnyxSecurityGroup" } ]
+                "SecurityGroups" : [ { "Ref": "OnyxSecurityGroup" } ],
+                "SpotPrice": { "Ref" : "MetricsSpotPrice" }
             }
         }
     }
