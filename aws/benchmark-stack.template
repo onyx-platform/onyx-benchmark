@@ -1,0 +1,171 @@
+{
+    "Description": "Template to benchmark an Onyx deployment.",
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Parameters": {
+        "AccountNumber": {
+            "Description": "Twelve digit AWS account number.",
+            "Type": "String",
+            "NoEcho": "True"
+        },
+        "KeyName": {
+            "Description": "Name of an existing EC2 Key Pair used to log into the StarCluster controller instance.",
+            "Type": "String"
+        },
+        "Peers": {
+            "Description": "Number of instances to provision as Peer nodes.",
+            "Type": "Number",
+            "Default": 3
+        },
+        "VirtualPeers": {
+            "Description": "Number of virtual peers per peer instance.",
+            "Type": "Number",
+            "Default": 4
+        },
+        "Region": {
+            "Description": "AWS Region to deploy all instances to.",
+            "Type": "String",
+            "Default": "us-east-1d"
+        },
+        "PeerInstanceType": {
+            "Description": "Instance type to provision as Peer nodes in the cluster.",
+            "Type": "String",
+            "Default": "c4.large"
+        },
+        "ZooKeeperInstanceType": {
+            "Description": "Instance type to provision as the ZooKeeper host.",
+            "Type": "String",
+            "Default": "m3.large"
+        },
+        "MetricsInstanceType": {
+            "Description": "Instance type to provision as the Metrics host.",
+            "Type": "String",
+            "Default": "m3.large"
+        },
+        "PeerSpotPrice": {
+            "Description": "Maximum spot price in USD (e.g.: 1.50) for each peer machine.",
+            "Type": "Number"
+        },
+        "ZooKeeperSpotPrice": {
+            "Description": "Maximum spot price in USD (e.g.: 1.50) for the ZooKeeper machine.",
+            "Type": "Number"
+        },
+        "MetricsSpotPrice": {
+            "Description": "Maximum spot price in USD (e.g.: 1.50) for the metrics machine.",
+            "Type": "Number"
+        },
+        "BatchSize": {
+            "Description": "Number of segments to send per batch in Onyx.",
+            "Type": "Number",
+            "Default": 20
+        },
+        "SSHLocation" : {
+            "Description" : "The IP address range that can be used to SSH to the EC2 instances",
+            "Type": "String",
+            "MinLength": "9",
+            "MaxLength": "18",
+            "Default": "0.0.0.0/0",
+            "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+            "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
+        }
+    },
+    "Mappings": {
+        "AWSInstanceType2Arch": {
+            "t1.micro": {
+                "Arch": "64HVM"
+            },
+            "m1.small": {
+                "Arch": "64HVM"
+            },
+            "m1.medium": {
+                "Arch": "64HVM"
+            },
+            "m1.large": {
+                "Arch": "64HVM"
+            },
+            "m1.xlarge": {
+                "Arch": "64HVM"
+            },
+            "m2.xlarge": {
+                "Arch": "64HVM"
+            },
+            "m2.2xlarge": {
+                "Arch": "64HVM"
+            },
+            "m2.4xlarge": {
+                "Arch": "64HVM"
+            },
+            "m3.large": {
+                "Arch": "64HVM"
+            },
+            "c1.medium": {
+                "Arch": "64HVM"
+            },
+            "c1.xlarge": {
+                "Arch": "64HVM"
+            },
+            "cc1.4xlarge": {
+                "Arch": "64HVM"
+            },
+            "c4.large": {
+                "Arch": "64HVM"
+            },            
+            "cc2.8xlarge": {
+                "Arch": "64HVM"
+            },
+            "cg1.4xlarge": {
+                "Arch": "64HVM"
+            }
+        },
+        "AWSRegionArch2AMI": {
+            "us-east-1a": {
+                "64HVM": "ami-9a562df2"
+            },
+            "us-east-1b": {
+                "64HVM": "ami-9a562df2"
+            },
+            "us-east-1d": {
+                "64HVM": "ami-9a562df2"
+            },
+            "us-east-1e": {
+                "64HVM": "ami-9a562df2"
+            }
+        }
+    },
+    "Resources": {
+        "OnyxSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Enable SSH access",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "CidrIp": { "Ref" : "SSHLocation"}
+                    }
+                ]
+            }
+        },
+        "PeerLaunchConfiguration":
+        {
+            "Type" : "AWS::AutoScaling::LaunchConfiguration",
+            "Properties" : {
+                "ImageId" : { "Fn::FindInMap": [ "AWSRegionPlatform2AMI", { "Ref": "AWS::Region" }, "64HVM"]},
+                "InstanceType" : { "Ref": "PeerInstanceType" },
+                "KeyName" : { "Ref": "KeyName" },
+                "SecurityGroups" : [ { "Ref": "OnyxSecurityGroup" } ],
+                "SpotPrice" : { "Ref" : "PeerSpotPrice" }
+            }
+        },
+        "PeerScalingGroup" : {
+            "Type" : "AWS::AutoScaling::AutoScalingGroup",
+            "Properties" : {
+                "AvailabilityZones" : [ { "Ref" : "Region" } ],
+                "LaunchConfigurationName" : { "Ref" : "PeerLaunchConfiguration" },
+                "MinSize" : { "Ref" : "Peers" },
+                "MaxSize" : { "Ref" : "Peers" },
+                "DesiredCapacity" : { "Ref" : "Peers" }
+            }
+        }
+    }
+}
