@@ -45,3 +45,4 @@
      peer-config
      {:catalog catalog :workflow workflow
       :task-scheduler :onyx.task-scheduler/round-robin})))
+

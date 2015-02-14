@@ -7,5 +7,5 @@
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [org.clojure/data.fressian "0.2.0"]
                  [com.mdrogalis/onyx "0.6.0-SNAPSHOT"]
-                 [com.mdrogalis/onyx-bench-plugin "0.6.0-SNAPSHOT"]
-                 [riemann-clojure-client "0.3.2"]])
+                 [riemann-clojure-client "0.3.2"]
+                 [http-kit "2.1.17"]])
