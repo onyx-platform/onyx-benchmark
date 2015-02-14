@@ -8,7 +8,7 @@
             "NoEcho": "True"
         },
         "KeyName": {
-            "Description": "Name of an existing EC2 Key Pair used to log into the StarCluster controller instance.",
+            "Description": "Name of an existing EC2 Key Pair used to log into the nodes.",
             "Type": "String"
         },
         "Peers": {
@@ -165,6 +165,28 @@
                 "MinSize" : { "Ref" : "Peers" },
                 "MaxSize" : { "Ref" : "Peers" },
                 "DesiredCapacity" : { "Ref" : "Peers" }
+            }
+        },
+        "ZooKeeperNode":
+        {
+            "Type" : "AWS::EC2::Instance",
+            "Properties" : {
+                "AvailabilityZone" : { "Ref" : "Region" },
+                "ImageId" : { "Fn::FindInMap": [ "AWSRegionPlatform2AMI", { "Ref": "AWS::Region" }, "64HVM"]},
+                "InstanceType" : { "Ref": "ZooKeeperInstanceType" },
+                "KeyName" : { "Ref": "KeyName" },
+                "SecurityGroups" : [ { "Ref": "OnyxSecurityGroup" } ]
+            }
+        },
+        "MetricsNode":
+        {
+            "Type" : "AWS::EC2::Instance",
+            "Properties" : {
+                "AvailabilityZone" : { "Ref" : "Region" },
+                "ImageId" : { "Fn::FindInMap": [ "AWSRegionPlatform2AMI", { "Ref": "AWS::Region" }, "64HVM"]},
+                "InstanceType" : { "Ref": "MetricsInstanceType" },
+                "KeyName" : { "Ref": "KeyName" },
+                "SecurityGroups" : [ { "Ref": "OnyxSecurityGroup" } ]
             }
         }
     }
