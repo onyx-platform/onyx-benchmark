@@ -18,11 +18,11 @@ end
 
 execute "DEBIAN_FRONTEND=noninteractive apt-get -q -y --force-yes install graphite-carbon"
 
-execute "psql -c \"CREATE USER graphite WITH PASSWORD 'password'\"" do
+execute "set -e psql -c \"CREATE USER graphite WITH PASSWORD 'password'\"" do
   user "postgres"
 end
 
-execute "psql -c \"CREATE DATABASE graphite WITH OWNER graphite\"" do
+execute "set -e psql -c \"CREATE DATABASE graphite WITH OWNER graphite\"" do
   user "postgres"
 end
 
@@ -76,6 +76,12 @@ execute "service apache2 reload"
 
 include_recipe "grafana::default"
 include_recipe "elasticsearch::default"
+
+template "/srv/apps/grafana/app/dashboards/default.json" do
+  source "grafana/default.json"
+  owner "vagrant"
+  group "vagrant"
+end
 
 remote_file "/home/vagrant/riemann.tar.bz2" do
   action :create_if_missing
