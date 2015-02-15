@@ -43,15 +43,15 @@
         },
         "PeerSpotPrice": {
             "Description": "Maximum spot price in USD (e.g.: 1.50) for each peer machine.",
-            "Type": "Number"
+            "Type": "String"
         },
         "ZooKeeperSpotPrice": {
             "Description": "Maximum spot price in USD (e.g.: 1.50) for the ZooKeeper machine.",
-            "Type": "Number"
+            "Type": "String"
         },
         "MetricsSpotPrice": {
             "Description": "Maximum spot price in USD (e.g.: 1.50) for the metrics machine.",
-            "Type": "Number"
+            "Type": "String"
         },
         "BatchSize": {
             "Description": "Number of segments to send per batch in Onyx.",
@@ -117,16 +117,7 @@
             }
         },
         "AWSRegionArch2AMI": {
-            "us-east-1a": {
-                "64HVM": "ami-9a562df2"
-            },
-            "us-east-1b": {
-                "64HVM": "ami-9a562df2"
-            },
-            "us-east-1d": {
-                "64HVM": "ami-9a562df2"
-            },
-            "us-east-1e": {
+            "us-east-1": {
                 "64HVM": "ami-9a562df2"
             }
         }
@@ -147,25 +138,25 @@
                         "IpProtocol": "tcp",
                         "FromPort": "80",
                         "ToPort": "80",
-                        "CidrIp": "0.0.0.0"
+                        "CidrIp": "0.0.0.0/0"
                     },
                     {
                         "IpProtocol": "tcp",
                         "FromPort": "5555",
                         "ToPort": "5555",
-                        "CidrIp": "0.0.0.0"
+                        "CidrIp": "0.0.0.0/0"
                     },
                     {
                         "IpProtocol": "udp",
                         "FromPort": "5555",
                         "ToPort": "5555",
-                        "CidrIp": "0.0.0.0"
+                        "CidrIp": "0.0.0.0/0"
                     },
                     {
                         "IpProtocol": "tcp",
                         "FromPort": "8080",
                         "ToPort": "8080",
-                        "CidrIp": "0.0.0.0"
+                        "CidrIp": "0.0.0.0/0"
                     }
                 ]
             }
@@ -174,7 +165,7 @@
         {
             "Type" : "AWS::AutoScaling::LaunchConfiguration",
             "Properties" : {
-                "ImageId" : { "Fn::FindInMap": [ "AWSRegionPlatform2AMI", { "Ref": "AWS::Region" }, "64HVM"]},
+                "ImageId" : { "Fn::FindInMap": [ "AWSRegionArch2AMI", { "Ref": "AWS::Region" }, "64HVM"]},
                 "InstanceType" : { "Ref": "PeerInstanceType" },
                 "KeyName" : { "Ref": "KeyName" },
                 "SecurityGroups" : [ { "Ref": "OnyxSecurityGroup" } ],
@@ -215,7 +206,7 @@
             "Type" : "AWS::EC2::Instance",
             "Properties" : {
                 "AvailabilityZone" : { "Ref" : "Region" },
-                "ImageId" : { "Fn::FindInMap": [ "AWSRegionPlatform2AMI", { "Ref": "AWS::Region" }, "64HVM"]},
+                "ImageId" : { "Fn::FindInMap": [ "AWSRegionArch2AMI", { "Ref": "AWS::Region" }, "64HVM"]},
                 "InstanceType" : { "Ref": "ZooKeeperInstanceType" },
                 "KeyName" : { "Ref": "KeyName" },
                 "SecurityGroups" : [ { "Ref": "OnyxSecurityGroup" } ],
@@ -245,7 +236,7 @@
             "Type" : "AWS::EC2::Instance",
             "Properties" : {
                 "AvailabilityZone" : { "Ref" : "Region" },
-                "ImageId" : { "Fn::FindInMap": [ "AWSRegionPlatform2AMI", { "Ref": "AWS::Region" }, "64HVM"]},
+                "ImageId" : { "Fn::FindInMap": [ "AWSRegionArch2AMI", { "Ref": "AWS::Region" }, "64HVM"]},
                 "InstanceType" : { "Ref": "MetricsInstanceType" },
                 "KeyName" : { "Ref": "KeyName" },
                 "SecurityGroups" : [ { "Ref": "OnyxSecurityGroup" } ],
