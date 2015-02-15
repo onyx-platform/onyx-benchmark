@@ -173,17 +173,18 @@
                 "UserData": {
                     "Fn::Base64" : {
                         "Fn::Join" : [
-                            "",
+                            "\n",
                             [
-                                "wget https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/13.10/x86_64/chefdk_0.1.0-1_amd64.deb\n",
-                                "dpkg -i chefdk_0.1.0-1_amd64.deb\n",
-                                "apt-get install -y git\n",
-                                "git clone https://github.com/MichaelDrogalis/onyx-benchmark.git\n",
-                                "chown -R vagrant:vagrant onyx-benchmark\n",
-                                "cd onyx-benchmark/chef/ec2\n",
-                                "berks install\n",
-                                "berks vendor vendors\n",
-                                "chef-solo -j peer-node.json -c solo.rb\n"
+                                "#!/bin/bash",
+                                "wget https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/13.10/x86_64/chefdk_0.1.0-1_amd64.deb",
+                                "dpkg -i chefdk_0.1.0-1_amd64.deb",
+                                "apt-get install -y git",
+                                "git clone https://github.com/MichaelDrogalis/onyx-benchmark.git",
+                                "chown -R vagrant:vagrant onyx-benchmark",
+                                "cd onyx-benchmark/chef/ec2",
+                                "berks install",
+                                "berks vendor vendors",
+                                "chef-solo -j peer-node.json -c solo.rb"
                             ]
                         ]
                     }
@@ -202,17 +203,18 @@
                 "UserData": {
                     "Fn::Base64" : {
                         "Fn::Join" : [
-                            "",
+                            "\n",
                             [
-                                "wget https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/13.10/x86_64/chefdk_0.1.0-1_amd64.deb\n",
-                                "dpkg -i chefdk_0.1.0-1_amd64.deb\n",
-                                "apt-get install -y git\n",
-                                "git clone https://github.com/MichaelDrogalis/onyx-benchmark.git\n",
-                                "chown -R vagrant:vagrant onyx-benchmark\n",
-                                "cd onyx-benchmark/chef/ec2\n",
-                                "berks install\n",
-                                "berks vendor vendors\n",
-                                "chef-solo -j zk-node.json -c solo.rb\n"
+                                "#!/bin/bash",
+                                "wget https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/13.10/x86_64/chefdk_0.1.0-1_amd64.deb",
+                                "dpkg -i chefdk_0.1.0-1_amd64.deb",
+                                "apt-get install -y git",
+                                "git clone https://github.com/MichaelDrogalis/onyx-benchmark.git",
+                                "chown -R vagrant:vagrant onyx-benchmark",
+                                "cd onyx-benchmark/chef/ec2",
+                                "berks install",
+                                "berks vendor vendors",
+                                "chef-solo -j zk-node.json -c solo.rb"
                             ]
                         ]
                     }
@@ -231,17 +233,18 @@
                 "UserData": {
                     "Fn::Base64" : {
                         "Fn::Join" : [
-                            "",
+                            "\n",
                             [
-                                "wget https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/13.10/x86_64/chefdk_0.1.0-1_amd64.deb\n",
-                                "dpkg -i chefdk_0.1.0-1_amd64.deb\n",
-                                "apt-get install -y git\n",
-                                "git clone https://github.com/MichaelDrogalis/onyx-benchmark.git\n",
-                                "chown -R vagrant:vagrant onyx-benchmark\n",
-                                "cd onyx-benchmark/chef/ec2\n",
-                                "berks install\n",
-                                "berks vendor vendors\n",
-                                "chef-solo -j metrics-node.json -c solo.rb\n"
+                                "#!/bin/bash",
+                                "wget https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/13.10/x86_64/chefdk_0.1.0-1_amd64.deb",
+                                "dpkg -i chefdk_0.1.0-1_amd64.deb",
+                                "apt-get install -y git",
+                                "git clone https://github.com/MichaelDrogalis/onyx-benchmark.git",
+                                "chown -R vagrant:vagrant onyx-benchmark",
+                                "cd onyx-benchmark/chef/ec2",
+                                "berks install",
+                                "berks vendor vendors",
+                                "chef-solo -j metrics-node.json -c solo.rb"
                             ]
                         ]
                     }
