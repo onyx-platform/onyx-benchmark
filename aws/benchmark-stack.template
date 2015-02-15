@@ -184,10 +184,19 @@
                                 "cd onyx-benchmark/chef/ec2",
                                 "berks install",
                                 "berks vendor vendors",
-                                "chef-solo -j peer-node.json -c solo.rb"
+                                "chef-solo -j peer-node.json -c solo.rb",
+                                "/opt/aws/bin/cfn-signal -e $? ",
+                                "         --stack ", { "Ref" : "AWS::StackName" },
+                                "         --resource PeerLaunchConfiguration ",
+                                "         --region ", { "Ref" : "AWS::Region" }
                             ]
                         ]
                     }
+                }
+            },
+            "CreationPolicy" : {
+                "ResourceSignal" : {
+                    "Timeout" : "PT20M"
                 }
             }
         },
@@ -214,10 +223,19 @@
                                 "cd onyx-benchmark/chef/ec2",
                                 "berks install",
                                 "berks vendor vendors",
-                                "chef-solo -j zk-node.json -c solo.rb"
+                                "chef-solo -j zk-node.json -c solo.rb",
+                                "/opt/aws/bin/cfn-signal -e $? ",
+                                "         --stack ", { "Ref" : "AWS::StackName" },
+                                "         --resource ZooKeeperLaunchConfiguration ",
+                                "         --region ", { "Ref" : "AWS::Region" }
                             ]
                         ]
                     }
+                }
+            },
+            "CreationPolicy" : {
+                "ResourceSignal" : {
+                    "Timeout" : "PT20M"
                 }
             }
         },
@@ -244,10 +262,19 @@
                                 "cd onyx-benchmark/chef/ec2",
                                 "berks install",
                                 "berks vendor vendors",
-                                "chef-solo -j metrics-node.json -c solo.rb"
+                                "chef-solo -j metrics-node.json -c solo.rb",
+                                "/opt/aws/bin/cfn-signal -e $? ",
+                                "         --stack ", { "Ref" : "AWS::StackName" },
+                                "         --resource MetricsLaunchConfiguration ",
+                                "         --region ", { "Ref" : "AWS::Region" }
                             ]
                         ]
                     }
+                }
+            },
+            "CreationPolicy" : {
+                "ResourceSignal" : {
+                    "Timeout" : "PT20M"
                 }
             }
         },
