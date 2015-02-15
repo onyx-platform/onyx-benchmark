@@ -43,8 +43,7 @@ include_recipe "collectd::default"
 
 template "/etc/collectd/collectd.conf" do
   source "collectd/collectd.conf"
-  owner "vagrant"
-  group "vagrant"
+  owner "ubuntu"
+  group "ubuntu"
 end
-
 

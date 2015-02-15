@@ -28,8 +28,8 @@ end
 
 template "/etc/graphite/local_settings.py" do
   source "graphite/local_settings.py"
-  owner "vagrant"
-  group "vagrant"
+  owner "ubuntu"
+  group "ubuntu"
 end
 
 execute "graphite-manage syncdb --noinput"
@@ -37,26 +37,26 @@ execute "echo \"from django.contrib.auth.models import User; User.objects.create
 
 template "/etc/default/graphite-carbon" do
   source "carbon/graphite-carbon"
-  owner "vagrant"
-  group "vagrant"
+  owner "ubuntu"
+  group "ubuntu"
 end
 
 template "/etc/default/carbon.conf" do
   source "carbon/carbon.conf"
-  owner "vagrant"
-  group "vagrant"
+  owner "ubuntu"
+  group "ubuntu"
 end
 
 template "/etc/default/storage-schemas.conf" do
   source "carbon/storage-schemas.conf"
-  owner "vagrant"
-  group "vagrant"
+  owner "ubuntu"
+  group "ubuntu"
 end
 
 template "/etc/carbon/storage-aggregation.conf" do
   source "carbon/storage-aggregation.conf"
-  owner "vagrant"
-  group "vagrant"
+  owner "ubuntu"
+  group "ubuntu"
 end
 
 execute "service carbon-cache start"
@@ -79,22 +79,22 @@ include_recipe "elasticsearch::default"
 
 template "/srv/apps/grafana/app/dashboards/default.json" do
   source "grafana/default.json"
-  owner "vagrant"
-  group "vagrant"
+  owner "ubuntu"
+  group "ubuntu"
 end
 
-remote_file "/home/vagrant/riemann.tar.bz2" do
+remote_file "/home/ubuntu/riemann.tar.bz2" do
   action :create_if_missing
   source "https://aphyr.com/riemann/riemann-0.2.8.tar.bz2"
 end
 
-execute "tar -xvf /home/vagrant/riemann.tar.bz2 -C /home/vagrant"
+execute "tar -xvf /home/ubuntu/riemann.tar.bz2 -C /home/ubuntu"
 
-template "/home/vagrant/riemann-0.2.8/etc/riemann.config" do
+template "/home/ubuntu/riemann-0.2.8/etc/riemann.config" do
   source "riemann/riemann.config"
-  owner "vagrant"
-  group "vagrant"
+  owner "ubuntu"
+  group "ubuntu"
 end
 
-execute "/home/vagrant/riemann-0.2.8/bin/riemann /home/vagrant/riemann-0.2.8/etc/riemann.config &"
+execute "/home/ubuntu/riemann-0.2.8/bin/riemann /home/ubuntu/riemann-0.2.8/etc/riemann.config &"
 

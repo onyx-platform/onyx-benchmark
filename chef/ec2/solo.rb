@@ -1,4 +1,3 @@
-cookbook_path ["/home/vagrant/onyx-benchmark/chef/ec2/vendors"]
-json_attribs "/home/vagrant/onyx-benchmark/node.json"
+cookbook_path ["/onyx-benchmark/chef/ec2/vendors"]
 
 ssl_verify_mode :verify_peer
