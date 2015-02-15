@@ -176,6 +176,7 @@
                             "\n",
                             [
                                 "#!/bin/bash",
+                                "export HOME=/home/ubuntu",
                                 "wget https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/13.10/x86_64/chefdk_0.1.0-1_amd64.deb",
                                 "dpkg -i chefdk_0.1.0-1_amd64.deb",
                                 "apt-get install -y git",
@@ -210,6 +211,7 @@
                             "\n",
                             [
                                 "#!/bin/bash",
+                                "export HOME=/home/ubuntu",
                                 "wget https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/13.10/x86_64/chefdk_0.1.0-1_amd64.deb",
                                 "dpkg -i chefdk_0.1.0-1_amd64.deb",
                                 "apt-get install -y git",
@@ -244,6 +246,7 @@
                             "\n",
                             [
                                 "#!/bin/bash",
+                                "export HOME=/home/ubuntu",
                                 "wget https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/13.10/x86_64/chefdk_0.1.0-1_amd64.deb",
                                 "dpkg -i chefdk_0.1.0-1_amd64.deb",
                                 "apt-get install -y git",
