@@ -216,5 +216,14 @@
                 "SpotPrice": { "Ref" : "MetricsSpotPrice" }
             }
         }
+    },
+    "Outputs":
+    {
+        "ZooKeeperDNS" : {
+            "Value" : { "Fn::GetAtt" : [ "ZooKeeperNode" , "PublicDnsName" ] }
+        },
+        "MetricsDNS" : {
+            "Value" : { "Fn::GetAtt" : [ "MetricsNode" , "PublicDnsName" ] }
+        }
     }
 }
