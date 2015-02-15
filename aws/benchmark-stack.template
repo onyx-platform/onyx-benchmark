@@ -183,6 +183,7 @@
         },
         "PeerScalingGroup" : {
             "Type" : "AWS::AutoScaling::AutoScalingGroup",
+            "DependsOn" : [ "ZooKeeperNode", "MetricsNode" ],
             "Properties" : {
                 "AvailabilityZones" : [ { "Ref" : "Region" } ],
                 "LaunchConfigurationName" : { "Ref" : "PeerLaunchConfiguration" },
