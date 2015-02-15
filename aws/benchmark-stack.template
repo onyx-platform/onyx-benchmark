@@ -178,7 +178,25 @@
                 "InstanceType" : { "Ref": "PeerInstanceType" },
                 "KeyName" : { "Ref": "KeyName" },
                 "SecurityGroups" : [ { "Ref": "OnyxSecurityGroup" } ],
-                "SpotPrice" : { "Ref" : "PeerSpotPrice" }
+                "SpotPrice" : { "Ref" : "PeerSpotPrice" },
+                "UserData": {
+                    "Fn::Base64" : {
+                        "Fn::Join" : [
+                            "",
+                            [
+                                "wget https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/13.10/x86_64/chefdk_0.1.0-1_amd64.deb\n",
+                                "dpkg -i chefdk_0.1.0-1_amd64.deb\n",
+                                "apt-get install -y git\n",
+                                "git clone https://github.com/MichaelDrogalis/onyx-benchmark.git\n",
+                                "chown -R vagrant:vagrant onyx-benchmark\n",
+                                "cd onyx-benchmark/chef/ec2\n",
+                                "berks install\n",
+                                "berks vendor vendors\n",
+                                "chef-solo -j peer-node.json -c solo.rb\n"
+                            ]
+                        ]
+                    }
+                }
             }
         },
         "PeerScalingGroup" : {
@@ -201,7 +219,25 @@
                 "InstanceType" : { "Ref": "ZooKeeperInstanceType" },
                 "KeyName" : { "Ref": "KeyName" },
                 "SecurityGroups" : [ { "Ref": "OnyxSecurityGroup" } ],
-                "SpotPrice" : { "Ref" : "ZooKeeperSpotPrice" }
+                "SpotPrice" : { "Ref" : "ZooKeeperSpotPrice" },
+                "UserData": {
+                    "Fn::Base64" : {
+                        "Fn::Join" : [
+                            "",
+                            [
+                                "wget https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/13.10/x86_64/chefdk_0.1.0-1_amd64.deb\n",
+                                "dpkg -i chefdk_0.1.0-1_amd64.deb\n",
+                                "apt-get install -y git\n",
+                                "git clone https://github.com/MichaelDrogalis/onyx-benchmark.git\n",
+                                "chown -R vagrant:vagrant onyx-benchmark\n",
+                                "cd onyx-benchmark/chef/ec2\n",
+                                "berks install\n",
+                                "berks vendor vendors\n",
+                                "chef-solo -j zk-node.json -c solo.rb\n"
+                            ]
+                        ]
+                    }
+                }
             }
         },
         "MetricsNode":
@@ -213,10 +249,27 @@
                 "InstanceType" : { "Ref": "MetricsInstanceType" },
                 "KeyName" : { "Ref": "KeyName" },
                 "SecurityGroups" : [ { "Ref": "OnyxSecurityGroup" } ],
-                "SpotPrice": { "Ref" : "MetricsSpotPrice" }
+                "SpotPrice": { "Ref" : "MetricsSpotPrice" },
+                "UserData": {
+                    "Fn::Base64" : {
+                        "Fn::Join" : [
+                            "",
+                            [
+                                "wget https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/13.10/x86_64/chefdk_0.1.0-1_amd64.deb\n",
+                                "dpkg -i chefdk_0.1.0-1_amd64.deb\n",
+                                "apt-get install -y git\n",
+                                "git clone https://github.com/MichaelDrogalis/onyx-benchmark.git\n",
+                                "chown -R vagrant:vagrant onyx-benchmark\n",
+                                "cd onyx-benchmark/chef/ec2\n",
+                                "berks install\n",
+                                "berks vendor vendors\n",
+                                "chef-solo -j metrics-node.json -c solo.rb\n"
+                            ]
+                        ]
+                    }
+                }
             }
-        }
-    },
+        },
     "Outputs":
     {
         "ZooKeeperDNS" : {
