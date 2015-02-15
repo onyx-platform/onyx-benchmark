@@ -275,7 +275,7 @@
             },
             "CreationPolicy" : {
                 "ResourceSignal" : {
-                    "Timeout" : "PT20M",
+                    "Timeout" : "PT30M",
                     "Count": { "Ref": "Peers" }
                 }
             }
@@ -291,7 +291,7 @@
             },
             "CreationPolicy" : {
                 "ResourceSignal" : {
-                    "Timeout" : "PT20M"
+                    "Timeout" : "PT30M"
                 }
             }
         },
@@ -306,7 +306,7 @@
             },
             "CreationPolicy" : {
                 "ResourceSignal" : {
-                    "Timeout" : "PT20M"
+                    "Timeout" : "PT30M"
                 }
             }
         }
