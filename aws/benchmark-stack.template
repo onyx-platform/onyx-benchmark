@@ -190,22 +190,10 @@
                 }
             }
         },
-        "PeerScalingGroup" : {
-            "Type" : "AWS::AutoScaling::AutoScalingGroup",
-            "DependsOn" : [ "ZooKeeperNode", "MetricsNode" ],
-            "Properties" : {
-                "AvailabilityZones" : [ { "Ref" : "Region" } ],
-                "LaunchConfigurationName" : { "Ref" : "PeerLaunchConfiguration" },
-                "MinSize" : { "Ref" : "Peers" },
-                "MaxSize" : { "Ref" : "Peers" },
-                "DesiredCapacity" : { "Ref" : "Peers" }
-            }
-        },
-        "ZooKeeperNode":
+        "ZooKeeperLaunchConfiguration":
         {
-            "Type" : "AWS::EC2::Instance",
+            "Type" : "AWS::AutoScaling::LaunchConfiguration",
             "Properties" : {
-                "AvailabilityZone" : { "Ref" : "Region" },
                 "ImageId" : { "Fn::FindInMap": [ "AWSRegionArch2AMI", { "Ref": "AWS::Region" }, "64HVM"]},
                 "InstanceType" : { "Ref": "ZooKeeperInstanceType" },
                 "KeyName" : { "Ref": "KeyName" },
@@ -231,16 +219,15 @@
                 }
             }
         },
-        "MetricsNode":
+        "MetricsLaunchConfiguration":
         {
-            "Type" : "AWS::EC2::Instance",
+            "Type" : "AWS::AutoScaling::LaunchConfiguration",
             "Properties" : {
-                "AvailabilityZone" : { "Ref" : "Region" },
                 "ImageId" : { "Fn::FindInMap": [ "AWSRegionArch2AMI", { "Ref": "AWS::Region" }, "64HVM"]},
                 "InstanceType" : { "Ref": "MetricsInstanceType" },
                 "KeyName" : { "Ref": "KeyName" },
                 "SecurityGroups" : [ { "Ref": "OnyxSecurityGroup" } ],
-                "SpotPrice": { "Ref" : "MetricsSpotPrice" },
+                "SpotPrice" : { "Ref" : "MetricsSpotPrice" },
                 "UserData": {
                     "Fn::Base64" : {
                         "Fn::Join" : [
@@ -260,15 +247,37 @@
                     }
                 }
             }
-        }
-    },
-    "Outputs":
-    {
-        "ZooKeeperDNS" : {
-            "Value" : { "Fn::GetAtt" : [ "ZooKeeperNode" , "PublicDnsName" ] }
         },
-        "MetricsDNS" : {
-            "Value" : { "Fn::GetAtt" : [ "MetricsNode" , "PublicDnsName" ] }
+        "PeerScalingGroup" : {
+            "Type" : "AWS::AutoScaling::AutoScalingGroup",
+            "DependsOn" : [ "ZooKeeperScalingGroup", "MetricsScalingGroup" ],
+            "Properties" : {
+                "AvailabilityZones" : [ { "Ref" : "Region" } ],
+                "LaunchConfigurationName" : { "Ref" : "PeerLaunchConfiguration" },
+                "MinSize" : { "Ref" : "Peers" },
+                "MaxSize" : { "Ref" : "Peers" },
+                "DesiredCapacity" : { "Ref" : "Peers" }
+            }
+        },
+        "ZooKeeperScalingGroup" : {
+            "Type" : "AWS::AutoScaling::AutoScalingGroup",
+            "Properties" : {
+                "AvailabilityZones" : [ { "Ref" : "Region" } ],
+                "LaunchConfigurationName" : { "Ref" : "ZooKeeperLaunchConfiguration" },
+                "MinSize" : 1,
+                "MaxSize" : 1,
+                "DesiredCapacity" : 1
+            }
+        },
+        "MetricsScalingGroup" : {
+            "Type" : "AWS::AutoScaling::AutoScalingGroup",
+            "Properties" : {
+                "AvailabilityZones" : [ { "Ref" : "Region" } ],
+                "LaunchConfigurationName" : { "Ref" : "MetricsLaunchConfiguration" },
+                "MinSize" : 1,
+                "MaxSize" : 1,
+                "DesiredCapacity" : 1
+            }
         }
     }
 }
