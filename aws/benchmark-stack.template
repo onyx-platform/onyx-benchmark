@@ -193,11 +193,6 @@
                         ]
                     }
                 }
-            },
-            "CreationPolicy" : {
-                "ResourceSignal" : {
-                    "Timeout" : "PT20M"
-                }
             }
         },
         "ZooKeeperLaunchConfiguration":
@@ -231,11 +226,6 @@
                             ]
                         ]
                     }
-                }
-            },
-            "CreationPolicy" : {
-                "ResourceSignal" : {
-                    "Timeout" : "PT20M"
                 }
             }
         },
@@ -271,11 +261,6 @@
                         ]
                     }
                 }
-            },
-            "CreationPolicy" : {
-                "ResourceSignal" : {
-                    "Timeout" : "PT20M"
-                }
             }
         },
         "PeerScalingGroup" : {
@@ -287,6 +272,11 @@
                 "MinSize" : { "Ref" : "Peers" },
                 "MaxSize" : { "Ref" : "Peers" },
                 "DesiredCapacity" : { "Ref" : "Peers" }
+            },
+            "CreationPolicy" : {
+                "ResourceSignal" : {
+                    "Timeout" : "PT20M"
+                }
             }
         },
         "ZooKeeperScalingGroup" : {
@@ -297,6 +287,11 @@
                 "MinSize" : 1,
                 "MaxSize" : 1,
                 "DesiredCapacity" : 1
+            },
+            "CreationPolicy" : {
+                "ResourceSignal" : {
+                    "Timeout" : "PT20M"
+                }
             }
         },
         "MetricsScalingGroup" : {
@@ -307,6 +302,11 @@
                 "MinSize" : 1,
                 "MaxSize" : 1,
                 "DesiredCapacity" : 1
+            },
+            "CreationPolicy" : {
+                "ResourceSignal" : {
+                    "Timeout" : "PT20M"
+                }
             }
         }
     }
