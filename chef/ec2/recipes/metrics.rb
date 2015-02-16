@@ -98,3 +98,24 @@ end
 
 execute "/home/ubuntu/riemann-0.2.8/bin/riemann /home/ubuntu/riemann-0.2.8/etc/riemann.config &"
 
+remote_file "/home/ubuntu/aws.tar.bz" do
+  action :create_if_missing
+  source "https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz"
+end
+
+execute "mkdir -p /opt/aws/bin/"
+
+execute "tar -xvf /home/ubuntu/aws.tar.bz -C /home/ubuntu"
+execute "easy_install /home/ubuntu/aws"
+execute "chmod +x /home/ubuntu/aws/bin/cfn-signal"
+execute "chmod +x /home/ubuntu/aws/bin/cfn-hup"
+execute "chmod +x /home/ubuntu/aws/bin/cfn-init"
+execute "chmod +x /home/ubuntu/aws/bin/cfn-get-metadata"
+execute "chmod +x /home/ubuntu/aws/bin/cfn-elect-cmd-leader"
+
+execute "ln -s /home/ubuntu/aws/bin/cfn-signal /opt/aws/bin/cfn-signal"
+execute "ln -s /home/ubuntu/aws/bin/cfn-hup /opt/aws/bin/cfn-hup"
+execute "ln -s /home/ubuntu/aws/bin/cfn-init /opt/aws/bin/cfn-init"
+execute "ln -s /home/ubuntu/aws/bin/cfn-get-metadata /opt/aws/bin/cfn-get-metadata"
+execute "ln -s /home/ubuntu/aws/bin/cfn-elect-cmd-leader /opt/aws/bin/cfn-elect-cmd-leader"
+
