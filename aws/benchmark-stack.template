@@ -189,7 +189,7 @@
                                 "chef-solo -j peer-node.json -c solo.rb &> /home/ubuntu/chef.log",
                                 "cfn-signal -e $? ",
                                 "         --stack ", { "Ref" : "AWS::StackName" },
-                                "         --resource PeerLaunchConfiguration ",
+                                "         --resource PeerScalingGroup ",
                                 "         --region ", { "Ref" : "AWS::Region" }
                             ]
                         ]
@@ -225,7 +225,7 @@
                                 "chef-solo -j zk-node.json -c solo.rb &> /home/ubuntu/chef.log",
                                 "cfn-signal -e $? ",
                                 "         --stack ", { "Ref" : "AWS::StackName" },
-                                "         --resource ZooKeeperLaunchConfiguration ",
+                                "         --resource ZooKeeperScalingGroup ",
                                 "         --region ", { "Ref" : "AWS::Region" }
                             ]
                         ]
@@ -261,7 +261,7 @@
                                 "chef-solo -j metrics-node.json -c solo.rb &> /home/ubuntu/chef.log",
                                 "cfn-signal -e $? ",
                                 "         --stack ", { "Ref" : "AWS::StackName" },
-                                "         --resource MetricsLaunchConfiguration ",
+                                "         --resource MetricsScalingGroup ",
                                 "         --region ", { "Ref" : "AWS::Region" }
                             ]
                         ]
