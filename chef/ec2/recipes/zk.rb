@@ -11,6 +11,9 @@ end
 
 execute "mkdir -p /opt/aws/bin/"
 
+execute "apt-get install -y python-pip"
+execute "pip install easyinstall"
+
 execute "tar -xvf /home/ubuntu/aws.tar.bz -C /home/ubuntu"
 execute "easy_install /home/ubuntu/aws-cfn-bootstrap-1.4"
 execute "chmod +x /home/ubuntu/aws-cfn-bootstrap-1.4/bin/cfn-signal"
