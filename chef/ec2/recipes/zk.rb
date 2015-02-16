@@ -4,6 +4,11 @@ include_recipe "zookeeper::default"
 
 execute "/opt/zookeeper/zookeeper-3.4.6/bin/zkServer.sh start"
 
+remote_file "/home/ubuntu/aws.tar.bz" do
+  action :create_if_missing
+  source "https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz"
+end
+
 execute "mkdir -p /opt/aws/bin/"
 
 execute "tar -xvf /home/ubuntu/aws.tar.bz -C /home/ubuntu"
