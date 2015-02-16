@@ -187,7 +187,7 @@
                                 "berks install &> /home/ubuntu/berks-install.log",
                                 "berks vendor vendors &> /home/ubuntu/berks-vendor.log",
                                 "chef-solo -j peer-node.json -c solo.rb &> /home/ubuntu/chef.log",
-                                "/opt/aws/apitools/cfn-init-1.4-5.amzn1/bin/cfn-signal -e $? ",
+                                "cfn-signal -e $? ",
                                 "         --stack ", { "Ref" : "AWS::StackName" },
                                 "         --resource PeerLaunchConfiguration ",
                                 "         --region ", { "Ref" : "AWS::Region" }
@@ -223,7 +223,7 @@
                                 "berks install &> /home/ubuntu/berks-install.log",
                                 "berks vendor vendors &> /home/ubuntu/berks-vendors.log",
                                 "chef-solo -j zk-node.json -c solo.rb &> /home/ubuntu/chef.log",
-                                "/opt/aws/apitools/cfn-init-1.4-5.amzn1/bin/cfn-signal -e $? ",
+                                "cfn-signal -e $? ",
                                 "         --stack ", { "Ref" : "AWS::StackName" },
                                 "         --resource ZooKeeperLaunchConfiguration ",
                                 "         --region ", { "Ref" : "AWS::Region" }
@@ -259,7 +259,7 @@
                                 "berks install &> /home/ubuntu/berks-install.log",
                                 "berks vendor vendors &> /home/ubuntu/berks-vendors.log",
                                 "chef-solo -j metrics-node.json -c solo.rb &> /home/ubuntu/chef.log",
-                                "/opt/aws/apitools/cfn-init-1.4-5.amzn1/bin/cfn-signal -e $? ",
+                                "cfn-signal -e $? ",
                                 "         --stack ", { "Ref" : "AWS::StackName" },
                                 "         --resource MetricsLaunchConfiguration ",
                                 "         --region ", { "Ref" : "AWS::Region" }
