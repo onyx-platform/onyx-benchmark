@@ -47,3 +47,6 @@ template "/etc/collectd/collectd.conf" do
   group "ubuntu"
 end
 
+execute "apt-get install -y python-pip"
+execute "pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz"
+
