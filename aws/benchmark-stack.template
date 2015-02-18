@@ -354,6 +354,15 @@
                 "MaxSize" : 1,
                 "DesiredCapacity" : 1
             },
+            "Tags" : [ {
+                "Key" : "stack-name",
+                "Value" : { "Ref" : "AWS::StackName" },
+                "PropagateAtLaunch" : "true"
+            }, {
+                "Key" : "stack-region",
+                "Value" : { "Ref": "AWS::Region" },
+                "PropagateAtLaunch" : "true"
+            } ],
             "CreationPolicy" : {
                 "ResourceSignal" : {
                     "Timeout" : "PT30M"
