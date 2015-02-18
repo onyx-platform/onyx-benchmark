@@ -8,4 +8,5 @@
                  [org.clojure/data.fressian "0.2.0"]
                  [com.mdrogalis/onyx "0.6.0-SNAPSHOT"]
                  [riemann-clojure-client "0.3.2"]
-                 [http-kit "2.1.17"]])
+                 [http-kit "2.1.17"]
+                 [cheshire "5.4.0"]])
