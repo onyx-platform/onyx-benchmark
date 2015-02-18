@@ -7,6 +7,16 @@
             "Type": "String",
             "NoEcho": "True"
         },
+        "AccessKeyId": {
+            "Description": "AWS access key.",
+            "Type": "String",
+            "NoEcho": "True"
+        },
+        "SecretAccessKey": {
+            "Description": "AWS secret key.",
+            "Type": "String",
+            "NoEcho": "True"
+        },
         "KeyName": {
             "Description": "Name of an existing EC2 Key Pair used to log into the nodes.",
             "Type": "String"
@@ -184,11 +194,17 @@
                                 "#!/bin/bash\n",
                                 "export LANG=en_US.UTF-8\n",
                                 "export HOME=/home/ubuntu\n",
+                                "export AWS_ACCESS_KEY_ID=", { "Ref" : "AccessKeyId" }, "\n",
+                                "export AWS_SECRET_ACCESS_KEY=", { "Ref": "SecretAccessKey" }, "\n",
+                                "export AWS_DEFAULT_REGION=us-east-1\n",
+                                "apt-get install -y python-pip\n",
                                 "wget https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/13.10/x86_64/chefdk_0.1.0-1_amd64.deb\n",
                                 "dpkg -i chefdk_0.1.0-1_amd64.deb\n",
                                 "apt-get install -y git\n",
                                 "git clone https://github.com/MichaelDrogalis/onyx-benchmark.git\n",
                                 "chown -R ubuntu:ubuntu onyx-benchmark\n",
+                                "pip install awscli\n",
+                                "aws ec2 describe-instances > /home/ubuntu/instances.json\n"
                                 "cd onyx-benchmark/chef/ec2\n",
                                 "berks install &> /home/ubuntu/berks-install.log\n",
                                 "berks vendor vendors &> /home/ubuntu/berks-vendor.log\n",
