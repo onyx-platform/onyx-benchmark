@@ -323,6 +323,19 @@
                 "MaxSize" : { "Ref" : "Peers" },
                 "DesiredCapacity" : { "Ref" : "Peers" }
             },
+            "Tags" : [ {
+                "Key" : "stack-name",
+                "Value" : { "Ref" : "AWS::StackName" },
+                "PropagateAtLaunch" : "true"
+            }, {
+                "Key" : "stack-region",
+                "Value" : { "Ref": "AWS::Region" },
+                "PropagateAtLaunch" : "true"
+            }, {
+                "Key" : "stack-role",
+                "Value" : "peer",
+                "PropagateAtLaunch" : "true"
+            } ],
             "CreationPolicy" : {
                 "ResourceSignal" : {
                     "Timeout" : "PT30M",
@@ -339,6 +352,19 @@
                 "MaxSize" : 1,
                 "DesiredCapacity" : 1
             },
+            "Tags" : [ {
+                "Key" : "stack-name",
+                "Value" : { "Ref" : "AWS::StackName" },
+                "PropagateAtLaunch" : "true"
+            }, {
+                "Key" : "stack-region",
+                "Value" : { "Ref": "AWS::Region" },
+                "PropagateAtLaunch" : "true"
+            }, {
+                "Key" : "stack-role",
+                "Value" : "zookeeper",
+                "PropagateAtLaunch" : "true"
+            } ],
             "CreationPolicy" : {
                 "ResourceSignal" : {
                     "Timeout" : "PT30M"
@@ -361,6 +387,10 @@
             }, {
                 "Key" : "stack-region",
                 "Value" : { "Ref": "AWS::Region" },
+                "PropagateAtLaunch" : "true"
+            }, {
+                "Key" : "stack-role",
+                "Value" : "metrics",
                 "PropagateAtLaunch" : "true"
             } ],
             "CreationPolicy" : {
