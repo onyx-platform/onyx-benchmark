@@ -45,7 +45,7 @@ template "/etc/collectd/collectd.conf" do
   group "ubuntu"
   variables({
     :zk => zk_addr,
-    :metrics => metrics_arr
+    :metrics => metrics_addr
   })
 end
 
