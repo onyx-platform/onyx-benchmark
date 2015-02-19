@@ -7,7 +7,10 @@
             [onyx.plugin.core-async]
             [onyx.api]))
 
-(defn -main [id zk-addr riemann-host batch-size & args]
+(defn -main [id batch-size & args]
+  (def zk-addr (slurp "/home/ubuntu/zoookeeper.txt"))
+  (def riemann-host (slurp "/home/ubuntu/metrics.txt"))
+  
   (let [batch-size (Integer/parseInt batch-size)]
 
     (def peer-config
