@@ -36,7 +36,7 @@ LoadPlugin match_regex
 
 <Plugin "write_riemann">
     <Node "local">
-        Host "127.0.0.1"
+        Host <%= @metrics %>
         Port "5555"
         Protocol TCP
         StoreRates true
