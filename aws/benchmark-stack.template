@@ -204,7 +204,7 @@
                                 "git clone https://github.com/MichaelDrogalis/onyx-benchmark.git\n",
                                 "chown -R ubuntu:ubuntu onyx-benchmark\n",
                                 "pip install awscli\n",
-                                "aws ec2 describe-instances > /home/ubuntu/instances.json\n"
+                                "aws ec2 describe-instances > /home/ubuntu/instances.json\n",
                                 "cd onyx-benchmark/chef/ec2\n",
                                 "berks install &> /home/ubuntu/berks-install.log\n",
                                 "berks vendor vendors &> /home/ubuntu/berks-vendor.log\n",
