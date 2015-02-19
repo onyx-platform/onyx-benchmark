@@ -1,4 +1,5 @@
 include_recipe "apt::default"
+include_recipe "java::default"
 
 apt_package "graphite-web" do
   action :install
