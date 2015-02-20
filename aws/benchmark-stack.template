@@ -163,7 +163,7 @@
                                 "export HOME=/home/ubuntu\n",
                                 "export AWS_ACCESS_KEY_ID=", { "Ref" : "AccessKeyId" }, "\n",
                                 "export AWS_SECRET_ACCESS_KEY=", { "Ref": "SecretAccessKey" }, "\n",
-                                "export AWS_DEFAULT_REGION=us-east-1\n",
+                                "export AWS_DEFAULT_REGION=", { "Ref" : "AWS::Region" }, "\"\n",
                                 "apt-get install -y python-pip\n",
                                 "wget https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/13.10/x86_64/chefdk_0.1.0-1_amd64.deb\n",
                                 "dpkg -i chefdk_0.1.0-1_amd64.deb\n",
