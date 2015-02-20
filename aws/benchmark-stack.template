@@ -31,7 +31,7 @@
             "Type": "Number",
             "Default": 4
         },
-        "Region": {
+        "RegionAZ": {
             "Description": "AWS Region to deploy all instances to.",
             "Type": "String",
             "Default": "us-east-1d"
@@ -266,7 +266,7 @@
             "Type" : "AWS::AutoScaling::AutoScalingGroup",
             "DependsOn" : [ "ZooKeeperScalingGroup", "MetricsScalingGroup" ],
             "Properties" : {
-                "AvailabilityZones" : [ { "Ref" : "Region" } ],
+                "AvailabilityZones" : [ { "Ref" : "RegionAZ" } ],
                 "LaunchConfigurationName" : { "Ref" : "PeerLaunchConfiguration" },
                 "MinSize" : { "Ref" : "Peers" },
                 "MaxSize" : { "Ref" : "Peers" },
@@ -295,7 +295,7 @@
         "ZooKeeperScalingGroup" : {
             "Type" : "AWS::AutoScaling::AutoScalingGroup",
             "Properties" : {
-                "AvailabilityZones" : [ { "Ref" : "Region" } ],
+                "AvailabilityZones" : [ { "Ref" : "RegionAZ" } ],
                 "LaunchConfigurationName" : { "Ref" : "ZooKeeperLaunchConfiguration" },
                 "MinSize" : 1,
                 "MaxSize" : 1,
@@ -323,7 +323,7 @@
         "MetricsScalingGroup" : {
             "Type" : "AWS::AutoScaling::AutoScalingGroup",
             "Properties" : {
-                "AvailabilityZones" : [ { "Ref" : "Region" } ],
+                "AvailabilityZones" : [ { "Ref" : "RegionAZ" } ],
                 "LaunchConfigurationName" : { "Ref" : "MetricsLaunchConfiguration" },
                 "MinSize" : 1,
                 "MaxSize" : 1,
