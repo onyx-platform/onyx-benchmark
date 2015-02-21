@@ -131,13 +131,13 @@
           },
           "targets": [
             {
-              "target": "*.*.processes.ps_state-running"
+              "target": "ubuntu.processes.ps_state-running"
             },
             {
-              "target": "*.*.processes.ps_state-blocked"
+              "target": "ubuntu.processes.ps_state-blocked"
             },
             {
-              "target": "*.*.processes.ps_state-sleeping"
+              "target": "ubuntu.processes.ps_state-stopped"
             }
           ],
           "aliasColors": {},
@@ -207,7 +207,7 @@
           },
           "targets": [
             {
-              "target": "*.*.memory.memory-used"
+              "target": "ubuntu.memory.memory-used"
             }
           ],
           "aliasColors": {},
@@ -246,8 +246,8 @@
           "lines": true,
           "fill": 0,
           "linewidth": 1,
-          "points": false,
-          "pointradius": 5,
+          "points": true,
+          "pointradius": 2,
           "bars": false,
           "stack": false,
           "legend": {
@@ -261,7 +261,7 @@
           },
           "percentage": false,
           "zerofill": true,
-          "nullPointMode": "connected",
+          "nullPointMode": "null",
           "steppedLine": false,
           "tooltip": {
             "value_type": "cumulative",
@@ -269,7 +269,7 @@
           },
           "targets": [
             {
-              "target": "offset(scale(*.*.*.cpu-idle, -1), 100)"
+              "target": "offset(scale(*.cpu-0.cpu-idle, -1), 100)"
             }
           ],
           "aliasColors": {},
@@ -339,7 +339,7 @@
           },
           "targets": [
             {
-              "target": "*.*.*.if_packets.tx"
+              "target": "ubuntu.interface-eth0.if_packets.tx"
             }
           ],
           "aliasColors": {},
@@ -401,7 +401,7 @@
           },
           "targets": [
             {
-              "target": "*.*.interface-eth0.if_packets.rx"
+              "target": "ubuntu.interface-eth0.if_packets.rx"
             }
           ],
           "aliasColors": {},
