@@ -9,7 +9,7 @@
             [onyx.api]))
 
 (defn -main [id n-peers & args]
-  (def zk-addr (slurp "/home/ubuntu/zoookeeper.txt"))
+  (def zk-addr (slurp "/home/ubuntu/zookeeper.txt"))
   
   (def peer-config
     {:zookeeper/address zk-addr
