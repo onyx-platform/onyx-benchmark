@@ -8,7 +8,7 @@
             [onyx.api]))
 
 (defn -main [id batch-size & args]
-  (def zk-addr (slurp "/home/ubuntu/zoookeeper.txt"))
+  (def zk-addr (slurp "/home/ubuntu/zookeeper.txt"))
   (def riemann-host (slurp "/home/ubuntu/metrics.txt"))
   
   (let [batch-size (Integer/parseInt batch-size)]
