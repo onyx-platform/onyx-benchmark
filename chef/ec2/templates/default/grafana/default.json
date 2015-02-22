@@ -131,13 +131,13 @@
           },
           "targets": [
             {
-              "target": "ubuntu.processes.ps_state-running"
+              "target": "*.*.*.processes.ps_state-running"
             },
             {
-              "target": "ubuntu.processes.ps_state-blocked"
+              "target": "*.*.*.processes.ps_state-blocked"
             },
             {
-              "target": "ubuntu.processes.ps_state-stopped"
+              "target": "*.*.*.processes.ps_state-stopped"
             }
           ],
           "aliasColors": {},
@@ -207,7 +207,7 @@
           },
           "targets": [
             {
-              "target": "ubuntu.memory.memory-used"
+              "target": "*.*.*.memory.memory-used"
             }
           ],
           "aliasColors": {},
@@ -269,7 +269,8 @@
           },
           "targets": [
             {
-              "target": "offset(scale(*.cpu-0.cpu-idle, -1), 100)"
+              "target": "offset(scale(*.*.*.cpu-0.cpu-idle, -1), 100)",
+              "hide": false
             }
           ],
           "aliasColors": {},
@@ -339,7 +340,7 @@
           },
           "targets": [
             {
-              "target": "ubuntu.interface-eth0.if_packets.tx"
+              "target": "*.*.*.interface-eth0.if_packets.tx"
             }
           ],
           "aliasColors": {},
@@ -401,7 +402,7 @@
           },
           "targets": [
             {
-              "target": "ubuntu.interface-eth0.if_packets.rx"
+              "target": "*.*.*.interface-eth0.if_packets.rx"
             }
           ],
           "aliasColors": {},
