@@ -2,8 +2,9 @@
 
 A benchmarking suite used by the Onyx team.
 
-Start with the aws cli tool e.g.
+Start with the aws cli tool after making sure to set your region to us-east-1.
 
+Example:
 ```shell
 aws cloudformation create-stack \
     --template-body file://aws/benchmark-stack.template \

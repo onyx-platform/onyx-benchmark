@@ -33,8 +33,7 @@
         },
         "RegionAZ": {
             "Description": "AWS Region to deploy all instances to.",
-            "Type": "String",
-            "Default": "us-east-1d"
+            "Type": "String"
         },
         "PeerInstanceType": {
             "Description": "Instance type to provision as Peer nodes in the cluster.",
@@ -76,7 +75,12 @@
             "Default": "0.0.0.0/0",
             "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
             "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
-        }
+        },
+	"BenchmarkGitCommit" : {
+	    "Description" : "The git commit SHA for the benchmark code that should be run. Will be used as an onyx deployment id",
+	    "Type": "String",
+	    "Default": "master"
+	}
     },
     "Mappings": {
         "AWSInstanceType2Arch": {
@@ -152,7 +156,6 @@
                 "InstanceType" : { "Ref": "PeerInstanceType" },
                 "KeyName" : { "Ref": "KeyName" },
                 "SecurityGroups" : [ { "Ref": "OnyxSecurityGroup" } ],
-                "SpotPrice" : { "Ref" : "PeerSpotPrice" },
                 "UserData": {
                     "Fn::Base64" : {
                         "Fn::Join" : [
@@ -185,6 +188,7 @@
                                 "/home/ubuntu/instances.json\n",
                                 "cd chef/ec2\n",
                                 "chef-solo -j peer-post-node.json -c solo.rb &> /home/ubuntu/chef-post.log\n",
+                                "cfn-hup -c /onyx-benchmark/aws/peer_cfn_hup -v\n",
                                 "cfn-signal -e $? ",
                                 "         --stack ", { "Ref" : "AWS::StackName" },
                                 "         --resource PeerScalingGroup ",
@@ -203,7 +207,6 @@
                 "InstanceType" : { "Ref": "ZooKeeperInstanceType" },
                 "KeyName" : { "Ref": "KeyName" },
                 "SecurityGroups" : [ { "Ref": "OnyxSecurityGroup" } ],
-                "SpotPrice" : { "Ref" : "ZooKeeperSpotPrice" },
                 "UserData": {
                     "Fn::Base64" : {
                         "Fn::Join" : [
@@ -239,7 +242,6 @@
                 "InstanceType" : { "Ref": "MetricsInstanceType" },
                 "KeyName" : { "Ref": "KeyName" },
                 "SecurityGroups" : [ { "Ref": "OnyxSecurityGroup" } ],
-                "SpotPrice" : { "Ref" : "MetricsSpotPrice" },
                 "UserData": {
                     "Fn::Base64" : {
                         "Fn::Join" : [
@@ -288,7 +290,11 @@
                     "Key" : "stack-role",
                     "Value" : "peer",
                     "PropagateAtLaunch" : "true"
-                } ]
+		}, {
+                    "Key" : "git-commit",
+                    "Value" : { "Ref" : "BenchmarkGitCommit" },
+                    "PropagateAtLaunch" : "true"
+                }]
             },
             "CreationPolicy" : {
                 "ResourceSignal" : {
