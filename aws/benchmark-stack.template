@@ -148,9 +148,15 @@
                 ]
             }
         },
+
         "PeerLaunchConfiguration":
         {
             "Type" : "AWS::AutoScaling::LaunchConfiguration",
+	    "Metadata" : {
+			"AWS::CloudFormation::Init: {
+				"BenchmarkGitCommit" : { "Ref" : "BenchmarkGitCommit" }
+			}
+		},
             "Properties" : {
                 "ImageId" : { "Fn::FindInMap": [ "AWSRegionArch2AMI", { "Ref": "AWS::Region" }, "64HVM"]},
                 "InstanceType" : { "Ref": "PeerInstanceType" },
@@ -189,6 +195,7 @@
                                 "/home/ubuntu/instances.json\n",
                                 "cd chef/ec2\n",
                                 "chef-solo -j peer-post-node.json -c solo.rb &> /home/ubuntu/chef-post.log\n",
+                                "chmod +x /onyx-benchmark/aws/peer_cfn_hup/run_peer.sh\n",
                                 "cfn-hup -c /onyx-benchmark/aws/peer_cfn_hup -v\n",
                                 "cfn-signal -e $? ",
                                 "         --stack ", { "Ref" : "AWS::StackName" },
@@ -239,7 +246,7 @@
         "MetricsLaunchConfiguration":
         {
             "Type" : "AWS::AutoScaling::LaunchConfiguration",
-            "Properties" : {
+	    "Properties" : {
                 "ImageId" : { "Fn::FindInMap": [ "AWSRegionArch2AMI", { "Ref": "AWS::Region" }, "64HVM"]},
                 "InstanceType" : { "Ref": "MetricsInstanceType" },
                 "KeyName" : { "Ref": "KeyName" },
@@ -270,7 +277,7 @@
                         ]
                     }
                 }
-            }
+           }
         },
         "PeerScalingGroup" : {
             "Type" : "AWS::AutoScaling::AutoScalingGroup",
@@ -293,11 +300,7 @@
                     "Key" : "stack-role",
                     "Value" : "peer",
                     "PropagateAtLaunch" : "true"
-		}, {
-                    "Key" : "git-commit",
-                    "Value" : { "Ref" : "BenchmarkGitCommit" },
-                    "PropagateAtLaunch" : "true"
-                }]
+		}]
             },
             "CreationPolicy" : {
                 "ResourceSignal" : {
