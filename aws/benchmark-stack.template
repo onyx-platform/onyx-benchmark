@@ -156,6 +156,7 @@
                 "InstanceType" : { "Ref": "PeerInstanceType" },
                 "KeyName" : { "Ref": "KeyName" },
                 "SecurityGroups" : [ { "Ref": "OnyxSecurityGroup" } ],
+		"SpotPrice" : { "Ref" : "PeerSpotPrice" },
                 "UserData": {
                     "Fn::Base64" : {
                         "Fn::Join" : [
@@ -207,6 +208,7 @@
                 "InstanceType" : { "Ref": "ZooKeeperInstanceType" },
                 "KeyName" : { "Ref": "KeyName" },
                 "SecurityGroups" : [ { "Ref": "OnyxSecurityGroup" } ],
+		"SpotPrice" : { "Ref" : "ZooKeeperSpotPrice" },
                 "UserData": {
                     "Fn::Base64" : {
                         "Fn::Join" : [
@@ -242,6 +244,7 @@
                 "InstanceType" : { "Ref": "MetricsInstanceType" },
                 "KeyName" : { "Ref": "KeyName" },
                 "SecurityGroups" : [ { "Ref": "OnyxSecurityGroup" } ],
+		"SpotPrice" : { "Ref" : "MetricsSpotPrice" },
                 "UserData": {
                     "Fn::Base64" : {
                         "Fn::Join" : [
