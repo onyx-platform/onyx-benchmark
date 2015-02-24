@@ -151,63 +151,104 @@
 
         "PeerLaunchConfiguration":
         {
-            "Type" : "AWS::AutoScaling::LaunchConfiguration",
-	    "Metadata" : {
-			"AWS::CloudFormation::Init: {
-				"BenchmarkGitCommit" : { "Ref" : "BenchmarkGitCommit" }
+		"Type" : "AWS::AutoScaling::LaunchConfiguration",
+		"Metadata" : {
+			"AWS::CloudFormation::Init" : {
+				"configSets" : {
+					"peer-run": [ "fileConfig", "commandConfig" ]
+				},
+
+				"fileConfig" : {
+					"files" : {
+						"/etc/cfn/cfn-hup.conf" : {
+							"content" : { "Fn::Join" : ["", [
+								"[main]\n",
+								"stack=", { "Ref" : "AWS::StackName" }, "\n",
+								"region=", { "Ref" : "AWS::Region" }, "\n",
+								"interval=1\n"
+							]]},
+							"mode"    : "000400",
+							"owner"   : "root",
+							"group"   : "root"
+						},
+
+						"/etc/cfn/hooks.d/cfn-auto-reloader.conf" : {
+							"content": { "Fn::Join" : ["", [
+								"[cfn-auto-reloader-hook]\n",
+								"triggers=post.update\n",
+								"path=Resources.PeerLaunchConfiguration.Metadata.AWS::CloudFormation::Init\n",
+								"action=/usr/local/bin/cfn-init -c peer-run -s ",
+								{ "Ref" : "AWS::StackName" }, " -r PeerLaunchConfiguration ",
+								" --region ", { "Ref" : "AWS::Region" }, "\n",
+								"runas=root\n"
+							]]}
+						}
+					}
+				},
+
+				"commandConfig" : {
+					"commands" : {
+						"runcommandtxt" : {
+							"command" : 
+							{ "Fn::Join" : 
+							["",
+							  ["echo ", 
+						           { "Ref" : "BenchmarkGitCommit" },
+							    " >> /home/ubuntu/testcommand.txt"]]},
+							"ignoreErrors" : "false"
+						}
+					}
+				}
 			}
 		},
-            "Properties" : {
-                "ImageId" : { "Fn::FindInMap": [ "AWSRegionArch2AMI", { "Ref": "AWS::Region" }, "64HVM"]},
-                "InstanceType" : { "Ref": "PeerInstanceType" },
-                "KeyName" : { "Ref": "KeyName" },
-                "SecurityGroups" : [ { "Ref": "OnyxSecurityGroup" } ],
-		"SpotPrice" : { "Ref" : "PeerSpotPrice" },
-                "UserData": {
-                    "Fn::Base64" : {
-                        "Fn::Join" : [
-                            "",
-                            [
-                                "#!/bin/bash\n",
-                                "export LANG=en_US.UTF-8\n",
-                                "export HOME=/home/ubuntu\n",
-                                "export AWS_ACCESS_KEY_ID=", { "Ref" : "AccessKeyId" }, "\n",
-                                "export AWS_SECRET_ACCESS_KEY=", { "Ref": "SecretAccessKey" }, "\n",
-                                "export AWS_DEFAULT_REGION=", { "Ref" : "AWS::Region" }, "\n",
-                                "apt-get install -y python-pip\n",
-                                "wget https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/13.10/x86_64/chefdk_0.1.0-1_amd64.deb\n",
-                                "dpkg -i chefdk_0.1.0-1_amd64.deb\n",
-                                "apt-get install -y git\n",
-                                "git clone https://github.com/MichaelDrogalis/onyx-benchmark.git\n",
-                                "chown -R ubuntu:ubuntu onyx-benchmark\n",
-                                "pip install awscli\n",
-                                "aws ec2 describe-instances > /home/ubuntu/instances.json\n",
-                                "cd onyx-benchmark/chef/ec2\n",
-                                "berks install &> /home/ubuntu/berks-install.log\n",
-                                "berks vendor vendors &> /home/ubuntu/berks-vendor.log\n",
-                                "chef-solo -j peer-pre-node.json -c solo.rb &> /home/ubuntu/chef-pre.log\n",
-                                "cd /onyx-benchmark\n",
-                                "lein run -m onyx-benchmark.util ",
-                                { "Ref" : "AWS::StackName" },
-                                " ",
-                                { "Ref" : "AWS::Region" },
-                                " ",
-                                "/home/ubuntu/instances.json\n",
-                                "cd chef/ec2\n",
-                                "chef-solo -j peer-post-node.json -c solo.rb &> /home/ubuntu/chef-post.log\n",
-                                "chmod +x /onyx-benchmark/aws/peer_cfn_hup/run_peer.sh\n",
-                                "cfn-hup -c /onyx-benchmark/aws/peer_cfn_hup -v\n",
-                                "cfn-signal -e $? ",
-                                "         --stack ", { "Ref" : "AWS::StackName" },
-                                "         --resource PeerScalingGroup ",
-                                "         --region ", { "Ref" : "AWS::Region" }
-                            ]
-                        ]
-                    }
-                }
-            }
-        },
-        "ZooKeeperLaunchConfiguration":
+		"Properties" : {
+			"ImageId" : { "Fn::FindInMap": [ "AWSRegionArch2AMI", { "Ref": "AWS::Region" }, "64HVM"]},
+			"InstanceType" : { "Ref": "PeerInstanceType" },
+			"KeyName" : { "Ref": "KeyName" },
+			"SecurityGroups" : [ { "Ref": "OnyxSecurityGroup" } ],
+			"UserData": {
+				"Fn::Base64" : {
+					"Fn::Join" : [
+						"",
+					[
+						"#!/bin/bash\n",
+					"export LANG=en_US.UTF-8\n",
+					"export HOME=/home/ubuntu\n",
+					"export AWS_ACCESS_KEY_ID=", { "Ref" : "AccessKeyId" }, "\n",
+					"export AWS_SECRET_ACCESS_KEY=", { "Ref": "SecretAccessKey" }, "\n",
+					"export AWS_DEFAULT_REGION=", { "Ref" : "AWS::Region" }, "\n",
+					"mkdir /etc/cfn\n",
+					"apt-get install -y python-pip\n",
+					"wget https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/13.10/x86_64/chefdk_0.1.0-1_amd64.deb\n",
+					"dpkg -i chefdk_0.1.0-1_amd64.deb\n",
+					"apt-get install -y git\n",
+					"git clone https://github.com/MichaelDrogalis/onyx-benchmark.git\n",
+					"chown -R ubuntu:ubuntu onyx-benchmark\n",
+					"pip install awscli\n",
+					"aws ec2 describe-instances > /home/ubuntu/instances.json\n",
+					"cd onyx-benchmark/chef/ec2\n",
+					"berks install &> /home/ubuntu/berks-install.log\n",
+					"berks vendor vendors &> /home/ubuntu/berks-vendor.log\n",
+					"chef-solo -j peer-pre-node.json -c solo.rb &> /home/ubuntu/chef-pre.log\n",
+					"cd /onyx-benchmark\n",
+					"lein run -m onyx-benchmark.util ", { "Ref" : "AWS::StackName" }, " ", { "Ref" : "AWS::Region" }, " ", "/home/ubuntu/instances.json\n",
+					"cd chef/ec2\n",
+					"chef-solo -j peer-post-node.json -c solo.rb &> /home/ubuntu/chef-post.log\n",
+					"chmod +x /onyx-benchmark/aws/peer_cfn_hup/run_peer.sh\n",
+					"/usr/local/bin/cfn-init -v -c peer-run -s ", { "Ref" : "AWS::StackName" }, " -r PeerLaunchConfiguration ",
+					"    --region ", { "Ref" : "AWS::Region" }, " >> /var/log/cfn-init.log\n",
+					"/usr/local/bin/cfn-hup -c /etc/cfn\n",
+					"cfn-signal -e $? ",
+					"         --stack ", { "Ref" : "AWS::StackName" },
+					"         --resource PeerScalingGroup ",
+					"         --region ", { "Ref" : "AWS::Region" }
+					]
+						]
+				}
+			}
+		}
+	},
+	"ZooKeeperLaunchConfiguration":
         {
             "Type" : "AWS::AutoScaling::LaunchConfiguration",
             "Properties" : {
