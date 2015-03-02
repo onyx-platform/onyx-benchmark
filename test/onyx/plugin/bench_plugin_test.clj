@@ -1,6 +1,5 @@
 (ns onyx.plugin.bench-plugin-test
-  (:require [clojure.core.async :refer [chan dropping-buffer]]
-            [clojure.data.fressian :as fressian]
+  (:require [clojure.core.async :refer [chan dropping-buffer put! >! <! <!! go >!!]]
             [onyx.peer.task-lifecycle-extensions :as l-ext]
             [onyx.peer.pipeline-extensions :as p-ext]
             [onyx.plugin.bench-plugin]
@@ -28,29 +27,31 @@
    :onyx.peer/job-scheduler scheduler
    :onyx.messaging/impl messaging})
 
-(def env (onyx.api/start-env env-config))
-
 (def n-messages 100)
 
-(def batch-size 20)
+(def batch-size 100)
+(def batch-timeout 50)
+
+(def counter (atom 0))
 
 (defn my-inc [{:keys [n] :as segment}]
-  (prn n)
+  (swap! counter inc)
   (assoc segment :n (inc n)))
 
 (def catalog
   [{:onyx/name :in
-    :onyx/ident :http/listen
+    :onyx/ident :generator/generator
     :onyx/type :input
-    :onyx/medium :http
+    :onyx/medium :generator
     :onyx/consumption :concurrent
-    :onyx/batch-size batch-size
-    :onyx/doc "Reads segments from an HTTP endpoint"}
+    :onyx/batch-timeout batch-timeout
+    :onyx/batch-size batch-size}
 
    {:onyx/name :inc
     :onyx/fn :onyx.plugin.bench-plugin-test/my-inc
     :onyx/type :function
     :onyx/consumption :concurrent
+    :onyx/batch-timeout batch-timeout
     :onyx/batch-size batch-size}
 
    {:onyx/name :no-op
@@ -58,35 +59,36 @@
     :onyx/type :output
     :onyx/medium :core.async
     :onyx/consumption :concurrent
+    :onyx/batch-timeout batch-timeout
     :onyx/batch-size batch-size
     :onyx/doc "Drops messages on the floor"}])
 
-(def workflow [[:in :inc] [:inc :no-op]])
-
-(def ports (atom 49999))
-
-(defmethod l-ext/inject-lifecycle-resources :in
-  [_ _] {:http/port (swap! ports inc)})
+;; TO TEST
 
 (defmethod l-ext/inject-lifecycle-resources :no-op
   [_ _] {:core.async/out-chan (chan (dropping-buffer 1))})
 
-(onyx.api/start-peers! 3 peer-config)
+(def workflow [[:in :inc] [:inc :no-op]])
 
+(def env (onyx.api/start-env env-config))
+
+(def v-peers (onyx.api/start-peers! 3 peer-config))
+
+(Thread/sleep 10000)
+
+(def start-time (java.util.Date.))
+
+(println "Started at " (java.util.Date.))
 (onyx.api/submit-job
- peer-config
- {:catalog catalog :workflow workflow
-  :task-scheduler :onyx.task-scheduler/round-robin})
+  peer-config
+  {:catalog catalog 
+   :workflow workflow
+   :task-scheduler :onyx.task-scheduler/round-robin})
 
+(Thread/sleep 45000)
+(println "Done at " start-time (java.util.Date.) @counter)
 
-(comment
-  
-  (doseq [v-peer v-peers]
+(doseq [v-peer v-peers]
     (onyx.api/shutdown-peer v-peer))
 
-  (onyx.api/shutdown-env env)
-
-  )
-
-
-
+(onyx.api/shutdown-env env)
