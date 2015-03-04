@@ -79,7 +79,10 @@
 	"BenchmarkGitCommit" : {
 	    "Description" : "The git commit SHA for the benchmark code that should be run. Will be used as an onyx deployment id",
 	    "Type": "String",
-	    "Default": "master"
+	},
+	"OnyxGitCommit" : {
+	    "Description" : "The git commit SHA for the benchmark code that should be run. Will be used as an onyx deployment id",
+	    "Type": "String",
 	}
     },
     "Mappings": {
@@ -188,14 +191,31 @@
 
 				"commandConfig" : {
 					"commands" : {
-						"runcommandtxt" : {
+						"kill-existing" : {
+							"command" : "killall -9 java >> /home/ubuntu/init-commands.txt",
+							"ignoreErrors" : "false",
+						},
+						"benchmark-checkout" : {
 							"command" : 
-							{ "Fn::Join" : 
-							["",
-							  ["echo ", 
-						           { "Ref" : "BenchmarkGitCommit" },
-							    " >> /home/ubuntu/testcommand.txt"]]},
-							"ignoreErrors" : "false"
+							{ "Fn::Join" : ["", ["git checkout ", { "Ref" : "BenchmarkGitCommit" }, " >> /home/ubuntu/init-commands.txt"]]},
+							"ignoreErrors" : "false",
+							"cwd" : "/onyx-benchmark"
+						},
+						"onyx-checkout" : {
+							"command" : 
+							{ "Fn::Join" : ["", ["git checkout ", { "Ref" : "OnyxGitCommit" }, " >> /home/ubuntu/init-commands.txt"]]},
+							"ignoreErrors" : "false",
+							"cwd" : "/onyx"
+						},
+						"onyx-install" : {
+							"command" : "LEIN_ROOT=1 lein install >> /home/ubuntu/init-commands.txt",
+							"ignoreErrors" : "false",
+							"cwd" : "/onyx"
+						}
+						"start-peer" : {
+							"command" : "LEIN_ROOT=1 lein run -m onyx-benchmark.peer abcd 6",
+							"ignoreErrors" : "false",
+							"cwd" : "/onyx-benchmark"
 						}
 					}
 				}
@@ -217,7 +237,8 @@
 					"export AWS_ACCESS_KEY_ID=", { "Ref" : "AccessKeyId" }, "\n",
 					"export AWS_SECRET_ACCESS_KEY=", { "Ref": "SecretAccessKey" }, "\n",
 					"export AWS_DEFAULT_REGION=", { "Ref" : "AWS::Region" }, "\n",
-					"mkdir /etc/cfn\n",
+					"mkdir /etc/cfn", "\n",
+					"apt-get update", "\n",
 					"apt-get install -y python-pip\n",
 					"wget https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/13.10/x86_64/chefdk_0.1.0-1_amd64.deb\n",
 					"dpkg -i chefdk_0.1.0-1_amd64.deb\n",
@@ -256,7 +277,6 @@
                 "InstanceType" : { "Ref": "ZooKeeperInstanceType" },
                 "KeyName" : { "Ref": "KeyName" },
                 "SecurityGroups" : [ { "Ref": "OnyxSecurityGroup" } ],
-		"SpotPrice" : { "Ref" : "ZooKeeperSpotPrice" },
                 "UserData": {
                     "Fn::Base64" : {
                         "Fn::Join" : [
@@ -267,8 +287,10 @@
                                 "export HOME=/home/ubuntu\n",
                                 "wget https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/13.10/x86_64/chefdk_0.1.0-1_amd64.deb\n",
                                 "dpkg -i chefdk_0.1.0-1_amd64.deb\n",
+				"apt-get update\n",
                                 "apt-get install -y git\n",
                                 "git clone https://github.com/MichaelDrogalis/onyx-benchmark.git\n",
+                                "git clone https://github.com/MichaelDrogalis/onyx.git\n",
                                 "chown -R ubuntu:ubuntu onyx-benchmark\n",
                                 "cd onyx-benchmark/chef/ec2\n",
                                 "berks install &> /home/ubuntu/berks-install.log\n",
@@ -292,7 +314,6 @@
                 "InstanceType" : { "Ref": "MetricsInstanceType" },
                 "KeyName" : { "Ref": "KeyName" },
                 "SecurityGroups" : [ { "Ref": "OnyxSecurityGroup" } ],
-		"SpotPrice" : { "Ref" : "MetricsSpotPrice" },
                 "UserData": {
                     "Fn::Base64" : {
                         "Fn::Join" : [
@@ -303,6 +324,7 @@
                                 "export HOME=/home/ubuntu\n",
                                 "wget https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/13.10/x86_64/chefdk_0.1.0-1_amd64.deb\n",
                                 "dpkg -i chefdk_0.1.0-1_amd64.deb\n",
+				"apt-get update\n",
                                 "apt-get install -y git\n",
                                 "git clone https://github.com/MichaelDrogalis/onyx-benchmark.git\n",
                                 "chown -R ubuntu:ubuntu onyx-benchmark\n",

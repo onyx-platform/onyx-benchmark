@@ -8,8 +8,8 @@
             [onyx.api]))
 
 (defn -main [id batch-size & args]
-  (def zk-addr (slurp "/home/ubuntu/zookeeper.txt"))
-  (def riemann-host (slurp "/home/ubuntu/metrics.txt"))
+  (def zk-addr (slurp "zookeeper.txt"))
+  (def riemann-host (slurp "metrics.txt"))
   
   (let [batch-size (Integer/parseInt batch-size)]
 
@@ -20,12 +20,12 @@
 
     (def catalog
       [{:onyx/name :in
-        :onyx/ident :http/listen
+        :onyx/ident :generator/generator
         :onyx/type :input
-        :onyx/medium :http
+        :onyx/medium :generator
         :onyx/consumption :concurrent
-        :onyx/batch-size batch-size
-        :onyx/doc "Reads segments from an HTTP endpoint"}
+        :onyx/batch-timeout batch-timeout
+        :onyx/batch-size batch-size}
 
        {:onyx/name :inc
         :onyx/fn :onyx-benchmark.peer/my-inc

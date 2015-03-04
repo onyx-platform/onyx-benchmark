@@ -23,11 +23,6 @@
   (defn my-inc [{:keys [n] :as segment}]
     (assoc segment :n (inc n)))
 
-  (def ports (atom 49999))
-
-  (defmethod l-ext/inject-lifecycle-resources :in
-    [_ _] {:http/port (swap! ports inc)})
-
   (defmethod l-ext/inject-lifecycle-resources :no-op
     [_ _] {:core.async/out-chan (chan (dropping-buffer 1))})
 
