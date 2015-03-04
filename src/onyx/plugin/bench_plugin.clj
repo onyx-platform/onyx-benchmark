@@ -12,6 +12,7 @@
 (defmethod p-ext/read-batch [:input :generator]
   [{:keys [onyx.core/task-map] :as event}]
   (let [batch-size (:onyx/batch-size task-map)]
+    (Thread/sleep 100)
     {:onyx.core/batch (map (fn [i] {:id (java.util.UUID/randomUUID)
                                     :input :generator
                                     :message {:n i}})

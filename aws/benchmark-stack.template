@@ -77,12 +77,12 @@
             "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
         },
 	"BenchmarkGitCommit" : {
-	    "Description" : "The git commit SHA for the benchmark code that should be run. Will be used as an onyx deployment id",
-	    "Type": "String",
+	    "Description" : "The git commit SHA for the benchmark code that should be run. Will be combined with the OnyxGitCommit and used as deployment id",
+	    "Type": "String"
 	},
 	"OnyxGitCommit" : {
-	    "Description" : "The git commit SHA for the benchmark code that should be run. Will be used as an onyx deployment id",
-	    "Type": "String",
+	    "Description" : "The git commit SHA for the onyx library version that should be used. Will be combined with the benchmark git commit and used as deployment id",
+	    "Type": "String"
 	}
     },
     "Mappings": {
@@ -192,30 +192,39 @@
 				"commandConfig" : {
 					"commands" : {
 						"kill-existing" : {
-							"command" : "killall -9 java >> /home/ubuntu/init-commands.txt",
-							"ignoreErrors" : "false",
+							"command" : "killall -9 java >> /home/ubuntu/init-commands.txt 2>&1 ",
+							"ignoreErrors" : "true"
 						},
-						"benchmark-checkout" : {
-							"command" : 
-							{ "Fn::Join" : ["", ["git checkout ", { "Ref" : "BenchmarkGitCommit" }, " >> /home/ubuntu/init-commands.txt"]]},
+						"benchmark-pull" : {
+							"command" : "git pull origin master >> /home/ubuntu/init-commands.txt 2>&1 ",
 							"ignoreErrors" : "false",
 							"cwd" : "/onyx-benchmark"
 						},
+						"benchmark-checkout" : {
+							"command" : 
+							{ "Fn::Join" : ["", ["git checkout ", { "Ref" : "BenchmarkGitCommit" }, " >> /home/ubuntu/init-commands.txt 2>&1 "]]},
+							"ignoreErrors" : "false",
+							"cwd" : "/onyx-benchmark"
+						},
+						"tune-os" : {
+							"command" : "./tune-os.sh linux >> /home/ubuntu/init-commands.txt 2>&1 ",
+							"cwd" : "/onyx-benchmark"
+						},
+						"onyx-pull" : {
+							"command" : "git pull origin 0.6.x >> /home/ubuntu/init-commands.txt 2>&1 ",
+							"ignoreErrors" : "false",
+							"cwd" : "/onyx"
+						},
 						"onyx-checkout" : {
 							"command" : 
-							{ "Fn::Join" : ["", ["git checkout ", { "Ref" : "OnyxGitCommit" }, " >> /home/ubuntu/init-commands.txt"]]},
+							{ "Fn::Join" : ["", ["git checkout ", { "Ref" : "OnyxGitCommit" }, " >> /home/ubuntu/init-commands.txt 2>&1 "]]},
 							"ignoreErrors" : "false",
 							"cwd" : "/onyx"
 						},
 						"onyx-install" : {
-							"command" : "LEIN_ROOT=1 lein install >> /home/ubuntu/init-commands.txt",
+							"command" : "LEIN_ROOT=1 lein install >> /home/ubuntu/init-commands.txt 2>&1 ",
 							"ignoreErrors" : "false",
 							"cwd" : "/onyx"
-						}
-						"start-peer" : {
-							"command" : "LEIN_ROOT=1 lein run -m onyx-benchmark.peer abcd 6",
-							"ignoreErrors" : "false",
-							"cwd" : "/onyx-benchmark"
 						}
 					}
 				}
@@ -243,6 +252,7 @@
 					"wget https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/13.10/x86_64/chefdk_0.1.0-1_amd64.deb\n",
 					"dpkg -i chefdk_0.1.0-1_amd64.deb\n",
 					"apt-get install -y git\n",
+					"git clone https://github.com/MichaelDrogalis/onyx.git\n",
 					"git clone https://github.com/MichaelDrogalis/onyx-benchmark.git\n",
 					"chown -R ubuntu:ubuntu onyx-benchmark\n",
 					"pip install awscli\n",
@@ -290,7 +300,6 @@
 				"apt-get update\n",
                                 "apt-get install -y git\n",
                                 "git clone https://github.com/MichaelDrogalis/onyx-benchmark.git\n",
-                                "git clone https://github.com/MichaelDrogalis/onyx.git\n",
                                 "chown -R ubuntu:ubuntu onyx-benchmark\n",
                                 "cd onyx-benchmark/chef/ec2\n",
                                 "berks install &> /home/ubuntu/berks-install.log\n",

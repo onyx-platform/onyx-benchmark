@@ -19,7 +19,7 @@
      :onyx.messaging/impl :http-kit})
 
   (def n-peers (Integer/parseInt n-peers))
-  
+
   (defn my-inc [{:keys [n] :as segment}]
     (assoc segment :n (inc n)))
 
