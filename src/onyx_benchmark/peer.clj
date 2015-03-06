@@ -42,7 +42,7 @@
       {:bench/state state
        :bench/riemann client}))
 
-  (defmethod l-ext/close-temporal-resources :inc
+  (defmethod l-ext/close-batch-resources :inc
     [_ event]
     (swap! (:bench/state event) + (count (:onyx.core/decompressed event)))
     {})

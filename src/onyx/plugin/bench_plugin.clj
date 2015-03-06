@@ -47,6 +47,6 @@
   ;; Infinite stream of messages, never drained.
   false)
 
-(defmethod l-ext/close-temporal-resources :generator
+(defmethod l-ext/close-batch-resources :generator
   [_ event] 
   event)
