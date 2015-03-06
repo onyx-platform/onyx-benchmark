@@ -15,6 +15,8 @@ DEPLOYMENT_ID=$1"_"$2
 
 killall -9 java || true
 
+export LEIN_ROOT=1
+
 cd /onyx
 git checkout master
 git fetch --all 
@@ -28,4 +30,4 @@ git fetch --all
 git pull --all 
 git checkout $BENCHMARK_REV
 
-LEIN_ROOT=1 lein run -m onyx-benchmark.peer $DEPLOYMENT_ID $VPEERS &
+lein run -m onyx-benchmark.peer $DEPLOYMENT_ID $VPEERS &
