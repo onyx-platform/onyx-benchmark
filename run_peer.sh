@@ -30,4 +30,6 @@ git fetch --all
 git pull --all 
 git checkout $BENCHMARK_REV
 
-lein run -m onyx-benchmark.peer $DEPLOYMENT_ID $VPEERS &
+ZOOKEEPER_ADDR=$(cat /home/ubuntu/zookeeper.txt)
+
+lein run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $DEPLOYMENT_ID $VPEERS &

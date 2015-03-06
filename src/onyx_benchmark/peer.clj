@@ -8,8 +8,7 @@
             [onyx.plugin.core-async]
             [onyx.api]))
 
-(defn -main [id n-peers & args]
-  (def zk-addr (slurp "/home/ubuntu/zookeeper.txt"))
+(defn -main [zk-addr id n-peers & args]
   
   (def peer-config
     {:zookeeper/address zk-addr
