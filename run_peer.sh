@@ -19,7 +19,7 @@ export LEIN_ROOT=1
 
 # update repo again since the other task might no be run if some other variables change?
 # investigate later
-./update_repo.sh
+./update_repo.sh $BENCHMARK_REV
 
 cd /onyx
 git checkout .

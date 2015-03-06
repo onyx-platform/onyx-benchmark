@@ -197,7 +197,7 @@
 					"commands" : {
 						"update-bench-repo" : {
 							"command" : { "Fn::Join" : ["", 
-								["./update-repo.sh ",  
+								["./update_repo.sh ",  
 								{ "Ref" : "BenchmarkGitCommit" },
 								" >> /home/ubuntu/init-commands.txt 2>&1 "]]},
 							"ignoreErrors" : "false",
