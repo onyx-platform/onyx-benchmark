@@ -198,11 +198,11 @@
 						"update-bench-repo" : {
 							"command" : { "Fn::Join" : ["", 
 								["./update-repo.sh ",  
-								{ "Ref" : "BenchmarkGitCommit" }, " " 
-								>> /home/ubuntu/init-commands.txt 2>&1 "]]}
+								{ "Ref" : "BenchmarkGitCommit" },
+								" >> /home/ubuntu/init-commands.txt 2>&1 "]]},
 							"ignoreErrors" : "false",
 							"cwd" : "/onyx-benchmark"
-						}
+						},
 						"run-peer" : {
 							"command" : { "Fn::Join" : ["", 
 								["./run-peer ",  
@@ -210,9 +210,9 @@
 								{ "Ref" : "BenchmarkGitCommit" }, " ",
 								{ "Ref" : "RunId" }, " ",
 								{ "Ref": "VirtualPeers" }, " ",
-								>> /home/ubuntu/init-commands.txt 2>&1 "]]},
+								" >> /home/ubuntu/init-commands.txt 2>&1 "]]},
 								"ignoreErrors" : "false",
-								"cwd" : "/onyx"
+								"cwd" : "/onyx-benchmark"
 						}
 					}
 				}
