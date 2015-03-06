@@ -83,6 +83,10 @@
 	"OnyxGitCommit" : {
 	    "Description" : "The git commit SHA for the onyx library version that should be used. Will be combined with the benchmark git commit and used as deployment id",
 	    "Type": "String"
+	},
+	"RunId" : {
+	    "Description" : "The run number for this bench (make sure to increment if you're using the same benchmark and onyx commit SHAs",
+	    "Type": "String"
 	}
     },
     "Mappings": {
@@ -191,40 +195,24 @@
 
 				"commandConfig" : {
 					"commands" : {
-						"kill-existing" : {
-							"command" : "killall -9 java >> /home/ubuntu/init-commands.txt 2>&1 ",
-							"ignoreErrors" : "true"
-						},
-						"benchmark-pull" : {
-							"command" : "git pull origin master >> /home/ubuntu/init-commands.txt 2>&1 ",
+						"update-bench-repo" : {
+							"command" : { "Fn::Join" : ["", 
+								["./update-repo.sh ",  
+								{ "Ref" : "BenchmarkGitCommit" }, " " 
+								>> /home/ubuntu/init-commands.txt 2>&1 "]]}
 							"ignoreErrors" : "false",
 							"cwd" : "/onyx-benchmark"
-						},
-						"benchmark-checkout" : {
-							"command" : 
-							{ "Fn::Join" : ["", ["git checkout ", { "Ref" : "BenchmarkGitCommit" }, " >> /home/ubuntu/init-commands.txt 2>&1 "]]},
-							"ignoreErrors" : "false",
-							"cwd" : "/onyx-benchmark"
-						},
-						"tune-os" : {
-							"command" : "./tune-os.sh linux >> /home/ubuntu/init-commands.txt 2>&1 ",
-							"cwd" : "/onyx-benchmark"
-						},
-						"onyx-pull" : {
-							"command" : "git pull origin 0.6.x >> /home/ubuntu/init-commands.txt 2>&1 ",
-							"ignoreErrors" : "false",
-							"cwd" : "/onyx"
-						},
-						"onyx-checkout" : {
-							"command" : 
-							{ "Fn::Join" : ["", ["git checkout ", { "Ref" : "OnyxGitCommit" }, " >> /home/ubuntu/init-commands.txt 2>&1 "]]},
-							"ignoreErrors" : "false",
-							"cwd" : "/onyx"
-						},
-						"onyx-install" : {
-							"command" : "LEIN_ROOT=1 lein install >> /home/ubuntu/init-commands.txt 2>&1 ",
-							"ignoreErrors" : "false",
-							"cwd" : "/onyx"
+						}
+						"run-peer" : {
+							"command" : { "Fn::Join" : ["", 
+								["./run-peer ",  
+								{ "Ref" : "OnyxGitCommit" }, " ", 
+								{ "Ref" : "BenchmarkGitCommit" }, " ",
+								{ "Ref" : "RunId" }, " ",
+								{ "Ref": "VirtualPeers" }, " ",
+								>> /home/ubuntu/init-commands.txt 2>&1 "]]},
+								"ignoreErrors" : "false",
+								"cwd" : "/onyx"
 						}
 					}
 				}

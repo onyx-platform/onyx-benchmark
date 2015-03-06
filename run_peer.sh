@@ -4,7 +4,7 @@
 set -o errexit
 set -o pipefail
 set -o nounset
-# set -o xtrace
+set -o xtrace
 
 ONYX_REV=$1
 BENCHMARK_REV=$2
@@ -18,13 +18,16 @@ killall -9 java || true
 export LEIN_ROOT=1
 
 cd /onyx
+git clean -f
 git checkout master
 git fetch --all 
 git pull --all 
 git checkout $ONYX_REV
+lein clean
 lein install
 
 cd /onyx-benchmark
+git clean -f
 git checkout master
 git fetch --all 
 git pull --all 
