@@ -17,6 +17,10 @@ killall -9 java || true
 
 export LEIN_ROOT=1
 
+# update repo again since the other task might no be run if some other variables change?
+# investigate later
+./update_repo.sh
+
 cd /onyx
 git checkout .
 git clean -f
