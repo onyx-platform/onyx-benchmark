@@ -205,12 +205,12 @@
 						},
 						"run-peer" : {
 							"command" : { "Fn::Join" : ["", 
-								["./run-peer ",  
+								["./run_peer.sh ",  
 								{ "Ref" : "OnyxGitCommit" }, " ", 
 								{ "Ref" : "BenchmarkGitCommit" }, " ",
 								{ "Ref" : "RunId" }, " ",
 								{ "Ref": "VirtualPeers" }, " ",
-								" >> /home/ubuntu/init-commands.txt 2>&1 "]]},
+								">> /home/ubuntu/init-commands.txt 2>&1 "]]},
 								"ignoreErrors" : "false",
 								"cwd" : "/onyx-benchmark"
 						}

@@ -9,6 +9,7 @@ set -o xtrace
 BENCHMARK_REV=$1
 
 cd /onyx-benchmark
+git checkout .
 git clean -f
 git checkout master
 git fetch --all 
