@@ -16,12 +16,14 @@ DEPLOYMENT_ID=$1"_"$2
 killall -9 java || true
 
 cd /onyx
+git checkout master
 git fetch --all 
 git pull --all 
 git checkout $ONYX_REV
 lein install
 
 cd /onyx-benchmark
+git checkout master
 git fetch --all 
 git pull --all 
 git checkout $BENCHMARK_REV
