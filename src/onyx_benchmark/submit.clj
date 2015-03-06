@@ -13,7 +13,7 @@
     (def peer-config
       {:zookeeper/address zk-addr
        :onyx/id id
-       :onyx.messaging/impl :http-kit})
+       :onyx.messaging/impl :http-kit-websockets})
 
     (def catalog
       [{:onyx/name :in

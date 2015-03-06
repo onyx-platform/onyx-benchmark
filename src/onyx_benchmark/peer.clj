@@ -47,7 +47,7 @@
     (swap! (:bench/state event) + (count (:onyx.core/decompressed event)))
     {})
 
-  (onyx.api/start-peers! (Integer/parseInt n-peers) peer-config)
+  (onyx.api/start-peers (Integer/parseInt n-peers) peer-config)
 
   (<!! (chan)))
 

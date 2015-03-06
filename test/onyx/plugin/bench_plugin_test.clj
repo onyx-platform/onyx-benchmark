@@ -10,26 +10,25 @@
 
 (def scheduler :onyx.job-scheduler/greedy)
 
-(def messaging :http-kit)
+(def messaging :http-kit-websockets)
 
 (def env-config
   {:zookeeper/address "127.0.0.1:2189"
    :zookeeper/server? true
    :zookeeper.server/port 2189
    :onyx/id id
-   :onyx.peer/job-scheduler scheduler
-   :onyx.messaging/impl messaging})
+   :onyx.peer/job-scheduler scheduler})
 
 (def peer-config
   {:zookeeper/address "127.0.0.1:2189"
    :onyx/id id
-   :onyx.peer/join-failure-back-off 500
+   ;:onyx.peer/join-failure-back-off 500
    :onyx.peer/job-scheduler scheduler
    :onyx.messaging/impl messaging})
 
 (def n-messages 100)
 
-(def batch-size 100)
+(def batch-size 200)
 (def batch-timeout 50)
 
 (def counter (atom 0))
@@ -70,9 +69,12 @@
 
 (def workflow [[:in :inc] [:inc :no-op]])
 
+(println "Starting env")
 (def env (onyx.api/start-env env-config))
+(println "starting Vpeers")
 
-(def v-peers (onyx.api/start-peers! 3 peer-config))
+(def v-peers (onyx.api/start-peers 3 peer-config))
+(println "Started vpeers")
 
 (Thread/sleep 10000)
 
