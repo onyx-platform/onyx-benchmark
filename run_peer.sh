@@ -31,10 +31,8 @@ git checkout $ONYX_REV
 lein clean
 lein install
 
-
 cd /onyx-benchmark
 
 ZOOKEEPER_ADDR=$(cat /home/ubuntu/zookeeper.txt)
-pwd
 
-lein run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $DEPLOYMENT_ID $VPEERS &
+lein clean && lein run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $DEPLOYMENT_ID $VPEERS &
