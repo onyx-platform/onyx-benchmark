@@ -195,14 +195,6 @@
 
 				"commandConfig" : {
 					"commands" : {
-						"update-bench-repo" : {
-							"command" : { "Fn::Join" : ["", 
-								["./update_repo.sh ",  
-								{ "Ref" : "BenchmarkGitCommit" },
-								" >> /home/ubuntu/init-commands.txt 2>&1 "]]},
-							"ignoreErrors" : "false",
-							"cwd" : "/onyx-benchmark"
-						},
 						"run-peer" : {
 							"command" : { "Fn::Join" : ["", 
 								["./run_peer.sh ",  

@@ -10,7 +10,7 @@
 
 (def scheduler :onyx.job-scheduler/greedy)
 
-(def messaging :http-kit-websockets)
+(def messaging :aleph-tcp)
 
 (def env-config
   {:zookeeper/address "127.0.0.1:2189"

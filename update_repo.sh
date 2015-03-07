@@ -8,6 +8,8 @@ set -o xtrace
 
 BENCHMARK_REV=$1
 
+## TODO: STASH ONYX LOGS
+
 cd /
 rm -rf onyx-benchmark
 git clone https://github.com/MichaelDrogalis/onyx-benchmark.git
