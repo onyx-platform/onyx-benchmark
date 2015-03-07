@@ -21,14 +21,10 @@ export LEIN_ROOT=1
 # investigate later
 ./update_repo.sh $BENCHMARK_REV
 
+rm -rf /onyx
+git clone https://github.com/MichaelDrogalis/onyx-benchmark.git
 cd /onyx
-git checkout .
-git clean -f
-git checkout master
-git fetch --all 
-git pull --all 
 git checkout $ONYX_REV
-lein clean
 lein install
 
 cd /onyx-benchmark

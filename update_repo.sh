@@ -8,10 +8,7 @@ set -o xtrace
 
 BENCHMARK_REV=$1
 
+rm -rf /onyx-benchmark
+git clone https://github.com/MichaelDrogalis/onyx-benchmark.git
 cd /onyx-benchmark
-git checkout .
-git clean -f
-git checkout master
-git fetch --all 
-git pull --all 
 git checkout $BENCHMARK_REV
