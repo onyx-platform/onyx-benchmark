@@ -15,7 +15,7 @@
      :onyx/id id
      :onyx.peer/join-failure-back-off 500
      :onyx.peer/job-scheduler :onyx.job-scheduler/greedy
-     :onyx.messaging/impl :aleph-tcp})
+     :onyx.messaging/impl :http-kit-websockets})
 
   (def n-peers (Integer/parseInt n-peers))
 
