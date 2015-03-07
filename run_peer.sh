@@ -22,7 +22,7 @@ export LEIN_ROOT=1
 ./update_repo.sh $BENCHMARK_REV
 
 rm -rf /onyx
-git clone https://github.com/MichaelDrogalis/onyx-benchmark.git
+git clone https://github.com/MichaelDrogalis/onyx.git
 cd /onyx
 git checkout $ONYX_REV
 lein install
