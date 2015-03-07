@@ -21,7 +21,8 @@ export LEIN_ROOT=1
 # investigate later
 ./update_repo.sh $BENCHMARK_REV
 
-rm -rf /onyx
+cd /
+rm -rf onyx
 git clone https://github.com/MichaelDrogalis/onyx.git
 cd /onyx
 git checkout $ONYX_REV
