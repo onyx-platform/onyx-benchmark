@@ -31,8 +31,8 @@
   ;; to ignore message acknowledgment for now.
   )
 
-(defmethod p-ext/replay-message [:input :generator]
-  [{:keys [core.async/pending-messages core.async/replay-ch]} message-id]
+(defmethod p-ext/retry-message [:input :generator]
+  [{:keys [core.async/pending-messages core.async/retry-ch]} message-id]
   ;; Same as above.
   )
 

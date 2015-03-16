@@ -10,7 +10,9 @@
 
 (def scheduler :onyx.job-scheduler/greedy)
 
-(def messaging :aleph-tcp)
+;(def messaging :aleph-tcp)
+;(def messaging :http-kit-websockets)
+(def messaging :netty-tcp)
 
 (def env-config
   {:zookeeper/address "127.0.0.1:2189"
@@ -26,9 +28,7 @@
    :onyx.peer/job-scheduler scheduler
    :onyx.messaging/impl messaging})
 
-(def n-messages 100)
-
-(def batch-size 200)
+(def batch-size 100)
 (def batch-timeout 50)
 
 (def counter (atom 0))
@@ -65,7 +65,7 @@
 ;; TO TEST
 
 (defmethod l-ext/inject-lifecycle-resources :no-op
-  [_ _] {:core.async/out-chan (chan (dropping-buffer 1))})
+  [_ _] {:core.async/chan (chan (dropping-buffer 1))})
 
 (def workflow [[:in :inc] [:inc :no-op]])
 
@@ -73,10 +73,10 @@
 (def env (onyx.api/start-env env-config))
 (println "starting Vpeers")
 
-(def v-peers (onyx.api/start-peers 3 peer-config))
+(def v-peers (onyx.api/start-peers 6 peer-config))
 (println "Started vpeers")
 
-(Thread/sleep 10000)
+(Thread/sleep 20000)
 
 (def start-time (java.util.Date.))
 
