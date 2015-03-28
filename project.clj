@@ -1,7 +1,8 @@
 (defproject onyx-benchmark "0.1.0-SNAPSHOT"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
-  :java-opts ["-server"]
+  ;"-Daeron.rcv.buffer.length=100000" "-Daeron.socket.so_sndbuf=320000" "-Daeron.socket.so_rcvbuf=320000"  "-Daeron.term.buffer.length=131072" "-Daeron.rcv.initial.window.length=131072"]
+  :java-opts ["-server" "-Xmx2g" ]
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.6.0"]

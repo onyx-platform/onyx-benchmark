@@ -2,8 +2,7 @@
   (:require [clojure.core.async :refer [chan >!! <!! close! alts!! timeout]]
             [clojure.data.fressian :as fressian]
             [onyx.peer.task-lifecycle-extensions :as l-ext]
-            [onyx.peer.pipeline-extensions :as p-ext]
-            [org.httpkit.server :as server]))
+            [onyx.peer.pipeline-extensions :as p-ext]))
 
 (defmethod l-ext/inject-lifecycle-resources :generator/generator
   [_ event]
@@ -16,14 +15,6 @@
                                     :input :generator
                                     :message {:n i}})
                            (range batch-size))}))
-
-(defmethod p-ext/decompress-batch [:input :generator]
-  [{:keys [onyx.core/batch]}]
-  {:onyx.core/decompressed batch})
-
-(defmethod p-ext/apply-fn [:input :generator]
-  [event segment]
-  segment)
 
 (defmethod p-ext/ack-message [:input :generator]
   [{:keys [core.async/pending-messages]} message-id]

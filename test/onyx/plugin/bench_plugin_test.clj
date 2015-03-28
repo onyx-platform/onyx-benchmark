@@ -3,6 +3,8 @@
             [onyx.peer.task-lifecycle-extensions :as l-ext]
             [onyx.peer.pipeline-extensions :as p-ext]
             [onyx.plugin.bench-plugin]
+            [taoensso.timbre.appenders.rotor :as rotor]
+            [onyx.static.logging-configuration :as log-config]
             [onyx.plugin.core-async]
             [onyx.api]))
 
@@ -10,26 +12,40 @@
 
 (def scheduler :onyx.job-scheduler/greedy)
 
+(def messaging :aeron)
 ;(def messaging :aleph-tcp)
-;(def messaging :http-kit-websockets)
-(def messaging :netty-tcp)
+;(def messaging :netty-tcp)
 
 (def env-config
   {:zookeeper/address "127.0.0.1:2189"
    :zookeeper/server? true
    :zookeeper.server/port 2189
    :onyx/id id
+   :onyx.log/config {:appenders {:standard-out {:enabled? false}
+                                 :spit {:enabled? false}
+                                 :rotor {:min-level :error
+                                         :enabled? true
+                                         :async? false
+                                         :max-message-per-msecs nil
+                                         :fn rotor/appender-fn}}
+                     :shared-appender-config {:rotor {:path "onyx.log"
+                                                      :max-size (* 512 102400) :backlog 5}}}
    :onyx.peer/job-scheduler scheduler})
 
 (def peer-config
   {:zookeeper/address "127.0.0.1:2189"
    :onyx/id id
+   :onyx.messaging/bind-addr "127.0.0.1"
+   :onyx.messaging/peer-ports (vec (range 40000 40200))
    ;:onyx.peer/join-failure-back-off 500
    :onyx.peer/job-scheduler scheduler
    :onyx.messaging/impl messaging})
 
-(def batch-size 100)
-(def batch-timeout 50)
+(def peer-group 
+  (onyx.api/start-peer-group peer-config))
+
+(def batch-size 1)
+(def batch-timeout 100)
 
 (def counter (atom 0))
 
@@ -67,30 +83,48 @@
 (defmethod l-ext/inject-lifecycle-resources :no-op
   [_ _] {:core.async/chan (chan (dropping-buffer 1))})
 
+
 (def workflow [[:in :inc] [:inc :no-op]])
 
 (println "Starting env")
 (def env (onyx.api/start-env env-config))
 (println "starting Vpeers")
 
-(def v-peers (onyx.api/start-peers 6 peer-config))
+(def v-peers (onyx.api/start-peers 6 peer-group))
 (println "Started vpeers")
 
-(Thread/sleep 20000)
+(def bench-length 100000)
+
+(Thread/sleep 30000)
 
 (def start-time (java.util.Date.))
 
-(println "Started at " (java.util.Date.))
+(def start-time-millis (System/currentTimeMillis))
+
+(println "Starting job at " (java.util.Date.))
 (onyx.api/submit-job
   peer-config
   {:catalog catalog 
    :workflow workflow
    :task-scheduler :onyx.task-scheduler/round-robin})
 
-(Thread/sleep 45000)
-(println "Done at " start-time (java.util.Date.) @counter)
+
+(println "Done starting job at " (java.util.Date.))
+
+(future
+  (while true 
+    (println "Update " @counter (float (/ @counter
+                                          (/ (- (System/currentTimeMillis) start-time-millis) 
+                                             1000))) "/sec")
+    (Thread/sleep 10000)))
+
+
+(Thread/sleep bench-length)
+(println "Done at " start-time (java.util.Date.) @counter (float (* 1000 (/ @counter bench-length))) "/sec")
 
 (doseq [v-peer v-peers]
-    (onyx.api/shutdown-peer v-peer))
+  (onyx.api/shutdown-peer v-peer))
+
+(onyx.api/shutdown-peer-group peer-group)
 
 (onyx.api/shutdown-env env)
