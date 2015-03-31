@@ -12,6 +12,7 @@
 
     (def peer-config
       {:zookeeper/address zk-addr
+       :onyx.messaging/impl :aeron
        :onyx/id id})
 
     (def catalog

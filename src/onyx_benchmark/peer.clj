@@ -13,8 +13,10 @@
   (def peer-config
     {:zookeeper/address zk-addr
      :onyx/id id
+     :onyx.messaging/bind-addr (slurp "http://169.254.169.254/latest/meta-data/local-ipv4")
+     :onyx.messaging/peer-ports (vec (range 40000 40200))
      :onyx.peer/join-failure-back-off 500
-     :onyx.peer/job-scheduler :onyx.job-scheduler/greedy
+     :onyx.peer/job-scheduler :onyx.peer/job-scheduler
      :onyx.messaging/impl :aeron})
 
   (def n-peers (Integer/parseInt n-peers))
@@ -47,7 +49,10 @@
     (swap! (:bench/state event) + (count (:onyx.core/decompressed event)))
     {})
 
-  (onyx.api/start-peers (Integer/parseInt n-peers) peer-config)
+  (def peer-group 
+    (onyx.api/start-peer-group peer-config))
+
+  (onyx.api/start-peers (Integer/parseInt n-peers) peer-group)
 
   (<!! (chan)))
 
