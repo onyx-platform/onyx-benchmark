@@ -1,14 +1,9 @@
 (ns onyx.plugin.bench-plugin
   (:require [clojure.core.async :refer [chan >!! <!! close! alts!! timeout]]
             [clojure.data.fressian :as fressian]
-            [onyx.peer.task-lifecycle-extensions :as l-ext]
             [onyx.peer.pipeline-extensions :as p-ext]))
 
-(defmethod l-ext/inject-lifecycle-resources :generator/generator
-  [_ event]
-  {})
-
-(defmethod p-ext/read-batch [:input :generator]
+(defmethod p-ext/read-batch :generator
   [{:keys [onyx.core/task-map] :as event}]
   (let [batch-size (:onyx/batch-size task-map)]
     {:onyx.core/batch (map (fn [i] {:id (java.util.UUID/randomUUID)
@@ -16,27 +11,23 @@
                                     :message {:n i}})
                            (range batch-size))}))
 
-(defmethod p-ext/ack-message [:input :generator]
+(defmethod p-ext/ack-message :generator
   [{:keys [core.async/pending-messages]} message-id]
   ;; We want to go as fast as possible, so we're going
   ;; to ignore message acknowledgment for now.
   )
 
-(defmethod p-ext/retry-message [:input :generator]
+(defmethod p-ext/retry-message :generator
   [{:keys [core.async/pending-messages core.async/retry-ch]} message-id]
   ;; Same as above.
   )
 
-(defmethod p-ext/pending? [:input :generator]
+(defmethod p-ext/pending? :generator
   [{:keys [core.async/pending-messages]} message-id]
   ;; Same as above.
   false)
 
-(defmethod p-ext/drained? [:input :generator]
+(defmethod p-ext/drained? :generator
   [event]
   ;; Infinite stream of messages, never drained.
   false)
-
-(defmethod l-ext/close-batch-resources :generator
-  [_ event] 
-  event)
