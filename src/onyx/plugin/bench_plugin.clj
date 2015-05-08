@@ -3,13 +3,18 @@
             [clojure.data.fressian :as fressian]
             [onyx.peer.pipeline-extensions :as p-ext]))
 
+(def hundred-bytes 
+  (into-array Byte/TYPE (range 100)))
+
 (defmethod p-ext/read-batch :generator
   [{:keys [onyx.core/task-map] :as event}]
   (let [batch-size (:onyx/batch-size task-map)]
-    {:onyx.core/batch (map (fn [i] {:id (java.util.UUID/randomUUID)
-                                    :input :generator
-                                    :message {:n i}})
-                           (range batch-size))}))
+    {:onyx.core/batch (doall (map (fn [i] {:id (java.util.UUID/randomUUID)
+                                           :input :generator
+                                           :message {:n i
+                                                     ;:data hundred-bytes
+                                                     }})
+                                  (range batch-size)))}))
 
 (defmethod p-ext/ack-message :generator
   [{:keys [core.async/pending-messages]} message-id]
