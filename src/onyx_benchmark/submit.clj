@@ -1,23 +1,36 @@
 (ns onyx-benchmark.submit
   (:require [clojure.core.async :refer [chan dropping-buffer <!!]]
             [clojure.data.fressian :as fressian]
-            [onyx.peer.task-lifecycle-extensions :as l-ext]
             [onyx.peer.pipeline-extensions :as p-ext]
             [onyx.plugin.bench-plugin]
             [onyx.plugin.core-async]
+            [onyx.peer.operation :as op ]
+            [onyx-benchmark.peer]
             [onyx.api]))
+
+(def lifecycles
+  [{:lifecycle/task :no-op
+    :lifecycle/calls :onyx-benchmark.peer/in-calls}
+   {:lifecycle/task :no-op
+    :lifecycle/calls :onyx.plugin.core-async/writer-calls}
+   {:lifecycle/task :inc
+    :lifecycle/calls :onyx-benchmark.peer/inc-calls}])
 
 (defn -main [zk-addr riemann-host id batch-size & args]
   (let [batch-size (Integer/parseInt batch-size)]
 
     (def peer-config
       {:zookeeper/address zk-addr
-       :onyx.messaging/impl :aeron
-       :onyx/id id})
+       :onyx/id id
+       :onyx.messaging/bind-addr (slurp "http://169.254.169.254/latest/meta-data/local-ipv4")
+       :onyx.messaging/peer-ports (vec (range 40000 40200))
+       :onyx.peer/join-failure-back-off 500
+       :onyx.peer/job-scheduler :onyx.job-scheduler/greedy
+       :onyx.messaging/impl :netty})
 
     (def catalog
       [{:onyx/name :in
-        :onyx/ident :generator/generator
+        :onyx/ident :generator
         :onyx/type :input
         :onyx/medium :generator
         :onyx/consumption :concurrent
@@ -42,6 +55,8 @@
 
     (onyx.api/submit-job
      peer-config
-     {:catalog catalog :workflow workflow
-      :task-scheduler :onyx.task-scheduler/round-robin})))
+      {:catalog catalog 
+       :workflow workflow
+       :lifecycles lifecycles
+       :task-scheduler :onyx.task-scheduler/balanced})))
 
