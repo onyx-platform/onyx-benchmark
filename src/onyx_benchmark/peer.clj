@@ -4,7 +4,7 @@
             [riemann.client :as r]
             [onyx.peer.pipeline-extensions :as p-ext]
             [taoensso.timbre.appenders.rotor :as rotor]
-            [taoensso.timbre :refer  [info warn trace fatal level-compile-time] :as timbre]
+            [taoensso.timbre :refer  [info warn trace fatal error] :as timbre]
             [onyx.plugin.bench-plugin]
             [onyx.plugin.core-async]
             [onyx.api]))
