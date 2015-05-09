@@ -3,6 +3,8 @@
             [clojure.data.fressian :as fressian]
             [riemann.client :as r]
             [onyx.peer.pipeline-extensions :as p-ext]
+            [taoensso.timbre.appenders.rotor :as rotor]
+            [taoensso.timbre :refer  [info warn trace fatal level-compile-time] :as timbre]
             [onyx.plugin.bench-plugin]
             [onyx.plugin.core-async]
             [onyx.api]))
@@ -23,12 +25,12 @@
       (try
         (loop []
           (Thread/sleep 1000)
-          (prn "-> " @state " <-")
+          (info "-> " @state " <-")
           (r/send-event client {:service "onyx" :state "ok" :metric @state :tags ["benchmark"]})
           (reset! state 0)
           (recur))
         (catch Exception e
-          (.printStackTrace e))))
+          (error e))))
     {:bench/state state
      :bench/riemann client}))
 
@@ -49,7 +51,16 @@
                      :onyx.messaging/peer-ports (vec (range 40000 40200))
                      :onyx.peer/join-failure-back-off 500
                      :onyx.peer/job-scheduler :onyx.job-scheduler/greedy
-                     :onyx.messaging/impl :netty}
+                     :onyx.messaging/impl :netty
+                     :onyx.log/config {:appenders {:standard-out {:enabled? false}
+                                                   :spit {:enabled? false}
+                                                   :rotor {:min-level :trace
+                                                           :enabled? true
+                                                           :async? false
+                                                           :max-message-per-msecs nil
+                                                           :fn rotor/appender-fn}}
+                                       :shared-appender-config {:rotor {:path "onyx.log"
+                                                                        :max-size (* 512 102400) :backlog 5}}}}
         n-peers-parsed (Integer/parseInt n-peers)
         peer-group (onyx.api/start-peer-group peer-config)
         peers (onyx.api/start-peers n-peers-parsed peer-group)]
