@@ -37,4 +37,8 @@ RIEMANN_ADDR=$(cat /home/ubuntu/metrics.txt)
 
 echo "lein run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $RIEMANN_ADDR $DEPLOYMENT_ID $VPEERS"
 
+### TODO ADD JVM_OPTS and timbre log level
+export JVM_OPTS="-server -Xmx1g"
+export TIMBRE_LOG_LEVEL="error"
+
 lein run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $RIEMANN_ADDR $DEPLOYMENT_ID $VPEERS &
