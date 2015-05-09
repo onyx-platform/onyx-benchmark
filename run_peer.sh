@@ -33,7 +33,8 @@ lein install
 cd /onyx-benchmark
 
 ZOOKEEPER_ADDR=$(cat /home/ubuntu/zookeeper.txt)
+RIEMANN_ADDR=$(cat /home/ubuntu/metrics.txt)
 
-echo "lein run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $DEPLOYMENT_ID $VPEERS"
+echo "lein run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $RIEMANN_ADDR $DEPLOYMENT_ID $VPEERS"
 
-lein run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $DEPLOYMENT_ID $VPEERS &
+lein run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $RIEMANN_ADDR $DEPLOYMENT_ID $VPEERS &
