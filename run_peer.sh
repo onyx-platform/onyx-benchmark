@@ -28,7 +28,7 @@ cd /onyx
 git checkout $ONYX_REV
 lein install
 
-cd .. && git clone https://github.com/real-logic/Aeron.git && cd Aeron && git checkout 3fc10054424fbaa0d5613f3baa05d1b43de2939a && ./gradlew && gradle install
+#cd .. && git clone https://github.com/real-logic/Aeron.git && cd Aeron && git checkout 3fc10054424fbaa0d5613f3baa05d1b43de2939a && ./gradlew && gradle install
 
 cd /onyx-benchmark
 
