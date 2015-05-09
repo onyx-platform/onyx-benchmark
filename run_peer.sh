@@ -38,7 +38,10 @@ RIEMANN_ADDR=$(cat /home/ubuntu/metrics.txt)
 echo "lein run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $RIEMANN_ADDR $DEPLOYMENT_ID $VPEERS"
 
 ### TODO ADD JVM_OPTS and timbre log level
-export JVM_OPTS="-server -Xmx1g"
+export OPTS="-server -Xmx1g"
+export FLIGHT_RECORDER="-XX:+UnlockCommercialFeatures -XX:+FlightRecorder -XX:StartFlightRecording=duration=240s,filename=myrecording.jfr"
+export JVM_OPTS=$OPTS" "$FLIGHT_RECORDER
+
 export TIMBRE_LOG_LEVEL="error"
 
 lein run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $RIEMANN_ADDR $DEPLOYMENT_ID $VPEERS &
