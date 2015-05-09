@@ -43,14 +43,13 @@
   (assoc segment :n (inc n)))
 
 (defn -main [zk-addr id n-peers & args]
-  (let [peer-config
-        {:zookeeper/address zk-addr
-         :onyx/id id
-         :onyx.messaging/bind-addr "127.0.0.1" (slurp "http://169.254.169.254/latest/meta-data/local-ipv4")
-         :onyx.messaging/peer-ports (vec (range 40000 40200))
-         :onyx.peer/join-failure-back-off 500
-         :onyx.peer/job-scheduler :onyx.job-scheduler/greedy
-         :onyx.messaging/impl :netty}
+  (let [peer-config {:zookeeper/address zk-addr
+                     :onyx/id id
+                     :onyx.messaging/bind-addr (slurp "http://169.254.169.254/latest/meta-data/local-ipv4")
+                     :onyx.messaging/peer-ports (vec (range 40000 40200))
+                     :onyx.peer/join-failure-back-off 500
+                     :onyx.peer/job-scheduler :onyx.job-scheduler/greedy
+                     :onyx.messaging/impl :netty}
         n-peers-parsed (Integer/parseInt n-peers)
         peer-group (onyx.api/start-peer-group peer-config)
         peers (onyx.api/start-peers n-peers-parsed peer-group)]
