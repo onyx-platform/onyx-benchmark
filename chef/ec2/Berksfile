@@ -3,7 +3,7 @@ source "https://api.berkshelf.com"
 metadata
 
 cookbook "apt"
-cookbook "java"
+cookbook "java", git: "https://github.com/agileorbit-cookbooks/java", branch: "master"
 cookbook "git"
 cookbook "lein", git: "https://github.com/MichaelDrogalis/chef-leiningen.git", branch: "patch-1"
 cookbook "zookeeper"
