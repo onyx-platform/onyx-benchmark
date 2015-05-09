@@ -12,39 +12,43 @@
 (defn inject-no-op-ch [event lifecycle]
   {:core.async/chan (chan (dropping-buffer 1))})
 
+(def counter (atom 0))
+
 (defn close-batch-inc
   [event _]
   (swap! (:bench/state event) + (count (:onyx.core/batch event)))
   {})
 
-(defn inject-inc
+(defn inject-state
   [event _]
-  (let [state (atom 0)
-        client (r/tcp-client {:host (:bench/riemann (:onyx.core/task-map event))})]
+  {:bench/state counter})
+
+(def no-op-calls 
+  {:lifecycle/before-task inject-no-op-ch})
+
+(def measurement-calls 
+  {:lifecycle/before-task inject-state
+   :lifecycle/after-batch close-batch-inc})
+
+(defn start-sending!
+  [riemann-addr]
+  (let [client (r/tcp-client {:host riemann-addr})]
     (future
       (try
         (loop []
           (Thread/sleep 1000)
-          (info "-> " @state " <-")
-          (r/send-event client {:service "onyx" :state "ok" :metric @state :tags ["benchmark"]})
-          (reset! state 0)
+          (let [cnt @counter]
+            (reset! counter 0)
+            (info "-> " cnt " <-")
+            (r/send-event client {:service "onyx" :state "ok" :metric cnt :tags ["benchmark"]}))
           (recur))
         (catch Exception e
-          (error e))))
-    {:bench/state state
-     :bench/riemann client}))
-
-(def in-calls 
-  {:lifecycle/before-task inject-no-op-ch})
-
-(def inc-calls 
-  {:lifecycle/after-batch close-batch-inc
-   :lifecycle/before-task inject-inc})
+          (error e))))))
 
 (defn my-inc [{:keys [n] :as segment}]
   (assoc segment :n (inc n)))
 
-(defn -main [zk-addr id n-peers & args]
+(defn -main [zk-addr riemann-addr id n-peers & args]
   (let [peer-config {:zookeeper/address zk-addr
                      :onyx/id id
                      :onyx.messaging/bind-addr (slurp "http://169.254.169.254/latest/meta-data/local-ipv4")
@@ -64,5 +68,5 @@
         n-peers-parsed (Integer/parseInt n-peers)
         peer-group (onyx.api/start-peer-group peer-config)
         peers (onyx.api/start-peers n-peers-parsed peer-group)]
+    (start-sending! riemann-addr)
     (<!! (chan))))
-

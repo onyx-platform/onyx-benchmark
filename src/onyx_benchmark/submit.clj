@@ -9,20 +9,24 @@
             [onyx.api]))
 
 (def lifecycles
-  [{:lifecycle/task :no-op
-    :lifecycle/calls :onyx-benchmark.peer/in-calls}
+  [{:lifecycle/task :in
+    :lifecycle/calls :onyx-benchmark.peer/measurement-calls}
+   {:lifecycle/task :inc
+    :lifecycle/calls :onyx-benchmark.peer/measurement-calls}
    {:lifecycle/task :no-op
     :lifecycle/calls :onyx.plugin.core-async/writer-calls}
-   {:lifecycle/task :inc
-    :lifecycle/calls :onyx-benchmark.peer/inc-calls}])
+   {:lifecycle/task :no-op
+    :lifecycle/calls :onyx-benchmark.peer/measurement-calls}
+   {:lifecycle/task :no-op
+    :lifecycle/calls :onyx-benchmark.peer/no-op-calls}])
 
-(defn -main [zk-addr riemann-host id batch-size & args]
+(defn -main [zk-addr id batch-size & args]
   (let [batch-size (Integer/parseInt batch-size)]
 
     (def peer-config
       {:zookeeper/address zk-addr
        :onyx/id id
-       :onyx.messaging/bind-addr (slurp "http://169.254.169.254/latest/meta-data/local-ipv4")
+       :onyx.messaging/bind-addr "127.0.0.1" ;(slurp "http://169.254.169.254/latest/meta-data/local-ipv4")
        :onyx.messaging/peer-ports (vec (range 40000 40200))
        :onyx.peer/join-failure-back-off 500
        :onyx.peer/job-scheduler :onyx.job-scheduler/greedy
@@ -40,7 +44,6 @@
         :onyx/fn :onyx-benchmark.peer/my-inc
         :onyx/type :function
         :onyx/consumption :concurrent
-        :bench/riemann riemann-host
         :onyx/batch-size batch-size}
 
        {:onyx/name :no-op
