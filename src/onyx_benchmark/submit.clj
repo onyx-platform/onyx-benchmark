@@ -11,7 +11,13 @@
 (def lifecycles
   [{:lifecycle/task :in
     :lifecycle/calls :onyx-benchmark.peer/measurement-calls}
-   {:lifecycle/task :inc
+   {:lifecycle/task :inc1
+    :lifecycle/calls :onyx-benchmark.peer/measurement-calls}
+   {:lifecycle/task :inc2
+    :lifecycle/calls :onyx-benchmark.peer/measurement-calls}
+   {:lifecycle/task :inc3
+    :lifecycle/calls :onyx-benchmark.peer/measurement-calls}
+   {:lifecycle/task :inc4
     :lifecycle/calls :onyx-benchmark.peer/measurement-calls}
    {:lifecycle/task :no-op
     :lifecycle/calls :onyx.plugin.core-async/writer-calls}
@@ -40,7 +46,25 @@
         :onyx/consumption :concurrent
         :onyx/batch-size batch-size}
 
-       {:onyx/name :inc
+       {:onyx/name :inc1
+        :onyx/fn :onyx-benchmark.peer/my-inc
+        :onyx/type :function
+        :onyx/consumption :concurrent
+        :onyx/batch-size batch-size}
+
+       {:onyx/name :inc2
+        :onyx/fn :onyx-benchmark.peer/my-inc
+        :onyx/type :function
+        :onyx/consumption :concurrent
+        :onyx/batch-size batch-size}
+       
+       {:onyx/name :inc3
+        :onyx/fn :onyx-benchmark.peer/my-inc
+        :onyx/type :function
+        :onyx/consumption :concurrent
+        :onyx/batch-size batch-size}
+
+       {:onyx/name :inc4
         :onyx/fn :onyx-benchmark.peer/my-inc
         :onyx/type :function
         :onyx/consumption :concurrent
@@ -54,7 +78,11 @@
         :onyx/batch-size batch-size
         :onyx/doc "Drops messages on the floor"}])
 
-    (def workflow [[:in :inc] [:inc :no-op]])
+    (def workflow [[:in :inc1] 
+                   [:inc1 :inc2] 
+                   [:inc2 :inc3]
+                   [:inc3 :inc4]
+                   [:inc4 :no-op]])
 
     (onyx.api/submit-job
      peer-config
