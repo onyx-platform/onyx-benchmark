@@ -11,6 +11,11 @@ BENCHMARK_REV=$2
 RUN_ID=$3
 VPEERS=$4
 
+if [[ $5 != "NONE" ]]; then
+	export YELLER_TOKEN=$5
+fi
+
+
 DEPLOYMENT_ID=$ONYX_REV"_"$BENCHMARK_REV"_"$RUN_ID
 
 killall -9 java || true
