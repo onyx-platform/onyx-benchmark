@@ -60,7 +60,7 @@
                                :fn rotor/appender-fn}}
            :shared-appender-config {:rotor {:path "onyx.log"
                                             :max-size (* 512 102400) :backlog 5}}}
-    (not-empty yeller-key) 
+    (not-empty yeller-token) 
     (assoc :yeller (yeller-timbre-appender/make-yeller-appender
                      {:token yeller-token
                       :environment "production"}))))
