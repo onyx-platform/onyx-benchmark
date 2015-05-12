@@ -49,6 +49,6 @@ export OPTS="-server -Xmx1g"
 export FLIGHT_RECORDER=""
 export JVM_OPTS=$OPTS" "$FLIGHT_RECORDER
 
-export TIMBRE_LOG_LEVEL="error"
+export TIMBRE_LOG_LEVEL="info"
 
 lein run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $RIEMANN_ADDR $DEPLOYMENT_ID $VPEERS &
