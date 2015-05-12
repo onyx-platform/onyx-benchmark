@@ -7,6 +7,7 @@
             [taoensso.timbre :refer  [info warn trace fatal error] :as timbre]
             [onyx.plugin.bench-plugin]
             [onyx.plugin.core-async]
+            [yeller-timbre-appender]
             [onyx.api]))
 
 (defn inject-no-op-ch [event lifecycle]
