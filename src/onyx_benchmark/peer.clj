@@ -1,4 +1,4 @@
-(ns onyx-benchmark.peer
+cd69211780584b9f5bfae11f87f5b7655b178e19 onyx-benchmark.peer
   (:require [clojure.core.async :refer [chan dropping-buffer <!!]]
             [clojure.data.fressian :as fressian]
             [riemann.client :as r]
@@ -59,7 +59,7 @@
                                :async? false
                                :max-message-per-msecs nil
                                :fn rotor/appender-fn}}
-           :shared-appender-config {:rotor {:path "onyx.log"
+           :shared-appender-config {:rotor {:path "onyx-benchmark.log"
                                             :max-size (* 512 102400) :backlog 5}}}
     (not-empty yeller-token) 
     (assoc :yeller (yeller-timbre-appender/make-yeller-appender
