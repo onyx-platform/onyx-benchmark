@@ -11,6 +11,8 @@
 (def lifecycles
   [{:lifecycle/task :in
     :lifecycle/calls :onyx-benchmark.peer/measurement-calls}
+   {:lifecycle/task :in
+    :lifecycle/calls :onyx.plugin.bench-plugin/reader-calls}
    {:lifecycle/task :inc1
     :lifecycle/calls :onyx-benchmark.peer/measurement-calls}
    {:lifecycle/task :inc2

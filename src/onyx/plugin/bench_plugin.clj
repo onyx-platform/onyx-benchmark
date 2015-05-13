@@ -6,31 +6,56 @@
 (def hundred-bytes 
   (into-array Byte/TYPE (range 100)))
 
+(defn inject-reader
+  [event lifecycle]
+  (assert (:core.async/chan event) ":core.async/chan not found - add it via inject-lifecycle-resources.")
+  {:generator/pending-messages (atom {})
+   :generator/retry (atom [])})
+
+(def reader-calls
+  {:lifecycle/before-task inject-reader})
+
+(defn flush-swap! [a f-read f-swap]
+  (loop []
+    (let [v (deref a)]
+      (if (compare-and-set! a v (f-swap v))
+        (f-read v)
+        (recur)))))
+
 (defmethod p-ext/read-batch :generator
-  [{:keys [onyx.core/task-map] :as event}]
-  (let [batch-size (:onyx/batch-size task-map)]
-    {:onyx.core/batch (doall (map (fn [i] {:id (java.util.UUID/randomUUID)
-                                           :input :generator
-                                           :message {:n i
-                                                     ;:data hundred-bytes
-                                                     }})
-                                  (range batch-size)))}))
+  [{:keys [onyx.core/task-map
+           generator/pending-messages
+           generator/retry] :as event}]
+  (let [batch-size (:onyx/batch-size task-map)
+        segments (flush-swap! retry 
+                              #(take batch-size %)
+                              #(subvec % (min batch-size (count %))))
+        batch (loop [n (count segments) 
+                     sgs segments]
+                (if (= n batch-size)
+                  sgs
+                  (recur (inc n)
+                         (conj sgs {:id (java.util.UUID/randomUUID)
+                                    :input :generator
+                                    :message {:n n 
+                                              :data hundred-bytes}}))))]
+    (doseq [m batch] 
+      (swap! pending-messages assoc (:id m) (:message m)))
+    {:onyx.core/batch batch}))
 
 (defmethod p-ext/ack-message :generator
-  [{:keys [core.async/pending-messages]} message-id]
-  ;; We want to go as fast as possible, so we're going
-  ;; to ignore message acknowledgment for now.
-  )
+  [{:keys [generator/pending-messages]} message-id]
+  (swap! pending-messages dissoc message-id))
 
 (defmethod p-ext/retry-message :generator
-  [{:keys [core.async/pending-messages core.async/retry-ch]} message-id]
-  ;; Same as above.
-  )
+  [{:keys [generator/pending-messages generator/retry]} message-id]
+  (when-let [msg (get @pending-messages message-id)]
+    (swap! retry conj msg)
+    (swap! pending-messages dissoc message-id)))
 
 (defmethod p-ext/pending? :generator
-  [{:keys [core.async/pending-messages]} message-id]
-  ;; Same as above.
-  false)
+  [{:keys [generator/pending-messages]} message-id]
+  (get @pending-messages message-id))
 
 (defmethod p-ext/drained? :generator
   [event]
