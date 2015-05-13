@@ -15,6 +15,8 @@ if [[ $5 != "NONE" ]]; then
 	export YELLER_TOKEN=$5
 fi
 
+LOG_LEVEL=$6
+
 
 DEPLOYMENT_ID=$ONYX_REV"_"$BENCHMARK_REV"_"$RUN_ID
 
@@ -49,6 +51,6 @@ export OPTS="-server -Xmx1g"
 export FLIGHT_RECORDER=""
 export JVM_OPTS=$OPTS" "$FLIGHT_RECORDER
 
-export TIMBRE_LOG_LEVEL="info"
+export TIMBRE_LOG_LEVEL=$LOG_LEVEL
 
 lein run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $RIEMANN_ADDR $DEPLOYMENT_ID $VPEERS &
