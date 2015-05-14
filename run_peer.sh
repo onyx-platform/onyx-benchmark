@@ -43,13 +43,7 @@ ZOOKEEPER_ADDR=$(cat /home/ubuntu/zookeeper.txt)
 RIEMANN_ADDR=$(cat /home/ubuntu/metrics.txt)
 
 echo "lein run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $RIEMANN_ADDR $DEPLOYMENT_ID $VPEERS"
-
-### TODO ADD JVM_OPTS and timbre log level
-export OPTS="-server -Xmx1g"
-#export FLIGHT_RECORDER="-XX:+UnlockCommercialFeatures -XX:+FlightRecorder -XX:StartFlightRecording=duration=240s,filename=myrecording.jfr"
-#### Flight Recorder currently causing crashes on aws
-export FLIGHT_RECORDER=""
-export JVM_OPTS=$OPTS" "$FLIGHT_RECORDER
+./tune-os.sh linux
 
 export TIMBRE_LOG_LEVEL=$LOG_LEVEL
 
