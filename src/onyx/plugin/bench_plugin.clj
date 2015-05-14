@@ -1,6 +1,7 @@
 (ns onyx.plugin.bench-plugin
   (:require [clojure.core.async :refer [chan >!! <!! close! alts!! timeout]]
             [clojure.data.fressian :as fressian]
+            [onyx.static.default-vals :refer [defaults]]
             [onyx.peer.pipeline-extensions :as p-ext]))
 
 (def hundred-bytes 
