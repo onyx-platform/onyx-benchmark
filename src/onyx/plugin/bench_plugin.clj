@@ -26,16 +26,19 @@
   [{:keys [onyx.core/task-map
            generator/pending-messages
            generator/retry] :as event}]
-  (let [batch-size (:onyx/batch-size task-map)
+  (let [pending (count @pending-messages)
+        max-pending (or (:onyx/max-pending task-map) (:onyx/max-pending defaults))
+        batch-size (:onyx/batch-size task-map)
+        max-segments (min (- max-pending pending) batch-size)
         segments (->> (flush-swap! retry 
-                                   #(take batch-size %)
-                                   #(subvec % (min batch-size (count %))))
+                                   #(take max-segments %)
+                                   #(subvec % (min max-segments (count %))))
                       (map (fn [m] {:id (java.util.UUID/randomUUID)
                                     :input :generator
                                     :message m})))
         batch (loop [n (count segments) 
                      sgs segments]
-                (if (= n batch-size)
+                (if (= n max-segments)
                   sgs
                   (recur (inc n)
                          (conj sgs {:id (java.util.UUID/randomUUID)
