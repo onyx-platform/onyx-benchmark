@@ -78,7 +78,7 @@
                      :onyx.messaging/peer-ports (vec (range 40000 40200))
                      :onyx.peer/join-failure-back-off 500
                      :onyx.peer/job-scheduler :onyx.job-scheduler/greedy
-                     :onyx.peer/inbox-capacity 100
+                     :onyx.peer/inbox-capacity 1000
                      :onyx.messaging/impl :netty
                      :onyx.log/config logging-config}
         n-peers-parsed (Integer/parseInt n-peers)
