@@ -42,6 +42,7 @@
                                     :input :generator
                                     :message {:n n 
                                               :data hundred-bytes}}))))]
+    (Thread/sleep 500)
     (doseq [m batch] 
       (swap! pending-messages assoc (:id m) (:message m)))
     {:onyx.core/batch batch}))
