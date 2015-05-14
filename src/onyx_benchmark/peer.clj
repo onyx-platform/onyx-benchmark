@@ -1,4 +1,4 @@
-cd69211780584b9f5bfae11f87f5b7655b178e19 onyx-benchmark.peer
+(ns onyx-benchmark.peer
   (:require [clojure.core.async :refer [chan dropping-buffer <!!]]
             [clojure.data.fressian :as fressian]
             [riemann.client :as r]
