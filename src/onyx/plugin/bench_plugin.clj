@@ -27,9 +27,12 @@
            generator/pending-messages
            generator/retry] :as event}]
   (let [batch-size (:onyx/batch-size task-map)
-        segments (flush-swap! retry 
-                              #(take batch-size %)
-                              #(subvec % (min batch-size (count %))))
+        segments (->> (flush-swap! retry 
+                                   #(take batch-size %)
+                                   #(subvec % (min batch-size (count %))))
+                      (map (fn [m] {:id (java.util.UUID/randomUUID)
+                                    :input :generator
+                                    :message m})))
         batch (loop [n (count segments) 
                      sgs segments]
                 (if (= n batch-size)
