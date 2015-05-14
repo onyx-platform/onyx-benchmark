@@ -43,7 +43,7 @@
           (let [cnt @counter
                 _ (reset! counter 0)
                 retry-cnt @retry-counter
-                _ (reset! retry-counter)]
+                _ (reset! retry-counter 0)]
             (info "-> " cnt " <-")
             (r/send-event client {:service "onyx-retry" :state "ok" :metric retry-cnt :tags ["benchmark"]})
             (r/send-event client {:service "onyx" :state "ok" :metric cnt :tags ["benchmark"]}))
