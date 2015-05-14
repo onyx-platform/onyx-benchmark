@@ -14,6 +14,7 @@
   {:core.async/chan (chan (dropping-buffer 1))})
 
 (def counter (atom 0))
+(def retry-counter (atom 0))
 
 (defn close-batch-inc
   [event _]
@@ -22,7 +23,8 @@
 
 (defn inject-state
   [event _]
-  {:bench/state counter})
+  {:retry-counter retry-counter
+   :bench/state counter})
 
 (def no-op-calls 
   {:lifecycle/before-task inject-no-op-ch})
@@ -38,9 +40,12 @@
       (try
         (loop []
           (Thread/sleep 1000)
-          (let [cnt @counter]
-            (reset! counter 0)
+          (let [cnt @counter
+                _ (reset! counter 0)
+                retry-cnt @retry-counter
+                _ (reset! retry-counter)]
             (info "-> " cnt " <-")
+            (r/send-event client {:service "onyx-retry" :state "ok" :metric retry-cnt :tags ["benchmark"]})
             (r/send-event client {:service "onyx" :state "ok" :metric cnt :tags ["benchmark"]}))
           (recur))
         (catch Exception e
@@ -73,6 +78,7 @@
                      :onyx.messaging/peer-ports (vec (range 40000 40200))
                      :onyx.peer/join-failure-back-off 500
                      :onyx.peer/job-scheduler :onyx.job-scheduler/greedy
+                     :onyx.peer/inbox-capacity 100
                      :onyx.messaging/impl :netty
                      :onyx.log/config logging-config}
         n-peers-parsed (Integer/parseInt n-peers)
