@@ -92,5 +92,7 @@
       {:catalog catalog 
        :workflow workflow
        :lifecycles lifecycles
+       :acker/percentage 20
+       :acker/exempt-input-tasks? true
        :task-scheduler :onyx.task-scheduler/balanced})))
 
