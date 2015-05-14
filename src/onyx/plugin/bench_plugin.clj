@@ -51,8 +51,13 @@
   (swap! pending-messages dissoc message-id))
 
 (defmethod p-ext/retry-message :generator
-  [{:keys [generator/pending-messages generator/retry]} message-id]
+  [{:keys [generator/pending-messages 
+           generator/retry
+           retry-counter]} message-id]
   (when-let [msg (get @pending-messages message-id)]
+    ;; TODO: We should be doing this via a retry-message lifecycle function
+    (when retry-counter 
+      (swap! retry-counter inc))
     (swap! retry conj msg)
     (swap! pending-messages dissoc message-id)))
 
