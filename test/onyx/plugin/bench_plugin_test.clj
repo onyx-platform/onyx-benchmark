@@ -9,11 +9,9 @@
 
 (def id (java.util.UUID/randomUUID))
 
-(def scheduler :onyx.job-scheduler/greedy)
+(def scheduler :onyx.job-scheduler/balanced)
 
 (def messaging :netty)
-;(def messaging :aleph-tcp)
-;(def messaging :netty-tcp)
 
 (def env-config
   {:zookeeper/address "127.0.0.1:2189"
@@ -36,20 +34,24 @@
    :onyx/id id
    :onyx.messaging/bind-addr "127.0.0.1"
    :onyx.messaging/peer-ports (vec (range 40000 40200))
-   ;:onyx.peer/join-failure-back-off 500
    :onyx.peer/job-scheduler scheduler
    :onyx.messaging/impl messaging})
+
+
+(println "Starting env")
+(def env (onyx.api/start-env env-config))
 
 (def peer-group 
   (onyx.api/start-peer-group peer-config))
 
-(def batch-size 1)
+(def batch-size 20)
 (def batch-timeout 100)
 
 (def counter (atom 0))
+(def retry-counter (atom 0))
+
 
 (defn my-inc [{:keys [n] :as segment}]
-  (swap! counter inc)
   (assoc segment :n (inc n)))
 
 (def catalog
@@ -60,7 +62,25 @@
     :onyx/batch-timeout batch-timeout
     :onyx/batch-size batch-size}
 
-   {:onyx/name :inc
+   {:onyx/name :inc1
+    :onyx/fn :onyx.plugin.bench-plugin-test/my-inc
+    :onyx/type :function
+    :onyx/batch-timeout batch-timeout
+    :onyx/batch-size batch-size}
+
+   {:onyx/name :inc2
+    :onyx/fn :onyx.plugin.bench-plugin-test/my-inc
+    :onyx/type :function
+    :onyx/batch-timeout batch-timeout
+    :onyx/batch-size batch-size}
+
+   {:onyx/name :inc3
+    :onyx/fn :onyx.plugin.bench-plugin-test/my-inc
+    :onyx/type :function
+    :onyx/batch-timeout batch-timeout
+    :onyx/batch-size batch-size}
+
+   {:onyx/name :inc4
     :onyx/fn :onyx.plugin.bench-plugin-test/my-inc
     :onyx/type :function
     :onyx/batch-timeout batch-timeout
@@ -76,19 +96,18 @@
 
 ;; TO TEST
 
-(defn inject-no-op-ch [event lifecycle]
-  {:core.async/chan (chan (dropping-buffer 1))})
+(def workflow [[:in :inc1] 
+               [:inc1 :inc2] 
+               [:inc2 :inc3]
+               [:inc3 :inc4]
+               [:inc4 :no-op]])
 
-(def workflow [[:in :inc] [:inc :no-op]])
 
-(println "Starting env")
-(def env (onyx.api/start-env env-config))
 (println "starting Vpeers")
-
 (def v-peers (onyx.api/start-peers 6 peer-group))
-(println "Started vpeers")
 
-(def bench-length 100000)
+(println "Started vpeers")
+(def bench-length 300000)
 
 (Thread/sleep 10000)
 
@@ -96,13 +115,36 @@
 
 (def start-time-millis (System/currentTimeMillis))
 
-(def in-calls {:lifecycle/before-task :onyx.plugin.bench-plugin-test/inject-no-op-ch})
+(def bench-calls
+  {:lifecycle/before-task (fn inject-counter-before-task [event lifecycle]
+                            {:counter counter
+                             :retry-counter retry-counter})
+   :lifecycle/after-batch (fn after-batch [event lifecycle]
+                            (swap! (:counter event) + (count (:onyx.core/batch event)))
+                            {})})
+
+(def in-calls {:lifecycle/before-task (fn inject-no-op-ch [event lifecycle]
+                                        {:core.async/chan (chan (dropping-buffer 1))})})
 
 (def lifecycles
   [{:lifecycle/task :no-op
     :lifecycle/calls :onyx.plugin.bench-plugin-test/in-calls}
    {:lifecycle/task :no-op
-    :lifecycle/calls :onyx.plugin.core-async/writer-calls}])
+    :lifecycle/calls :onyx.plugin.core-async/writer-calls}
+   {:lifecycle/task :in
+    :lifecycle/calls :onyx.plugin.bench-plugin-test/bench-calls}
+   {:lifecycle/task :in
+    :lifecycle/calls :onyx.plugin.bench-plugin/reader-calls}
+   {:lifecycle/task :inc1
+    :lifecycle/calls :onyx.plugin.bench-plugin-test/bench-calls}
+   {:lifecycle/task :inc2
+    :lifecycle/calls :onyx.plugin.bench-plugin-test/bench-calls}
+   {:lifecycle/task :inc3
+    :lifecycle/calls :onyx.plugin.bench-plugin-test/bench-calls}
+   {:lifecycle/task :inc4
+    :lifecycle/calls :onyx.plugin.bench-plugin-test/bench-calls}
+   {:lifecycle/task :no-op
+    :lifecycle/calls :onyx.plugin.bench-plugin-test/bench-calls}])
 
 (println "Starting job at " (java.util.Date.))
 (onyx.api/submit-job
@@ -116,6 +158,7 @@
 
 (future
   (while true 
+    (println "Retry counter " @retry-counter)
     (println "Update " @counter (float (/ @counter
                                           (/ (- (System/currentTimeMillis) start-time-millis) 
                                              1000))) "/sec")
