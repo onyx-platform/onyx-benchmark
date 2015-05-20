@@ -50,7 +50,6 @@
 (def counter (atom 0))
 (def retry-counter (atom 0))
 
-
 (defn my-inc [{:keys [n] :as segment}]
   (assoc segment :n (inc n)))
 
@@ -116,15 +115,16 @@
 (def start-time-millis (System/currentTimeMillis))
 
 (def bench-calls
-  {:lifecycle/before-task (fn inject-counter-before-task [event lifecycle]
-                            {:counter counter
-                             :retry-counter retry-counter})
+  {:lifecycle/before-task-start (fn inject-counter-before-task [event lifecycle]
+                                  {:counter counter
+                                   :retry-counter retry-counter})
    :lifecycle/after-batch (fn after-batch [event lifecycle]
                             (swap! (:counter event) + (count (:onyx.core/batch event)))
                             {})})
 
-(def in-calls {:lifecycle/before-task (fn inject-no-op-ch [event lifecycle]
-                                        {:core.async/chan (chan (dropping-buffer 1))})})
+(def in-calls 
+  {:lifecycle/before-task-start (fn inject-no-op-ch [event lifecycle]
+                                  {:core.async/chan (chan (dropping-buffer 1))})})
 
 (def lifecycles
   [{:lifecycle/task :no-op
@@ -166,7 +166,8 @@
 
 
 (Thread/sleep bench-length)
-(println "Done at " start-time (java.util.Date.) @counter (float (* 1000 (/ @counter bench-length))) "/sec")
+(println "Done at " start-time (java.util.Date.) @counter 
+         (float (* 1000 (/ @counter bench-length))) "/sec")
 
 (doseq [v-peer v-peers]
   (onyx.api/shutdown-peer v-peer))
