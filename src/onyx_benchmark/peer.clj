@@ -67,9 +67,10 @@
            :shared-appender-config {:rotor {:path "onyx-benchmark.log"
                                             :max-size (* 512 102400) :backlog 5}}}
     (not-empty yeller-token) 
-    (assoc :yeller (yeller-timbre-appender/make-yeller-appender
-                     {:token yeller-token
-                      :environment "production"}))))
+    (assoc-in [:appenders :yeller] 
+              (yeller-timbre-appender/make-yeller-appender
+                {:token yeller-token
+                 :environment "production"}))))
 
 (defn -main [zk-addr riemann-addr id n-peers & args]
   (let [peer-config {:zookeeper/address zk-addr
