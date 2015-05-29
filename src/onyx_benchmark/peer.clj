@@ -27,10 +27,10 @@
    :bench/state counter})
 
 (def no-op-calls 
-  {:lifecycle/before-task inject-no-op-ch})
+  {:lifecycle/before-task-start inject-no-op-ch})
 
 (def measurement-calls 
-  {:lifecycle/before-task inject-state
+  {:lifecycle/before-task-start inject-state
    :lifecycle/after-batch close-batch-inc})
 
 (defn start-sending!

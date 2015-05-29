@@ -14,7 +14,7 @@
    :generator/retry (atom [])})
 
 (def reader-calls
-  {:lifecycle/before-task inject-reader})
+  {:lifecycle/before-task-start inject-reader})
 
 (defn flush-swap! [a f-read f-swap]
   (loop []
