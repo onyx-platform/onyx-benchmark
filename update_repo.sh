@@ -12,6 +12,6 @@ BENCHMARK_REV=$1
 
 cd /
 rm -rf onyx-benchmark
-git clone https://github.com/MichaelDrogalis/onyx-benchmark.git
+git clone https://github.com/onyx-platform/onyx-benchmark.git
 cd /onyx-benchmark
 git checkout $BENCHMARK_REV

@@ -44,7 +44,7 @@
       [{:onyx/name :in
         :onyx/ident :generator
         :onyx/type :input
-        :onyx/max-pending 300000
+        :onyx/max-pending 500000
         :onyx/medium :generator
         :onyx/consumption :concurrent
         :onyx/batch-size batch-size}
