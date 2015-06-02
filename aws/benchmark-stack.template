@@ -28,12 +28,6 @@
 			"Type": "String",
 			"Default": "info"
 		},
-		"YellerToken" : {
-			"Description": "AWS secret key.",
-			"Type": "String",
-			"Default": "NONE",
-			"NoEcho": "True"
-		},
 		"MetricsNumberOfInstances" : {
 			"Description" : "Number of instances in the cluster",
 			"Type" : "Number",
@@ -283,7 +277,6 @@
 										{ "Ref" : "BenchmarkGitCommit" }, " ",
 										{ "Ref" : "RunId" }, " ",
 										{ "Ref": "VirtualPeers" }, " ",
-										{ "Ref": "YellerToken" }, " ",
 										{ "Ref": "OnyxLogLevel" }, " ",
 										">> /home/ubuntu/init-commands.txt 2>&1 "]]},
 										"ignoreErrors" : "false",

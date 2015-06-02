@@ -7,7 +7,6 @@
             [taoensso.timbre :refer  [info warn trace fatal error] :as timbre]
             [onyx.plugin.bench-plugin]
             [onyx.plugin.core-async]
-            [yeller-timbre-appender]
             [onyx.api]))
 
 (defn inject-no-op-ch [event lifecycle]
@@ -54,23 +53,16 @@
 (defn my-inc [{:keys [n] :as segment}]
   (assoc segment :n (inc n)))
 
-(def yeller-token (System/getenv "YELLER_TOKEN"))
-
 (def logging-config 
-  (cond-> {:appenders {:standard-out {:enabled? false}
-                       :spit {:enabled? false}
-                       :rotor {:min-level :trace
-                               :enabled? true
-                               :async? false
-                               :max-message-per-msecs nil
-                               :fn rotor/appender-fn}}
-           :shared-appender-config {:rotor {:path "onyx-benchmark.log"
-                                            :max-size (* 512 102400) :backlog 5}}}
-    (not-empty yeller-token) 
-    (assoc-in [:appenders :yeller] 
-              (yeller-timbre-appender/make-yeller-appender
-                {:token yeller-token
-                 :environment "production"}))))
+  {:appenders {:standard-out {:enabled? false}
+               :spit {:enabled? false}
+               :rotor {:min-level :trace
+                       :enabled? true
+                       :async? false
+                       :max-message-per-msecs nil
+                       :fn rotor/appender-fn}}
+   :shared-appender-config {:rotor {:path "onyx-benchmark.log"
+                                    :max-size (* 512 102400) :backlog 5}}})
 
 (defn -main [zk-addr riemann-addr id n-peers & args]
   (let [peer-config {:zookeeper/address zk-addr
