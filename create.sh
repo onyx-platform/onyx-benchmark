@@ -12,7 +12,7 @@ git push
 source bench.config
 
 aws cloudformation $CREATE_UPDATE \
-    --stack-name onyx-benchmark-3 \
+    --stack-name onyx-benchmark-1 \
     --template-body file://aws/benchmark-stack.template \
     --capabilities CAPABILITY_IAM \
     --parameters \

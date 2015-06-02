@@ -12,7 +12,6 @@ RUN_ID=$3
 VPEERS=$4
 LOG_LEVEL=$5
 
-
 DEPLOYMENT_ID=$ONYX_REV"_"$BENCHMARK_REV"_"$RUN_ID
 
 killall -9 java || true
