@@ -50,9 +50,9 @@
 			"Default" : "1"
 		},
 		"PeerSpotPrice" : {
-			"Description" : "Number of instances in the cluster",
+			"Description" : "Spot price to bid on for the Peer EC2 machine",
 			"Type" : "Number",
-			"Default" : "0.1"
+			"Default" : "0.07"
 		},
 		"VirtualPeers": {
 			"Description": "Number of virtual peers per peer instance.",
@@ -71,6 +71,11 @@
 			"Description" : "The run number for this bench (make sure to increment if you're using the same benchmark and onyx commit SHAs",
 				"Type": "String"
 		},
+		"AvailabilityZone" :
+        {
+			"Description" : "The AZ to launch instances into",
+			"Type" : "String"
+        },
 		"PeersInstanceType" : {
 			"Description" : "Type of EC2 instance to launch. Choose the one which allows HVM AMIs",
 			"Type" : "String",
@@ -80,7 +85,6 @@
 			"Description" : "Type of EC2 instance to launch. Choose the one which allows HVM AMIs",
 			"Type" : "String",
 			"Default" : "c4.large"},
-
 
 		"ZooKeeperInstanceType" : {
 			"Description" : "Type of EC2 instance to launch. Choose the one which allows HVM AMIs",
@@ -101,7 +105,7 @@
 				"DesiredCapacity" : { "Ref" : "ZooKeeperNumberOfInstances"},
 				"MinSize" : "1",
 				"MaxSize" : "15",
-				"AvailabilityZones" : [ { "Fn::Select" : [ "0", { "Fn::GetAZs" : { "Ref" : "AWS::Region" } } ] } ],
+				"AvailabilityZones" : [ { "Ref": "AvailabilityZone" } ],
 				"VPCZoneIdentifier" : [{ "Ref" : "PublicSubnet" }],
 				"Tags" : [ {"Key" : "StackID", "Value" : { "Ref" : "AWS::StackId"}, "PropagateAtLaunch" : "true" },
 					   {"Key" : "stack-name", "Value" : { "Ref": "AWS::StackName" }, "PropagateAtLaunch" : "true" },
@@ -119,6 +123,7 @@
 			"DependsOn" : "GatewayToInternet",
 			"Properties" : {
 				"InstanceType" : { "Ref" : "ZooKeeperInstanceType"},
+                "SpotPrice" : { "Ref" : "PeerSpotPrice" } ,
 				"KeyName" : { "Ref" : "KeyPair" },
 				"ImageId" : { "Fn::FindInMap" : [ "AWSRegionalAMIs", { "Ref": "AWS::Region" }, "64HVM" ] },
 				"AssociatePublicIpAddress" : "true",
@@ -159,7 +164,7 @@
 				"DesiredCapacity" : { "Ref" : "MetricsNumberOfInstances"},
 				"MinSize" : "1",
 				"MaxSize" : "15",
-				"AvailabilityZones" : [ { "Fn::Select" : [ "0", { "Fn::GetAZs" : { "Ref" : "AWS::Region" } } ] } ],
+				"AvailabilityZones" : [ { "Ref": "AvailabilityZone" } ],
 				"VPCZoneIdentifier" : [{ "Ref" : "PublicSubnet" }],
 				"Tags" : [ {"Key" : "StackID", "Value" : { "Ref" : "AWS::StackId"}, "PropagateAtLaunch" : "true" },
 					   {"Key" : "stack-name", "Value" : { "Ref": "AWS::StackName" }, "PropagateAtLaunch" : "true" },
@@ -177,6 +182,7 @@
 			"DependsOn" : "GatewayToInternet",
 			"Properties" : {
 				"InstanceType" : { "Ref" : "MetricsInstanceType"},
+                "SpotPrice" : { "Ref" : "PeerSpotPrice" } ,
 				"KeyName" : { "Ref" : "KeyPair" },
 				"ImageId" : { "Fn::FindInMap" : [ "AWSRegionalAMIs", { "Ref": "AWS::Region" }, "64HVM" ] },
 				"AssociatePublicIpAddress" : "true",
@@ -217,7 +223,7 @@
 				"DesiredCapacity" : { "Ref" : "PeersNumberOfInstances"},
 				"MinSize" : "1",
 				"MaxSize" : "15",
-				"AvailabilityZones" : [ { "Fn::Select" : [ "0", { "Fn::GetAZs" : { "Ref" : "AWS::Region" } } ] } ],
+				"AvailabilityZones" : [ { "Ref": "AvailabilityZone" } ],
 				"VPCZoneIdentifier" : [{ "Ref" : "PublicSubnet" }],
 				"Tags" : [ {"Key" : "StackID", "Value" : { "Ref" : "AWS::StackId"}, "PropagateAtLaunch" : "true" },
 					   {"Key" : "stack-region", "Value" : { "Ref": "AWS::Region" }, "PropagateAtLaunch" : "true" },
@@ -290,7 +296,7 @@
 
 			"Properties" : {
 				"InstanceType" : { "Ref" : "PeersInstanceType"},
-				"SpotPrice" : { "Ref" : "PeerSpotPrice" } ,
+                "SpotPrice" : { "Ref" : "PeerSpotPrice" } ,
 				"KeyName" : { "Ref" : "KeyPair" },
 				"ImageId" : { "Fn::FindInMap" : [ "AWSRegionalAMIs", { "Ref": "AWS::Region" }, "64HVM" ] },
 				"AssociatePublicIpAddress" : "true",
@@ -359,7 +365,7 @@
 			"Properties" : {
 				"VpcId" : { "Ref" : "VPC" },
 				"CidrBlock" : "10.0.0.0/24",
-				"AvailabilityZone" : { "Fn::Select" : [ "0", { "Fn::GetAZs" : { "Ref" : "AWS::Region" } } ] },
+				"AvailabilityZone" : { "Ref": "AvailabilityZone" },
 				"Tags" : [ {"Key" : "StackID", "Value" : { "Ref" : "AWS::StackId"} } ]
 			}
 		},
