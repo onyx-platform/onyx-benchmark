@@ -15,6 +15,6 @@
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [io.netty/netty-all "4.0.25.Final"]
                  [org.clojure/data.fressian "0.2.0"]
-                 [com.mdrogalis/onyx "0.6.0-SNAPSHOT"]
+                 [org.onyxplatform/onyx "0.6.0"]
                  [riemann-clojure-client "0.3.2" :exclusions [io.netty/netty]]
                  [cheshire "5.4.0"]])
