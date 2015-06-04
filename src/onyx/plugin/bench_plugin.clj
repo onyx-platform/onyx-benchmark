@@ -9,7 +9,6 @@
 
 (defn inject-reader
   [event lifecycle]
-  (assert (:core.async/chan event) ":core.async/chan not found - add it via inject-lifecycle-resources.")
   {:generator/pending-messages (atom {})
    :generator/retry (atom [])})
 
