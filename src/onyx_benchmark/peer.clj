@@ -72,6 +72,7 @@
                      :onyx.peer/join-failure-back-off 500
                      :onyx.peer/job-scheduler :onyx.job-scheduler/greedy
                      :onyx.peer/inbox-capacity 1000
+                     :onyx.messaging.netty/thread-pool-sizes 4
                      :onyx.messaging/impl :netty
                      :onyx.log/config logging-config}
         n-peers-parsed (Integer/parseInt n-peers)
