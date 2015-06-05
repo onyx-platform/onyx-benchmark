@@ -51,6 +51,7 @@
 (def retry-counter (atom 0))
 
 (defn my-inc [{:keys [n] :as segment}]
+  ;(Thread/sleep 10)
   (assoc segment :n (inc n)))
 
 (def catalog
@@ -58,6 +59,7 @@
     :onyx/ident :generator
     :onyx/type :input
     :onyx/medium :generator
+    :onyx/max-pending 50000
     :onyx/batch-timeout batch-timeout
     :onyx/batch-size batch-size}
 
