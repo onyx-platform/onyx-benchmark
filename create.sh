@@ -12,11 +12,10 @@ git push
 source bench.config
 
 aws cloudformation $CREATE_UPDATE \
-    --stack-name onyx-benchmark-1 \
+    --stack-name onyx-benchmark \
     --template-body file://aws/benchmark-stack.template \
     --capabilities CAPABILITY_IAM \
     --parameters \
-    ParameterKey=AccountNumber,ParameterValue=$AWS_ACCOUNT_NUMBER \
     ParameterKey=AccessKeyId,ParameterValue=$AWS_ACCESS_KEY \
     ParameterKey=SecretAccessKey,ParameterValue=$AWS_SECRET_KEY \
     ParameterKey=PeersInstanceType,ParameterValue=$PEER_INSTANCE_TYPE \

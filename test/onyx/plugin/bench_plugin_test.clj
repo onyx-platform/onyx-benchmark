@@ -11,7 +11,7 @@
 
 (def scheduler :onyx.job-scheduler/balanced)
 
-(def messaging :netty)
+(def messaging :core.async)
 
 (def env-config
   {:zookeeper/address "127.0.0.1:2189"
@@ -59,7 +59,7 @@
     :onyx/ident :generator
     :onyx/type :input
     :onyx/medium :generator
-    :onyx/max-pending 50000
+    :onyx/max-pending 70000
     :onyx/batch-timeout batch-timeout
     :onyx/batch-size batch-size}
 

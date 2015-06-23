@@ -5,16 +5,17 @@
   :java-opts ["-server" "-Xmx10g"
               ;"-XX:+UseG1GC"
               "-XX:+UnlockCommercialFeatures" "-XX:+FlightRecorder" "-XX:StartFlightRecording=duration=240s,filename=myrecording.jfr"
+              ;"-XX:+UnlockDiagnosticVMOptions" "-XX:+TraceClassLoading" "-XX:+LogCompilation" "-XX:+PrintAssembly"
               ]
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :global-vars  {*warn-on-reflection* true *assert* false
-                 ;*unchecked-math* :warn-on-boxed
-                 }
+  :global-vars  {*warn-on-reflection* true 
+                 *assert* false
+                 *unchecked-math* :warn-on-boxed}
   :dependencies [[org.clojure/clojure "1.7.0-beta2"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [io.netty/netty-all "4.0.25.Final"]
-                 [org.clojure/data.fressian "0.2.0"]
-                 [org.onyxplatform/onyx "0.6.0"]
+                 [org.onyxplatform/onyx "0.6.1-SNAPSHOT"]
+                 ;[org.onyxplatform/onyx "0.6.0"]
                  [riemann-clojure-client "0.3.2" :exclusions [io.netty/netty]]
                  [cheshire "5.4.0"]])
