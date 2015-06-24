@@ -24,9 +24,8 @@
 (def reader-calls
   {:lifecycle/before-task-start inject-reader})
 
-
 (defrecord BenchmarkInput [pending-messages retry retry-counter max-pending batch-size]
-  p-ext/IPipelineExtension
+  p-ext/Pipeline
   (write-batch [this event]
     (function/write-batch event))
 
@@ -52,6 +51,7 @@
         (swap! pending-messages assoc (:id m) (:message m)))
       {:onyx.core/batch batch}))
 
+  p-ext/PipelineInput
   (ack-message [_ _ message-id]
     (swap! pending-messages dissoc message-id))
 
@@ -68,7 +68,7 @@
     [_ _ message-id]
     (get @pending-messages message-id))
 
-  (drained? 
+  (drained?
     [_ _]
     false))
 
@@ -77,7 +77,6 @@
         max-pending (or (:onyx/max-pending task-map) (:onyx/max-pending defaults))
         batch-size (:onyx/batch-size task-map)]
     (->BenchmarkInput (atom {}) (atom []) (atom 0) max-pending batch-size)))
-
 
 (comment 
   (defn inject-reader

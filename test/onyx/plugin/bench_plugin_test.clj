@@ -1,17 +1,19 @@
 (ns onyx.plugin.bench-plugin-test
   (:require [clojure.core.async :refer [chan dropping-buffer put! >! <! <!! go >!!]]
+            [taoensso.timbre :refer [info warn trace fatal level-compile-time] :as timbre]
             [onyx.peer.pipeline-extensions :as p-ext]
             [onyx.plugin.bench-plugin]
             [taoensso.timbre.appenders.rotor :as rotor]
             [onyx.static.logging-configuration :as log-config]
             [onyx.plugin.core-async]
-            [onyx.api]))
+            [onyx.api])
+  (:import [onyx.plugin RandomInputPlugin]))
 
 (def id (java.util.UUID/randomUUID))
 
 (def scheduler :onyx.job-scheduler/balanced)
 
-(def messaging :core.async)
+(def messaging :netty)
 
 (def env-config
   {:zookeeper/address "127.0.0.1:2189"
@@ -20,7 +22,7 @@
    :onyx/id id
    :onyx.log/config {:appenders {:standard-out {:enabled? false}
                                  :spit {:enabled? false}
-                                 :rotor {:min-level :info
+                                 :rotor {:min-level :trace
                                          :enabled? true
                                          :async? false
                                          :max-message-per-msecs nil
@@ -51,12 +53,14 @@
 (def retry-counter (atom 0))
 
 (defn my-inc [{:keys [n] :as segment}]
+  ;(info "Received segment " segment)
   ;(Thread/sleep 10)
   (assoc segment :n (inc n)))
 
 (def catalog
   [{:onyx/name :in
-    :onyx/ident :generator
+    ;:onyx/ident :onyx.plugin.bench-plugin/generator
+    :onyx/ident :onyx.plugin.RandomInputPlugin
     :onyx/type :input
     :onyx/medium :generator
     :onyx/max-pending 70000
@@ -88,7 +92,7 @@
     :onyx/batch-size batch-size}
 
    {:onyx/name :no-op
-    :onyx/ident :core.async/write-to-chan
+    :onyx/ident :onyx.plugin.core-async/output
     :onyx/type :output
     :onyx/medium :core.async
     :onyx/batch-timeout batch-timeout

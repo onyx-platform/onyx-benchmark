@@ -2,9 +2,9 @@
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   ;"-Daeron.rcv.buffer.length=100000" "-Daeron.socket.so_sndbuf=320000" "-Daeron.socket.so_rcvbuf=320000"  "-Daeron.term.buffer.length=131072" "-Daeron.rcv.initial.window.length=131072"]
-  :java-opts ["-server" "-Xmx10g"
+  :java-opts [;"-server" "-Xmx10g"
               ;"-XX:+UseG1GC"
-              "-XX:+UnlockCommercialFeatures" "-XX:+FlightRecorder" "-XX:StartFlightRecording=duration=240s,filename=myrecording.jfr"
+              ;"-XX:+UnlockCommercialFeatures" "-XX:+FlightRecorder" "-XX:StartFlightRecording=duration=240s,filename=myrecording.jfr"
               ;"-XX:+UnlockDiagnosticVMOptions" "-XX:+TraceClassLoading" "-XX:+LogCompilation" "-XX:+PrintAssembly"
               ]
   :license {:name "Eclipse Public License"
@@ -12,6 +12,7 @@
   :global-vars  {*warn-on-reflection* true 
                  *assert* false
                  *unchecked-math* :warn-on-boxed}
+  :java-source-paths ["src/java"]
   :dependencies [[org.clojure/clojure "1.7.0-beta2"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [io.netty/netty-all "4.0.25.Final"]
