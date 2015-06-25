@@ -3,18 +3,23 @@ package onyx.plugin;
 import onyx.peer.IPipeline;
 import onyx.peer.IPipelineInput;
 import onyx.peer.Function;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import clojure.lang.IPersistentMap;
 import clojure.lang.PersistentArrayMap;
 import clojure.lang.PersistentVector;
 import clojure.lang.Keyword;
-import java.util.UUID;
 
 
 public class RandomInputPlugin implements IPipelineInput, IPipeline
 {
-	private int maxPending;
 	private Keyword pluginName = Keyword.intern("java-generator");
 	private byte[] hundredBytes;
+	private int maxPending;
+	private int batchSize;
+	private ConcurrentHashMap<UUID, IPersistentMap> pendingMessages;
+	private ConcurrentLinkedQueue<IPersistentMap> pendingRetries;
 
 	private void initBytes ()
 	{
@@ -27,44 +32,96 @@ public class RandomInputPlugin implements IPipelineInput, IPipeline
 
 	public RandomInputPlugin(IPersistentMap pipelineData) 
 	{
-		//Integer maxPending = (Integer)(pipelineData.entryAt(Keyword.intern ("onyx", "max-pending"))).val();
-		//System.out.println ("maxpending is " + maxPending);
-		//System.out.println ((pipelineData.entryAt(Keyword.intern ("onyx", "max-pending"))));
-		//System.out.println (pipelineData);
+		initBytes();
 
+		IPersistentMap taskMap = (IPersistentMap)pipelineData.entryAt(Keyword.intern ("onyx.core", "task-map")).val();
+
+		// TODO, implement onyx defaults for max-pending
+		maxPending = ((Long) (taskMap.entryAt(Keyword.intern ("onyx", "max-pending"))).val()).intValue();
+		batchSize = ((Long) (taskMap.entryAt(Keyword.intern ("onyx", "batch-size"))).val()).intValue();
+		pendingMessages = new ConcurrentHashMap<UUID, IPersistentMap> ();
+		pendingRetries = new ConcurrentLinkedQueue <IPersistentMap> ();
+	}
+
+	/* Add any segments that have been added to the retry queue to the batch */
+	public PersistentVector addRetries (PersistentVector batch, int count)
+	{
+		for (int i = 0; i < count; i++)
+		{
+			IPersistentMap message = pendingRetries.poll();
+			if (message != null)
+			{
+				UUID id = UUID.randomUUID();
+				IPersistentMap m = (PersistentArrayMap.EMPTY)
+					.assoc (Keyword.intern("id"), id)
+					.assoc (Keyword.intern("input"), pluginName)
+					.assoc (Keyword.intern("message"), message);
+				batch = batch.cons (m);
+				pendingMessages.put(id, message);
+			}
+		}
+		return batch;
+	}
+
+	/* Fill up batch with newly generated segments */
+	public PersistentVector addGenerated (PersistentVector batch, int count)
+	{
+		IPersistentMap payload = PersistentArrayMap.EMPTY.assoc (Keyword.intern ("data"), hundredBytes);
+		for (int i = 0; i < count; i++)
+		{
+			UUID id = UUID.randomUUID();
+
+			IPersistentMap message = payload.assoc (Keyword.intern ("n"), new Integer (i));
+			IPersistentMap m = (PersistentArrayMap.EMPTY)
+				.assoc (Keyword.intern("id"), id)
+				.assoc (Keyword.intern("input"), pluginName)
+				.assoc (Keyword.intern("message"), message);
+
+			batch = batch.cons (m);
+			pendingMessages.put(id, message);
+		}
+
+		return batch;
 	}
 
 	public IPersistentMap readBatch (IPersistentMap event) 
 	{
-		IPersistentMap payload = PersistentArrayMap.EMPTY.assoc (Keyword.intern ("data"), hundredBytes);
-		IPersistentMap m = PersistentArrayMap.EMPTY;
-		m = m.assoc (Keyword.intern("id"), java.util.UUID.randomUUID())
-		     .assoc (Keyword.intern("input"), pluginName)
-		     .assoc (Keyword.intern("message"), payload.assoc (Keyword.intern ("n"), new Integer (0)));
-
 		PersistentVector batch = PersistentVector.EMPTY;
-		for (int i = 0; i < 20; i++)
-		{
-			batch = batch.cons (m);
-		}
+
+		int retryCount = Math.min (pendingRetries.size(), batchSize);
+		int generatedCount = Math.max (0, Math.min (maxPending - retryCount - pendingMessages.size(), batchSize - retryCount));
+
+		batch = addGenerated(addRetries (batch, retryCount), generatedCount);
 
 		return (PersistentArrayMap.EMPTY).assoc (Keyword.intern ("onyx.core", "batch"), batch);
 	}
 
-	public Object ackMessage (IPersistentMap event, java.util.UUID messageId) 
+	// ackMessage should maybe be void return
+	public Object ackMessage (IPersistentMap event, UUID messageId) 
 	{
+		pendingMessages.remove(messageId);
 		return null;
 	}
 
-	public Object isPending (IPersistentMap event, java.util.UUID messageId) 
+	// isPending should return the message
+	public Object isPending (IPersistentMap event, UUID messageId) 
 	{
-		return null;
+		IPersistentMap message = pendingMessages.get(messageId);
+		return message;
 	}
 
-	public Object retryMessage (IPersistentMap event, java.util.UUID messageId)
+	// retry should return the message if it existed, otherwise return null.
+	public Object retryMessage (IPersistentMap event, UUID messageId)
 	{
-		System.out.println ("Should be retrying " + messageId);
-		return null;
+		IPersistentMap message = pendingMessages.get(messageId);
+		if (message == null)
+		{
+			return null;
+		}
+
+		pendingMessages.remove(messageId);
+		pendingRetries.add(message);
+		return message;
 	}
 
 	public boolean isDrained (IPersistentMap event)

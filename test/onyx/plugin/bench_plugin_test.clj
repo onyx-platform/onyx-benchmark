@@ -59,11 +59,11 @@
 
 (def catalog
   [{:onyx/name :in
-    ;:onyx/ident :onyx.plugin.bench-plugin/generator
-    :onyx/ident :onyx.plugin.RandomInputPlugin
+    :onyx/ident :onyx.plugin.bench-plugin/generator
+    ;:onyx/ident :onyx.plugin.RandomInputPlugin
     :onyx/type :input
     :onyx/medium :generator
-    :onyx/max-pending 70000
+    :onyx/max-pending 50000
     :onyx/batch-timeout batch-timeout
     :onyx/batch-size batch-size}
 
