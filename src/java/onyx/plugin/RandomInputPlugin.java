@@ -96,11 +96,9 @@ public class RandomInputPlugin implements IPipelineInput, IPipeline
 		return (PersistentArrayMap.EMPTY).assoc (Keyword.intern ("onyx.core", "batch"), batch);
 	}
 
-	// ackMessage should maybe be void return
-	public Object ackMessage (IPersistentMap event, UUID messageId) 
+	public void ackMessage (IPersistentMap event, UUID messageId) 
 	{
 		pendingMessages.remove(messageId);
-		return null;
 	}
 
 	// isPending should return the message
