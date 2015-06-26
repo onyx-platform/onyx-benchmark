@@ -1,8 +1,8 @@
 package onyx.plugin;
 
-import onyx.peer.IPipeline;
-import onyx.peer.IPipelineInput;
-import onyx.peer.Function;
+import onyx.interop;
+import onyx.IPipelineInput;
+import onyx.IPipeline;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -136,6 +136,6 @@ public class RandomInputPlugin implements IPipelineInput, IPipeline
 
 	public IPersistentMap writeBatch (IPersistentMap event)
 	{
-		return (IPersistentMap)Function.write_batch (event);
+		return (IPersistentMap)interop.write_batch (event);
 	}
 }

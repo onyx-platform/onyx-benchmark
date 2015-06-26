@@ -7,7 +7,8 @@
             [onyx.static.logging-configuration :as log-config]
             [onyx.plugin.core-async]
             [onyx.api])
-  (:import [onyx.plugin RandomInputPlugin]))
+  (:import [onyx.plugin RandomInputPlugin]
+           [onyx.plugin JavaFn]))
 
 (def id (java.util.UUID/randomUUID))
 
@@ -68,19 +69,22 @@
     :onyx/batch-size batch-size}
 
    {:onyx/name :inc1
-    :onyx/fn :onyx.plugin.bench-plugin-test/my-inc
+    ;:onyx/fn :onyx.plugin.bench-plugin-test/my-inc
+    :onyx/fn :onyx.plugin.JavaFn/testFn
     :onyx/type :function
     :onyx/batch-timeout batch-timeout
     :onyx/batch-size batch-size}
 
    {:onyx/name :inc2
-    :onyx/fn :onyx.plugin.bench-plugin-test/my-inc
+    ;:onyx/fn :onyx.plugin.bench-plugin-test/my-inc
+    :onyx/fn :onyx.plugin.JavaFn/testFn
     :onyx/type :function
     :onyx/batch-timeout batch-timeout
     :onyx/batch-size batch-size}
 
    {:onyx/name :inc3
-    :onyx/fn :onyx.plugin.bench-plugin-test/my-inc
+    ;:onyx/fn :onyx.plugin.bench-plugin-test/my-inc
+    :onyx/fn :onyx.plugin.JavaFn/testFn
     :onyx/type :function
     :onyx/batch-timeout batch-timeout
     :onyx/batch-size batch-size}
