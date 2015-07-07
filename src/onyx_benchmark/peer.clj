@@ -56,11 +56,11 @@
                 start (System/currentTimeMillis)
                 _ (reset! retry-counter 0)
                 latencies (:latencies latency)
-                latency-00 (get latencies 0.0)
-                latency-05 (get latencies 0.5)
-                latency-095 (get latencies 0.95)
-                latency-099 (get latencies 0.99)
-                latency-0999 (get latencies 0.999)]
+                latency-00 (float (/ (get latencies 0.0) 1000000))
+                latency-05 (float (/ (get latencies 0.5) 1000000))
+                latency-095 (float (/ (get latencies 0.95) 1000000))
+                latency-099 (float (/ (get latencies 0.99) 1000000))
+                latency-0999 (float (/ (get latencies 0.999) 1000000))]
             (info "-> " throughput ", retries: " retry-cnt ", latency " latency " <-")
             (info "-> " latency-00 latency-05 latency-095 latency-099 latency-0999)
             (r/send-event client {:service "onyx-retry" :state "ok" :metric retry-cnt :tags ["benchmark"]})
