@@ -91,8 +91,9 @@
 (defn -main [zk-addr riemann-addr id n-peers messaging & args]
   (let [peer-config {:zookeeper/address zk-addr
                      :onyx/id id
-                     :onyx.messaging/bind-addr "127.0.0.1" ;(slurp "http://169.254.169.254/latest/meta-data/local-ipv4")
+                     :onyx.messaging/bind-addr (slurp "http://169.254.169.254/latest/meta-data/local-ipv4")
                      :onyx.messaging/peer-ports (vec (range 40000 40200))
+                     :onyx.messaging.aeron/embedded-driver? false
                      :onyx.peer/join-failure-back-off 500
                      :onyx.peer/job-scheduler :onyx.job-scheduler/greedy
                      :onyx.messaging/impl (keyword messaging)
