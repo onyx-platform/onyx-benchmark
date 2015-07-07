@@ -25,5 +25,6 @@ aws cloudformation $CREATE_UPDATE \
     ParameterKey=BenchmarkGitCommit,ParameterValue=$BENCHMARK_REVISION \
     ParameterKey=OnyxGitCommit,ParameterValue=$ONYX_REVISION \
     ParameterKey=OnyxLogLevel,ParameterValue=$ONYX_LOG_LEVEL \
+    ParameterKey=OnyxMessaging,ParameterValue=$ONYX_MESSAGING \
     ParameterKey=RunId,ParameterValue=$RUN_ID \
     ParameterKey=AvailabilityZone,ParameterValue=$AVAILABILITY_ZONE

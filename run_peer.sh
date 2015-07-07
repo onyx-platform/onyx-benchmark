@@ -10,7 +10,8 @@ ONYX_REV=$1
 BENCHMARK_REV=$2
 RUN_ID=$3
 VPEERS=$4
-LOG_LEVEL=$5
+MESSAGING=$5
+LOG_LEVEL=$6
 
 DEPLOYMENT_ID=$ONYX_REV"_"$BENCHMARK_REV"_"$RUN_ID
 
@@ -24,21 +25,25 @@ export LEIN_ROOT=1
 
 cd /
 rm -rf onyx
-git clone https://github.com/MichaelDrogalis/onyx.git
+git clone https://github.com/onyx-platform/onyx.git
 cd /onyx
 git checkout $ONYX_REV
 lein install
-
-#cd .. && git clone https://github.com/real-logic/Aeron.git && cd Aeron && git checkout 3fc10054424fbaa0d5613f3baa05d1b43de2939a && ./gradlew && gradle install
+bash -x install-aeron.sh
 
 cd /onyx-benchmark
 
 ZOOKEEPER_ADDR=$(cat /home/ubuntu/zookeeper.txt)
 RIEMANN_ADDR=$(cat /home/ubuntu/metrics.txt)
 
-echo "lein run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $RIEMANN_ADDR $DEPLOYMENT_ID $VPEERS"
 ./tune-os.sh linux
+
+echo "lein run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $RIEMANN_ADDR $DEPLOYMENT_ID $VPEERS $MESSAGING"
 
 export TIMBRE_LOG_LEVEL=$LOG_LEVEL
 
-lein run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $RIEMANN_ADDR $DEPLOYMENT_ID $VPEERS &
+lein deps
+
+java -Xmx4g -server -Xbootclasspath/a:/Users/lucas/.lein/self-installs/leiningen-2.5.1-standalone.jar -Dfile.encoding=UTF-8 -Dmaven.wagon.http.ssl.easy=false -Dmaven.wagon.rto=10000 -Dleiningen.original.pwd=/onyx-benchmark -Dleiningen.script=/usr/local/bin/lein -classpath /root/.lein/self-installs/leiningen-2.5.1-standalone.jar clojure.main -m leiningen.core.main run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $RIEMANN_ADDR $DEPLOYMENT_ID $VPEERS $MESSAGING &
+
+#lein run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $RIEMANN_ADDR $DEPLOYMENT_ID $VPEERS $MESSAGING &

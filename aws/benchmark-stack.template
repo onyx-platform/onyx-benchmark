@@ -23,6 +23,11 @@
 			"Type": "String",
 			"Default": "info"
 		},
+		"OnyxMessaging": {
+			"Description": "Messaging Onyx benchmark run.",
+			"Type": "String",
+			"Default": "netty"
+		},
 		"MetricsNumberOfInstances" : {
 			"Description" : "Number of instances in the cluster",
 			"Type" : "Number",
@@ -272,6 +277,7 @@
 										{ "Ref" : "BenchmarkGitCommit" }, " ",
 										{ "Ref" : "RunId" }, " ",
 										{ "Ref": "VirtualPeers" }, " ",
+										{ "Ref": "OnyxMessaging" }, " ",
 										{ "Ref": "OnyxLogLevel" }, " ",
 										">> /home/ubuntu/init-commands.txt 2>&1 "]]},
 										"ignoreErrors" : "false",
