@@ -71,6 +71,5 @@
 (defn generator [pipeline-data]
   (let [task-map (:onyx.core/task-map pipeline-data)
         max-pending (or (:onyx/max-pending task-map) (:onyx/max-pending defaults))
-        batch-size (:onyx/batch-size task-map)
-        retry-counter (atom 0)]
+        batch-size (:onyx/batch-size task-map)]
     (->BenchmarkInput (atom {}) (atom []) max-pending batch-size))) 
