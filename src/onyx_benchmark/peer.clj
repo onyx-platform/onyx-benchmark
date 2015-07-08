@@ -48,13 +48,22 @@
   (let [client (r/tcp-client {:host riemann-addr})]
     (future
       (try
-        (loop [t 0]
-          (Thread/sleep (- 1000 t))
-          (let [throughput (im/snapshot! rate)
+        (loop [offset 0]
+          (let [sleep-time (if (neg? (- 1000 offset))
+                             (do
+                               ;; loop took too long and measurements are inaccurate
+                               ;; throw away results
+                               (im/snapshot! rate)   
+                               (im/snapshot! rate+latency)      
+                               (reset! retry-counter 0)
+                               1000)
+                             (- 1000 offset))
+                _ (Thread/sleep sleep-time)
+                throughput (im/snapshot! rate)
                 latency (im/snapshot! rate+latency)
                 retry-cnt @retry-counter
-                start (System/currentTimeMillis)
                 _ (reset! retry-counter 0)
+                start (System/currentTimeMillis)
                 latencies (:latencies latency)
                 latency-00 (float (/ (or (get latencies 0.0) 0) 1000000))
                 latency-05 (float (/ (or (get latencies 0.5) 0) 1000000))
