@@ -103,6 +103,10 @@
                      :onyx.messaging/bind-addr (slurp "http://169.254.169.254/latest/meta-data/local-ipv4")
                      :onyx.messaging/peer-ports (vec (range 40000 40200))
                      :onyx.messaging/peer-link-gc-interval 99999999
+                     :onyx.messaging/inbound-buffer-size 4000000
+                     :onyx.messaging/completion-buffer-size 500000
+                     :onyx.messaging/release-ch-buffer-size 500000
+                     :onyx.messaging/retry-ch-buffer-size 1000000
                      ;:onyx.messaging.aeron/embedded-driver? false
                      :onyx.peer/join-failure-back-off 500
                      :onyx.peer/job-scheduler :onyx.job-scheduler/greedy
