@@ -117,7 +117,7 @@
 			"DependsOn" : "GatewayToInternet",
 			"Properties" : {
 				"InstanceType" : { "Ref" : "ZooKeeperInstanceType"},
-                "SpotPrice" : { "Ref" : "PeerSpotPrice" } ,
+				"SpotPrice" : { "Ref" : "PeerSpotPrice" } ,
 				"KeyName" : { "Ref" : "KeyPair" },
 				"ImageId" : { "Fn::FindInMap" : [ "AWSRegionalAMIs", { "Ref": "AWS::Region" }, "64HVM" ] },
 				"AssociatePublicIpAddress" : "true",
@@ -176,7 +176,7 @@
 			"DependsOn" : "GatewayToInternet",
 			"Properties" : {
 				"InstanceType" : { "Ref" : "MetricsInstanceType"},
-                "SpotPrice" : { "Ref" : "PeerSpotPrice" } ,
+				"SpotPrice" : { "Ref" : "PeerSpotPrice" } ,
 				"KeyName" : { "Ref" : "KeyPair" },
 				"ImageId" : { "Fn::FindInMap" : [ "AWSRegionalAMIs", { "Ref": "AWS::Region" }, "64HVM" ] },
 				"AssociatePublicIpAddress" : "true",
@@ -290,7 +290,7 @@
 
 			"Properties" : {
 				"InstanceType" : { "Ref" : "PeersInstanceType"},
-                "SpotPrice" : { "Ref" : "PeerSpotPrice" } ,
+				"SpotPrice" : { "Ref" : "PeerSpotPrice" } ,
 				"KeyName" : { "Ref" : "KeyPair" },
 				"ImageId" : { "Fn::FindInMap" : [ "AWSRegionalAMIs", { "Ref": "AWS::Region" }, "64HVM" ] },
 				"AssociatePublicIpAddress" : "true",
