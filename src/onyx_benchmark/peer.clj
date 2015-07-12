@@ -2,7 +2,6 @@
   (:require [clojure.core.async :refer [chan dropping-buffer <!!]]
             [riemann.client :as r]
             [onyx.peer.pipeline-extensions :as p-ext]
-            [taoensso.timbre.appenders.rotor :as rotor]
             [taoensso.timbre :refer  [info warn trace fatal error] :as timbre]
             [interval-metrics.core :as im]
             [onyx.plugin.bench-plugin]
@@ -86,17 +85,6 @@
 (defn my-inc [{:keys [n] :as segment}]
   (assoc segment :n (inc n)))
 
-(def logging-config 
-  {:appenders {:standard-out {:enabled? false}
-               :spit {:enabled? false}
-               :rotor {:min-level :trace
-                       :enabled? true
-                       :async? false
-                       :max-message-per-msecs nil
-                       :fn rotor/appender-fn}}
-   :shared-appender-config {:rotor {:path "onyx-benchmark.log"
-                                    :max-size (* 512 102400) :backlog 5}}})
-
 (defn -main [zk-addr riemann-addr id n-peers messaging & args]
   (let [peer-config {:zookeeper/address zk-addr
                      :onyx/id id
@@ -110,8 +98,7 @@
                      ;:onyx.messaging.aeron/embedded-driver? false
                      :onyx.peer/join-failure-back-off 500
                      :onyx.peer/job-scheduler :onyx.job-scheduler/greedy
-                     :onyx.messaging/impl (keyword messaging)
-                     :onyx.log/config logging-config}
+                     :onyx.messaging/impl (keyword messaging)}
         n-peers-parsed (Integer/parseInt n-peers)
         peer-group (onyx.api/start-peer-group peer-config)
         peers (onyx.api/start-peers n-peers-parsed peer-group)]
