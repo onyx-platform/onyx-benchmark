@@ -2,7 +2,7 @@
   (:require [clojure.core.async :refer [chan >!! <!! close! alts!! timeout]]
             [onyx.peer.function :as function]
             [onyx.static.default-vals :refer [defaults]]
-            [taoensso.timbre :refer [info warn trace fatal level-compile-time] :as timbre]
+            [taoensso.timbre :refer [info warn trace fatal] :as timbre]
             [onyx.peer.pipeline-extensions :as p-ext]))
 
 (def hundred-bytes 
