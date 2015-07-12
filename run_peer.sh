@@ -29,7 +29,7 @@ git clone https://github.com/onyx-platform/onyx.git
 cd /onyx
 git checkout $ONYX_REV
 lein install
-bash -x install-aeron.sh
+#bash -x install-aeron.sh
 
 cd /onyx-benchmark
 
