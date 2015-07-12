@@ -61,7 +61,7 @@
           },
           "percentage": false,
           "zerofill": true,
-          "nullPointMode": "null as zero",
+          "nullPointMode": "null",
           "steppedLine": false,
           "tooltip": {
             "value_type": "cumulative",
