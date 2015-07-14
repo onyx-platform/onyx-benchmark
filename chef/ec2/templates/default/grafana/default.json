@@ -149,7 +149,7 @@
       "panels": [
         {
           "error": false,
-          "span": 12,
+          "span": 3,
           "editable": true,
           "type": "graph",
           "id": 13,
@@ -211,7 +211,7 @@
         },
         {
           "error": false,
-          "span": 4,
+          "span": 3,
           "editable": true,
           "type": "graph",
           "id": 10,
@@ -273,7 +273,7 @@
         },
         {
           "error": false,
-          "span": 4,
+          "span": 3,
           "editable": true,
           "type": "graph",
           "id": 11,
@@ -335,7 +335,7 @@
         },
         {
           "error": false,
-          "span": 4,
+          "span": 3,
           "editable": true,
           "type": "graph",
           "id": 12,
