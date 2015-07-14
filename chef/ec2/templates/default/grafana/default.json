@@ -207,7 +207,7 @@
           ],
           "aliasColors": {},
           "seriesOverrides": [],
-          "title": "50th percentile latency (ms)"
+          "title": "50th percentile complete latency (ms)"
         },
         {
           "error": false,
@@ -269,7 +269,7 @@
           ],
           "aliasColors": {},
           "seriesOverrides": [],
-          "title": "95th percentile latency (ms)"
+          "title": "95th percentile complete latency (ms)"
         },
         {
           "error": false,
@@ -331,7 +331,7 @@
           ],
           "aliasColors": {},
           "seriesOverrides": [],
-          "title": "99th percentile latency (ms)"
+          "title": "99th percentile complete latency (ms)"
         },
         {
           "error": false,
@@ -393,7 +393,7 @@
           ],
           "aliasColors": {},
           "seriesOverrides": [],
-          "title": "99.9 percentile latency (ms)"
+          "title": "99.9 percentile complete latency (ms)"
         }
       ]
     },
@@ -697,7 +697,7 @@
     }
   ],
   "time": {
-    "from": "now-15m",
+    "from": "now-5m",
     "to": "now"
   },
   "templating": {
