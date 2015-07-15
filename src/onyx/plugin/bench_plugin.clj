@@ -30,8 +30,11 @@
     (function/write-batch event))
 
   (read-batch [_ event]
-    (let [pending (count @pending-messages)
-          max-segments (min (- max-pending pending) batch-size)
+    (let [_ (while (< (- max-pending 
+                         (count @pending-messages)) 
+                      batch-size)
+              (Thread/sleep 100))
+          max-segments batch-size
           segments (->> (flush-swap! retry 
                                      #(take max-segments %)
                                      #(subvec % (min max-segments (count %))))
