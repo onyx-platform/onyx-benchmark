@@ -2,6 +2,7 @@
   (:require [clojure.core.async :refer [chan >!! <!! close! alts!! timeout]]
             [onyx.peer.function :as function]
             [onyx.static.default-vals :refer [defaults]]
+            [onyx.types :refer  [->Leaf]]
             [taoensso.timbre :refer [info warn trace fatal] :as timbre]
             [onyx.peer.pipeline-extensions :as p-ext]))
 
@@ -23,8 +24,6 @@
 (def reader-calls
   {:lifecycle/before-task-start inject-reader})
 
-(defrecord InputSegment [id message])
-
 (defrecord BenchmarkInput [pending-messages retry max-pending batch-size]
   p-ext/Pipeline
   (write-batch [this event]
@@ -36,14 +35,15 @@
           segments (->> (flush-swap! retry 
                                      #(take max-segments %)
                                      #(subvec % (min max-segments (count %))))
-                        (map (fn [m] (->InputSegment (java.util.UUID/randomUUID) m))))
+                        (map (fn [m] (->Leaf m (java.util.UUID/randomUUID) nil nil nil nil nil))))
           batch (loop [n (count segments) 
                        sgs segments]
                   (if (= n max-segments)
                     sgs
                     (recur (inc n)
-                           (conj sgs (->InputSegment (java.util.UUID/randomUUID)
-                                                     {:n n :data hundred-bytes})))))]
+                           (conj sgs (->Leaf {:n n :data hundred-bytes}
+                                             (java.util.UUID/randomUUID) 
+                                             nil nil nil nil nil)))))]
       (doseq [m batch] 
         (swap! pending-messages assoc (:id m) (:message m)))
       {:onyx.core/batch batch}))
