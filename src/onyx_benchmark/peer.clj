@@ -92,6 +92,7 @@
                      :onyx.messaging/peer-ports (vec (range 40000 40200))
                      :onyx.messaging.aeron/offer-idle-strategy :high-restart-latency
                      :onyx.messaging.aeron/poll-idle-strategy :high-restart-latency
+                     :onyx.messaging.aeron/embedded-driver? false
                      :onyx.messaging.aeron/subscriber-count 2
                      :onyx.peer/join-failure-back-off 500
                      :onyx.peer/job-scheduler :onyx.job-scheduler/greedy
