@@ -1,9 +1,15 @@
 (defproject onyx-benchmark "0.1.0-SNAPSHOT"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
-  ;"-Daeron.rcv.buffer.length=100000" "-Daeron.socket.so_sndbuf=320000" "-Daeron.socket.so_rcvbuf=320000"  "-Daeron.term.buffer.length=131072" "-Daeron.rcv.initial.window.length=131072"]
-  :java-opts ^:replace ["-server" "-Xmx8g"
-                        ;"-XX:+UseG1GC"
+  :java-opts ^:replace ["-server" 
+                        "-Xmx8g"
+                        "-XX:BiasedLockingStartupDelay=0" 
+                        "-Daeron.mtu.length=16384" 
+                        "-Daeron.socket.so_sndbuf=2097152" 
+                        "-Daeron.socket.so_rcvbuf=2097152" 
+                        "-Daeron.rcv.buffer.length=16384" 
+                        "-Daeron.rcv.initial.window.length=2097152" 
+                        "-Dagrona.disable.bounds.checks=true"
                         "-XX:+UnlockCommercialFeatures" "-XX:+FlightRecorder" "-XX:StartFlightRecording=duration=240s,filename=myrecording.jfr" "-XX:+UnlockDiagnosticVMOptions" 
                         ; "-XX:+TraceClassLoading" "-XX:+LogCompilation" "-XX:+PrintAssembly"
                         ]
