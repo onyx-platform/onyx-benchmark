@@ -1,15 +1,13 @@
 (ns onyx.plugin.bench-plugin-test
   (:require [clojure.core.async :refer [chan dropping-buffer put! >! <! <!! go >!!]]
-            [taoensso.timbre :refer [info warn trace fatal level-compile-time] :as timbre]
+            [taoensso.timbre :refer [info warn trace fatal] :as timbre]
             [onyx.peer.pipeline-extensions :as p-ext]
             [onyx.plugin.bench-plugin]
-            [taoensso.timbre.appenders.rotor :as rotor]
             [onyx.static.logging-configuration :as log-config]
             [onyx.plugin.core-async]
             [interval-metrics.core :as im]
             [onyx.api])
-  (:import [onyx.plugin RandomInputPlugin]
-           [onyx.plugin JavaFn]))
+  (:import [onyx.plugin RandomInputPlugin]))
 
 (def id (java.util.UUID/randomUUID))
 
@@ -22,15 +20,6 @@
    :zookeeper/server? true
    :zookeeper.server/port 2189
    :onyx/id id
-   :onyx.log/config {:appenders {:standard-out {:enabled? false}
-                                 :spit {:enabled? false}
-                                 :rotor {:min-level :trace
-                                         :enabled? true
-                                         :async? false
-                                         :max-message-per-msecs nil
-                                         :fn rotor/appender-fn}}
-                     :shared-appender-config {:rotor {:path "onyx.log"
-                                                      :max-size (* 512 102400) :backlog 5}}}
    :onyx.peer/job-scheduler scheduler})
 
 (def pending-timeout 60000)
