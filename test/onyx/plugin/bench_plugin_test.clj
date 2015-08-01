@@ -5,6 +5,7 @@
             [onyx.plugin.bench-plugin]
             [onyx.static.logging-configuration :as log-config]
             [onyx.plugin.core-async]
+            [onyx.test-helper :refer [load-config]]
             [interval-metrics.core :as im]
             [onyx.api])
   (:import [onyx.plugin RandomInputPlugin]))
@@ -13,76 +14,47 @@
 
 (def scheduler :onyx.job-scheduler/balanced)
 
-(def messaging :aeron)
+(def id (java.util.UUID/randomUUID))
 
-(def env-config
-  {:zookeeper/address "127.0.0.1:2189"
-   :zookeeper/server? true
-   :zookeeper.server/port 2189
-   :onyx/id id
-   :onyx.peer/job-scheduler scheduler})
+(def config (load-config))
 
-(def pending-timeout 60000)
+(def env-config (assoc (:env-config config) :onyx/id id))
+(def peer-config (assoc (:peer-config config) :onyx/id id))
 
-(def peer-config
-  {:zookeeper/address "127.0.0.1:2189"
-   :onyx/id id
-   :onyx.messaging/ack-daemon-timeout pending-timeout
-   ;:onyx.messaging.aeron/offer-idle-strategy :low-restart-latency
-   ;:onyx.messaging.aeron/poll-idle-strategy :low-restart-latency
-   :onyx.messaging/bind-addr "127.0.0.1"
-   :onyx.messaging/peer-ports (vec (range 40000 40200))
-   :onyx.peer/job-scheduler scheduler
-   :onyx.messaging/impl messaging})
-
-
-(println "Starting env")
 (def env (onyx.api/start-env env-config))
 
 (def peer-group 
   (onyx.api/start-peer-group peer-config))
 
 (def batch-size 20)
-(def batch-timeout 100)
-
-; (defn test-input [segment]
-;   (println "Input called on " segment)
-;   segment)
+(def batch-timeout 10)
 
 (defn my-inc [{:keys [n] :as segment}]
-  ;(info "Received segment " segment)
-  #_(when (zero? (rand-int 100000))
-    (Thread/sleep 2000))
   (assoc segment :n (inc n)))
 
 (def catalog
   [{:onyx/name :in
     :onyx/plugin :onyx.plugin.bench-plugin/generator
-    ;:onyx/ident :onyx.plugin.RandomInputPlugin
     :onyx/type :input
     :onyx/medium :generator
     :onyx/max-pending 50000
-    :onyx/pending-timeout pending-timeout
     :onyx/batch-timeout batch-timeout
     :onyx/batch-size batch-size}
 
    {:onyx/name :inc1
     :onyx/fn :onyx.plugin.bench-plugin-test/my-inc
-    ;:onyx/fn :onyx.plugin.JavaFn/testFn
     :onyx/type :function
     :onyx/batch-timeout batch-timeout
     :onyx/batch-size batch-size}
 
    {:onyx/name :inc2
     :onyx/fn :onyx.plugin.bench-plugin-test/my-inc
-    ;:onyx/fn :onyx.plugin.JavaFn/testFn
     :onyx/type :function
     :onyx/batch-timeout batch-timeout
     :onyx/batch-size batch-size}
 
    {:onyx/name :inc3
     :onyx/fn :onyx.plugin.bench-plugin-test/my-inc
-    ;:onyx/fn :onyx.plugin.JavaFn/testFn
     :onyx/type :function
     :onyx/batch-timeout batch-timeout
     :onyx/batch-size batch-size}
@@ -101,27 +73,25 @@
     :onyx/batch-size batch-size
     :onyx/doc "Drops messages on the floor"}])
 
-
-;; TO TEST
-
 (def workflow [[:in :inc1] 
                [:inc1 :inc2] 
                [:inc2 :inc3]
                [:inc3 :inc4]
                [:inc4 :no-op]])
 
-
-(println "starting Vpeers")
+(println "Starting Vpeers")
 (def v-peers (onyx.api/start-peers 6 peer-group))
 
 (println "Started vpeers")
-(def bench-length 300000)
+(def bench-length 120000)
 
 (def messages-tracking (atom {}))
 (def rate+latency (im/rate+latency {:rate-unit :nanoseconds 
                                     :latency-unit :nanoseconds}))
 (def retry-counter 
   (atom (long 0)))
+
+(def total-segments (atom 0))
 
 (Thread/sleep 10000)
 
@@ -159,7 +129,9 @@
                                                              (Thread/sleep 1000)
                                                              (.println (System/out) (str (:onyx.core/id event) " RATE: " (im/snapshot! rate)))))}))
    :lifecycle/after-batch (fn after-batch [event lifecycle]
-                            (im/update! (:generator/rate event) (count (:onyx.core/batch event)))
+                            (let [cnt (count (:onyx.core/batch event))] 
+                              (swap! total-segments + cnt)
+                              (im/update! (:generator/rate event) cnt))
                             {})})
 
 (def in-calls 
@@ -195,12 +167,11 @@
   {:catalog catalog 
    :workflow workflow
    :lifecycles lifecycles
-   ;:acker/percentage 50
    :task-scheduler :onyx.task-scheduler/balanced})
 
-(Thread/sleep 5000)
-
+(reset! total-segments 0)
 (Thread/sleep bench-length)
+(println "AVERAGE THROUGHPUT: " (float (* 1000 (/ @total-segments bench-length))))
 
 (doseq [v-peer v-peers]
   (onyx.api/shutdown-peer v-peer))
