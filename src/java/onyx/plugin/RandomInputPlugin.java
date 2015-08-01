@@ -96,7 +96,7 @@ public class RandomInputPlugin implements IPipelineInput, IPipeline
 		return (PersistentArrayMap.EMPTY).assoc (Keyword.intern ("onyx.core", "batch"), batch);
 	}
 
-	public void ackMessage (IPersistentMap event, UUID messageId) 
+	public void ackSegment (IPersistentMap event, UUID messageId) 
 	{
 		pendingMessages.remove(messageId);
 	}
@@ -109,7 +109,7 @@ public class RandomInputPlugin implements IPipelineInput, IPipeline
 	}
 
 	// retry should return the message if it existed, otherwise return null.
-	public Object retryMessage (IPersistentMap event, UUID messageId)
+	public Object retrySegment (IPersistentMap event, UUID messageId)
 	{
 		IPersistentMap message = pendingMessages.get(messageId);
 		if (message == null)
