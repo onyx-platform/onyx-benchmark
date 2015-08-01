@@ -20,11 +20,11 @@
 (def rate (im/rate))
 
 (def retry-calls
-  {:lifecycle/after-retry-message (fn retry-count-inc [event message-id rets lifecycle]
+  {:lifecycle/after-retry-segment (fn retry-count-inc [event message-id rets lifecycle]
                                     (swap! retry-counter (fn [v] (inc ^long v))))})
 
 (def latency-calls 
-  {:lifecycle/after-ack-message (fn latency-after-ack [event message-id rets lifecycle]
+  {:lifecycle/after-ack-segment (fn latency-after-ack [event message-id rets lifecycle]
                                   (when-let [v (@messages-tracking message-id)] 
                                     (im/update! rate+latency (- ^long (System/nanoTime) ^long v))
                                     (swap! messages-tracking dissoc message-id)))
@@ -39,7 +39,7 @@
                             (im/update! rate (count (:onyx.core/batch event)))
                             {})})
 
-(def no-op-calls 
+(def no-op-calls
   {:lifecycle/before-task-start inject-no-op-ch})
 
 (defn start-sending!

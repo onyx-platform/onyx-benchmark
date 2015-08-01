@@ -131,11 +131,11 @@
                                                          (while (not (Thread/interrupted))
                                                            (Thread/sleep 10000)
                                                            (.println (System/out) (str (:onyx.core/id event) " RETRY COUNTER: " @retry-counter))))})
-   :lifecycle/after-retry-message (fn retry-count-inc [event message-id rets lifecycle]
+   :lifecycle/after-retry-segment (fn retry-count-inc [event message-id rets lifecycle]
                                     (swap! retry-counter (fn [v] (inc ^long v))))})
 
 (def latency-calls 
-  {:lifecycle/after-ack-message (fn latency-after-ack [event message-id rets lifecycle]
+  {:lifecycle/after-ack-segment (fn latency-after-ack [event message-id rets lifecycle]
                                   (when-let [v (@messages-tracking message-id)] 
                                     (im/update! rate+latency (- ^long (System/nanoTime) ^long v))
                                     (swap! messages-tracking dissoc message-id)))
