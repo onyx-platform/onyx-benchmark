@@ -25,11 +25,11 @@
    {:lifecycle/task :inc4
     :lifecycle/calls :onyx-benchmark.peer/throughput-calls}
    {:lifecycle/task :no-op
+    :lifecycle/calls :onyx-benchmark.peer/no-op-calls}
+   {:lifecycle/task :no-op
     :lifecycle/calls :onyx.plugin.core-async/writer-calls}
    {:lifecycle/task :no-op
-    :lifecycle/calls :onyx-benchmark.peer/throughput-calls}
-   {:lifecycle/task :no-op
-    :lifecycle/calls :onyx-benchmark.peer/no-op-calls}])
+    :lifecycle/calls :onyx-benchmark.peer/throughput-calls}])
 
 
 (def batch-timeout 100)
