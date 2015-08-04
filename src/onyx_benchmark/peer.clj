@@ -94,6 +94,7 @@
                      :onyx.messaging.aeron/poll-idle-strategy :high-restart-latency
                      :onyx.messaging.aeron/embedded-driver? false
                      :onyx.messaging.aeron/subscriber-count 2
+                     :onyx.messaging/allow-short-circuit? false
                      :onyx.peer/join-failure-back-off 500
                      :onyx.peer/job-scheduler :onyx.job-scheduler/greedy
                      :onyx.messaging/impl (keyword messaging)}
