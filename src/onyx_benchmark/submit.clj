@@ -45,7 +45,7 @@
        :onyx.messaging/peer-ports (vec (range 40000 40200))
        :onyx.peer/join-failure-back-off 500
        :onyx.peer/job-scheduler :onyx.job-scheduler/greedy
-       :onyx.messaging/impl :netty})
+       :onyx.messaging/impl :aeron})
 
     (def env-config
       (assoc peer-config 
@@ -62,7 +62,7 @@
       [{:onyx/name :in
         :onyx/plugin :onyx.plugin.bench-plugin/generator
         :onyx/type :input
-        :onyx/max-pending 50000
+        :onyx/max-pending 10000
         :onyx/medium :generator
         :onyx/batch-timeout batch-timeout
         :onyx/batch-size batch-size}
@@ -110,6 +110,6 @@
       {:catalog catalog 
        :workflow workflow
        :lifecycles lifecycles
-       ;:acker/percentage 60 
-       ;:acker/exempt-input-tasks? true
+       :acker/percentage 20 
+       :acker/exempt-input-tasks? true
        :task-scheduler :onyx.task-scheduler/balanced})))

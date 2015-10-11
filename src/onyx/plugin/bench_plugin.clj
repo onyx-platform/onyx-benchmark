@@ -2,7 +2,7 @@
   (:require [clojure.core.async :refer [chan >!! <!! close! alts!! timeout]]
             [onyx.peer.function :as function]
             [onyx.static.default-vals :refer [defaults]]
-            [onyx.types :refer  [->Leaf]]
+            [onyx.types :as t]
             [taoensso.timbre :refer [info warn trace fatal] :as timbre]
             [onyx.peer.pipeline-extensions :as p-ext]))
 
@@ -38,15 +38,15 @@
           segments (->> (flush-swap! retry 
                                      #(take max-segments %)
                                      #(subvec % (min max-segments (count %))))
-                        (map (fn [m] (->Leaf m (java.util.UUID/randomUUID) nil nil nil nil nil))))
+                        (map (fn [m] (t/input (java.util.UUID/randomUUID) 
+                                              m))))
           batch (loop [n (count segments) 
                        sgs segments]
                   (if (= n max-segments)
                     sgs
                     (recur (inc n)
-                           (conj sgs (->Leaf {:n n :data hundred-bytes}
-                                             (java.util.UUID/randomUUID) 
-                                             nil nil nil nil nil)))))]
+                           (conj sgs (t/input (java.util.UUID/randomUUID)
+                                              {:n n :data hundred-bytes})))))]
       (doseq [m batch] 
         (swap! pending-messages assoc (:id m) (:message m)))
       {:onyx.core/batch batch}))
@@ -54,18 +54,18 @@
   (seal-resource [this event])
 
   p-ext/PipelineInput
-  (ack-segment [_ _ message-id]
-    (swap! pending-messages dissoc message-id))
+  (ack-segment [_ _ segment-id]
+    (swap! pending-messages dissoc segment-id))
 
-  (retry-segment
-    [_ _ message-id]
-    (when-let [msg (get @pending-messages message-id)]
+  (retry-segment 
+    [_ _ segment-id]
+    (when-let [msg (get @pending-messages segment-id)]
       (swap! retry conj msg)
-      (swap! pending-messages dissoc message-id)))
+      (swap! pending-messages dissoc segment-id)))
 
   (pending?
-    [_ _ message-id]
-    (get @pending-messages message-id))
+    [_ _ segment-id]
+    (get @pending-messages segment-id))
 
   (drained?
     [_ _]
