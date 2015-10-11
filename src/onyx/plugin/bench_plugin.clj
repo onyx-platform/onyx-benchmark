@@ -24,7 +24,16 @@
 (def reader-calls
   {:lifecycle/before-task-start inject-reader})
 
-(defrecord BenchmarkInput [pending-messages retry max-pending batch-size]
+(defn new-segment-small [batch-index]
+  {:n batch-index :data hundred-bytes})
+
+(defn new-grouping-segment [batch-index]
+  {:id (java.util.UUID/randomUUID) 
+   :event-time (java.util.Date.)
+   :group-key (rand-int 10000)
+   :value (rand-int 500)})
+
+(defrecord BenchmarkInput [pending-messages retry max-pending batch-size new-segment-fn]
   p-ext/Pipeline
   (write-batch [this event]
     (function/write-batch event))
@@ -46,7 +55,7 @@
                     sgs
                     (recur (inc n)
                            (conj sgs (t/input (java.util.UUID/randomUUID)
-                                              {:n n :data hundred-bytes})))))]
+                                              (new-segment-fn n))))))]
       (doseq [m batch] 
         (swap! pending-messages assoc (:id m) (:message m)))
       {:onyx.core/batch batch}))
@@ -74,5 +83,12 @@
 (defn generator [pipeline-data]
   (let [task-map (:onyx.core/task-map pipeline-data)
         max-pending (or (:onyx/max-pending task-map) (:onyx/max-pending defaults))
-        batch-size (:onyx/batch-size task-map)]
-    (->BenchmarkInput (atom {}) (atom []) max-pending batch-size))) 
+        batch-size (:onyx/batch-size task-map)
+        _ (info "What "(:benchmark/segment-generator task-map))
+        segment-generator-fn (case (:benchmark/segment-generator task-map)
+                               :hundred-bytes new-segment-small
+                               :grouping-fn new-grouping-segment)
+        
+        _ (info "What2 "segment-generator-fn)
+        ]
+    (->BenchmarkInput (atom {}) (atom []) max-pending batch-size segment-generator-fn))) 

@@ -21,9 +21,9 @@
                  *unchecked-math* :warn-on-boxed}
   :java-source-paths ["src/java"]
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [interval-metrics "1.0.0"]
-                 [org.clojure/core.async "0.1.346.0-17112a-alpha"]
-                 [io.netty/netty-all "4.0.25.Final"]
-                 [org.onyxplatform/onyx "0.7.0-SNAPSHOT"]
-                 [riemann-clojure-client "0.3.2" :exclusions [io.netty/netty]]
-                 [cheshire "5.4.0"]])
+		 [interval-metrics "1.0.0"]
+		 [org.clojure/core.async "0.1.346.0-17112a-alpha"]
+		 [org.onyxplatform/onyx "0.8.0-SNAPSHOT"]
+		 [org.onyxplatform/onyx-metrics "0.7.10-SNAPSHOT"]
+		 [riemann-clojure-client "0.3.2" :exclusions [io.netty/netty]]
+		 [cheshire "5.4.0"]])

@@ -5,6 +5,8 @@
             [onyx.plugin.bench-plugin]
             [onyx.static.logging-configuration :as log-config]
             [onyx.plugin.core-async]
+	    [onyx.lifecycle.metrics.timbre]
+	    [onyx.lifecycle.metrics.metrics]
             [onyx.test-helper :refer [load-config]]
             [interval-metrics.core :as im]
             [onyx.api])
@@ -37,7 +39,8 @@
     :onyx/plugin :onyx.plugin.bench-plugin/generator
     :onyx/type :input
     :onyx/medium :generator
-    :onyx/max-pending 50000
+    :benchmark/segment-generator :hundred-bytes
+    :onyx/max-pending 10000
     :onyx/batch-timeout batch-timeout
     :onyx/batch-size batch-size}
 
@@ -143,24 +146,21 @@
     :lifecycle/calls :onyx.plugin.bench-plugin-test/in-calls}
    {:lifecycle/task :no-op
     :lifecycle/calls :onyx.plugin.core-async/writer-calls}
-   {:lifecycle/task :in
+
+   {:lifecycle/task :in ; or :task-name for an individual task
+    :lifecycle/calls :onyx.lifecycle.metrics.metrics/calls
+    :metrics/buffer-capacity 10000
+    :metrics/workflow-name "your-workflow-name"
+    :metrics/sender-fn :onyx.lifecycle.metrics.timbre/timbre-sender
+    :lifecycle/doc "Instruments a task's metrics to timbre"}
+   #_{:lifecycle/task :in
     :lifecycle/calls :onyx.plugin.bench-plugin-test/retry-calls}
-   {:lifecycle/task :in
+   #_{:lifecycle/task :all
     :lifecycle/calls :onyx.plugin.bench-plugin-test/throughput-calls}
-   {:lifecycle/task :in
+   #_{:lifecycle/task :in
     :lifecycle/calls :onyx.plugin.bench-plugin-test/latency-calls}
    {:lifecycle/task :in
-    :lifecycle/calls :onyx.plugin.bench-plugin/reader-calls}
-   {:lifecycle/task :inc1
-    :lifecycle/calls :onyx.plugin.bench-plugin-test/throughput-calls}
-   {:lifecycle/task :inc2
-    :lifecycle/calls :onyx.plugin.bench-plugin-test/throughput-calls}
-   {:lifecycle/task :inc3
-    :lifecycle/calls :onyx.plugin.bench-plugin-test/throughput-calls}
-   {:lifecycle/task :inc4
-    :lifecycle/calls :onyx.plugin.bench-plugin-test/throughput-calls}
-   {:lifecycle/task :no-op
-    :lifecycle/calls :onyx.plugin.bench-plugin-test/throughput-calls}])
+    :lifecycle/calls :onyx.plugin.bench-plugin/reader-calls}])
 
 (onyx.api/submit-job
   peer-config
