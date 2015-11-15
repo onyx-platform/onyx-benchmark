@@ -22,7 +22,7 @@
   :java-source-paths ["src/java"]
   :dependencies [[org.clojure/clojure "1.7.0"]
 		 [interval-metrics "1.0.0"]
-		 [org.onyxplatform/onyx "0.8.0-SNAPSHOT"]
+		 [org.onyxplatform/onyx "0.8.1-SNAPSHOT"]
 		 [org.onyxplatform/onyx-metrics "0.7.10-SNAPSHOT"]
 		 [riemann-clojure-client "0.3.2" :exclusions [io.netty/netty]]
 		 [cheshire "5.4.0"]])

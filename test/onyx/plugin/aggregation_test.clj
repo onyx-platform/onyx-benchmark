@@ -20,7 +20,16 @@
 (def config (load-config))
 
 (def env-config (assoc (:env-config config) :onyx/id id))
-(def peer-config (assoc (:peer-config config) :onyx/id id))
+(def peer-config (assoc (:peer-config config) :onyx/id id
+                        ;:onyx.peer/state-log-impl :none
+                        ;:onyx.peer/state-filter-impl :set
+                        ;:onyx.bookkeeper/port 3196
+                        ;:onyx.bookkeeper/local-quorum? false
+                        ;:onyx.bookkeeper/ledger-quorum-size 1
+                        ;:onyx.bookkeeper/ledger-ensemble-size 1
+
+
+                        ))
 
 (def env (onyx.api/start-env env-config))
 
@@ -43,8 +52,8 @@
     :benchmark/segment-generator :grouping-fn
     :onyx/medium :generator
     :onyx/max-pending 10000
-    :onyx/max-peers 2
-    :onyx/min-peers 2
+    :onyx/max-peers 1
+    :onyx/min-peers 1
     :onyx/batch-timeout batch-timeout
     :onyx/batch-size batch-size}
 
@@ -63,6 +72,7 @@
     :onyx/plugin :onyx.plugin.core-async/output
     :onyx/type :output
     :onyx/medium :core.async
+    :onyx/max-peers 1
     :onyx/batch-timeout batch-timeout
     :onyx/batch-size batch-size
     :onyx/doc "Drops messages on the floor"}])
@@ -74,7 +84,7 @@
 (def v-peers (onyx.api/start-peers 6 peer-group))
 
 (println "Started vpeers")
-(def bench-length 120000)
+(def bench-length 12000000)
 
 (Thread/sleep 10000)
 
@@ -113,7 +123,7 @@
                  :trigger/on :segment
                  :trigger/fire-all-extents? true
                  ;; Align threshhold with batch-size since we'll be restarting
-                 :trigger/threshold [500000 :elements]
+                 :trigger/threshold [5000 :elements]
                  :trigger/sync ::update-atom!}]]
 
 

@@ -41,6 +41,7 @@
     :onyx/medium :generator
     :benchmark/segment-generator :hundred-bytes
     :onyx/max-pending 10000
+    :onyx/max-peers 1
     :onyx/batch-timeout batch-timeout
     :onyx/batch-size batch-size}
 
@@ -71,6 +72,7 @@
    {:onyx/name :no-op
     :onyx/plugin :onyx.plugin.core-async/output
     :onyx/type :output
+    :onyx/max-peers 1
     :onyx/medium :core.async
     :onyx/batch-timeout batch-timeout
     :onyx/batch-size batch-size

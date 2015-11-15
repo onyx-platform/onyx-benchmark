@@ -10,3 +10,5 @@ pom.xml.asc
 onyx.log*
 *~
 inputs.json
+hs_err*
+*.jfr
