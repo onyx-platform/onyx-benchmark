@@ -15,13 +15,13 @@
     :lifecycle/calls :onyx-benchmark.peer/no-op-calls}
    {:lifecycle/task :no-op
     :lifecycle/calls :onyx.plugin.core-async/writer-calls}
-   {:lifecycle/task :all ; or :task-name for an individual task
+   #_{:lifecycle/task :all ; or :task-name for an individual task
     :lifecycle/calls :onyx.lifecycle.metrics.metrics/calls
     :metrics/buffer-capacity 10000
     :metrics/workflow-name "your-workflow-name"
     :metrics/sender-fn :onyx.lifecycle.metrics.timbre/timbre-sender
     :lifecycle/doc "Instruments a task's metrics to timbre"}
-   #_{:lifecycle/task :all
+   {:lifecycle/task :all
     :lifecycle/calls :onyx.lifecycle.metrics.metrics/calls
     :metrics/buffer-capacity 10000
     :metrics/workflow-name "bench-workflow"
@@ -96,5 +96,5 @@
                           :acker/percentage 20 
                           :acker/exempt-input-tasks? true
                           :task-scheduler :onyx.task-scheduler/balanced})
-    (<!! (chan))
-    ))
+    (println "Job successfully submitted")
+    (<!! (chan))))
