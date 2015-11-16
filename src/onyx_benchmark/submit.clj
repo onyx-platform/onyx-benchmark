@@ -30,8 +30,6 @@
     :riemann/port riemann-port
     :lifecycle/doc "Instruments a task's metrics and sends via riemann"}])
 
-;; FIXME REMEMBER RIEMANN IN SUBMITSUBMITSUMBIT
-
 (defn -main [zk-addr riemann-addr riemann-port id batch-size & args]
   (let [batch-size (Integer/parseInt batch-size)
         peer-config {:zookeeper/address zk-addr
@@ -77,10 +75,11 @@
 
                  {:onyx/name :no-op
                   :onyx/plugin :onyx.plugin.core-async/output
+                  :onyx/batch-size 1000
                   :onyx/max-peers 1
                   :onyx/type :output
                   :onyx/medium :core.async
-                  :onyx/batch-size batch-size
+                  ;:onyx/batch-size batch-size
                   :onyx/doc "Drops messages on the floor"}]
         workflow [[:in :inc1] 
                   [:inc1 :inc2] 
