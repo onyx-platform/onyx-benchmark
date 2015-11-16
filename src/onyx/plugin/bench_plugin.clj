@@ -84,11 +84,7 @@
   (let [task-map (:onyx.core/task-map pipeline-data)
         max-pending (or (:onyx/max-pending task-map) (:onyx/max-pending defaults))
         batch-size (:onyx/batch-size task-map)
-        _ (info "What "(:benchmark/segment-generator task-map))
         segment-generator-fn (case (:benchmark/segment-generator task-map)
                                :hundred-bytes new-segment-small
-                               :grouping-fn new-grouping-segment)
-        
-        _ (info "What2 "segment-generator-fn)
-        ]
+                               :grouping-fn new-grouping-segment)]
     (->BenchmarkInput (atom {}) (atom []) max-pending batch-size segment-generator-fn))) 

@@ -34,11 +34,10 @@ lein install
 cd /onyx-benchmark
 
 ZOOKEEPER_ADDR=$(cat /home/ubuntu/zookeeper.txt)
-RIEMANN_ADDR=$(cat /home/ubuntu/metrics.txt)
 
 ./tune-os.sh linux
 
-echo "lein run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $RIEMANN_ADDR $DEPLOYMENT_ID $VPEERS $MESSAGING"
+echo "lein run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $DEPLOYMENT_ID $VPEERS $MESSAGING"
 
 export TIMBRE_LOG_LEVEL=$LOG_LEVEL
 
@@ -48,4 +47,4 @@ lein run -m onyx-benchmark.aeron-media-driver &
 
 #java -Xmx7g -server -Xbootclasspath/a:/home/ubuntu/.lein/self-installs/leiningen-2.5.1-standalone.jar -Dfile.encoding=UTF-8 -Dmaven.wagon.http.ssl.easy=false -Dmaven.wagon.rto=10000 -Dleiningen.original.pwd=/onyx-benchmark -Dleiningen.script=/usr/local/bin/lein -classpath /home/ubuntu/.lein/self-installs/leiningen-2.5.1-standalone.jar clojure.main -m leiningen.core.main run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $RIEMANN_ADDR $DEPLOYMENT_ID $VPEERS $MESSAGING &
 
-lein run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $RIEMANN_ADDR $DEPLOYMENT_ID $VPEERS $MESSAGING &
+lein run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $DEPLOYMENT_ID $VPEERS $MESSAGING &

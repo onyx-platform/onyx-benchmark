@@ -9,8 +9,9 @@
                         "-Daeron.socket.so_rcvbuf=2097152" 
                         "-Daeron.rcv.buffer.length=16384" 
                         "-Daeron.rcv.initial.window.length=2097152" 
-                        "-Dagrona.disable.bounds.checks=true"
-                        ;"-XX:+UnlockCommercialFeatures" "-XX:+FlightRecorder" "-XX:StartFlightRecording=duration=240s,filename=myrecording.jfr" "-XX:+UnlockDiagnosticVMOptions" 
+
+                        "-XX:+UnlockCommercialFeatures" "-XX:+FlightRecorder" "-XX:StartFlightRecording=duration=1080s,filename=myrecording.jfr" "-XX:+UnlockDiagnosticVMOptions" 
+                        ;"-Dagrona.disable.bounds.checks=true"
                         ; "-XX:+TraceClassLoading" "-XX:+LogCompilation" "-XX:+PrintAssembly"
                         ]
 
@@ -21,8 +22,8 @@
                  *unchecked-math* :warn-on-boxed}
   :java-source-paths ["src/java"]
   :dependencies [[org.clojure/clojure "1.7.0"]
-		 [interval-metrics "1.0.0"]
 		 [org.onyxplatform/onyx "0.8.1-SNAPSHOT"]
-		 [org.onyxplatform/onyx-metrics "0.7.10-SNAPSHOT"]
+		 [org.onyxplatform/onyx-metrics "0.8.0.3"]
+                 ;; TODO, bump to 0.4.1
 		 [riemann-clojure-client "0.3.2" :exclusions [io.netty/netty]]
 		 [cheshire "5.4.0"]])

@@ -34,7 +34,7 @@ echo $DEPLOYMENT_ID
 
 #nc -z $ZOOKEEPER 2181
 
-lein run -m onyx-benchmark.submit $ZOOKEEPER_ADDR $DEPLOYMENT_ID 20
+lein run -m onyx-benchmark.submit $ZOOKEEPER_ADDR $RIEMANN_ADDR $RIEMANN_PORT $DEPLOYMENT_ID 20
 
 # if [ $? -eq 0 ]; then
 # 	lein run -m onyx-benchmark.submit $ZOOKEEPER $DEPLOYMENT_ID 20

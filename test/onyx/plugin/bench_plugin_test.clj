@@ -41,7 +41,6 @@
     :onyx/medium :generator
     :benchmark/segment-generator :hundred-bytes
     :onyx/max-pending 10000
-    :onyx/max-peers 1
     :onyx/batch-timeout batch-timeout
     :onyx/batch-size batch-size}
 
@@ -90,54 +89,7 @@
 (println "Started vpeers")
 (def bench-length 120000)
 
-(def messages-tracking (atom {}))
-(def rate+latency (im/rate+latency {:rate-unit :nanoseconds 
-                                    :latency-unit :nanoseconds}))
-(def retry-counter 
-  (atom (long 0)))
-
-(def total-segments (atom 0))
-
 (Thread/sleep 10000)
-
-(def retry-calls
-  {:lifecycle/before-task-start (fn inject-counter-before-task [event lifecycle]
-                                  {:generator/rate-fut (future
-                                                         (while (not (Thread/interrupted))
-                                                           (Thread/sleep 10000)
-                                                           (.println (System/out) (str (:onyx.core/id event) " RETRY COUNTER: " @retry-counter))))})
-   :lifecycle/after-retry-segment (fn retry-count-inc [event message-id rets lifecycle]
-                                    (swap! retry-counter (fn [v] (inc ^long v))))})
-
-(def latency-calls 
-  {:lifecycle/after-ack-segment (fn latency-after-ack [event message-id rets lifecycle]
-                                  (when-let [v (@messages-tracking message-id)] 
-                                    (im/update! rate+latency (- ^long (System/nanoTime) ^long v))
-                                    (swap! messages-tracking dissoc message-id)))
-   :lifecycle/before-task-start (fn [event lifecycle]
-                                  {:latency-printer-fut 
-                                   (future 
-                                     (while (not (Thread/interrupted))
-                                       (Thread/sleep 10000)
-                                       (.println (System/out) (str (:onyx.core/id event) " LATENCY: " (im/snapshot! rate+latency)))))})
-   :lifecycle/after-batch (fn after-batch [event lifecycle]
-                            (doseq [m (:onyx.core/batch event)] 
-                              (swap! messages-tracking assoc (:id m) (System/nanoTime)))
-                            {})})
-
-(def throughput-calls
-  {:lifecycle/before-task-start (fn inject-counter-before-task [event lifecycle]
-                                  (let [rate (im/rate)] 
-                                    {:generator/rate rate
-                                     :generator/rate-fut (future
-                                                           (while (not (Thread/interrupted))
-                                                             (Thread/sleep 1000)
-                                                             (.println (System/out) (str (:onyx.core/id event) " RATE: " (im/snapshot! rate)))))}))
-   :lifecycle/after-batch (fn after-batch [event lifecycle]
-                            (let [cnt (count (:onyx.core/batch event))] 
-                              (swap! total-segments + cnt)
-                              (im/update! (:generator/rate event) cnt))
-                            {})})
 
 (def in-calls 
   {:lifecycle/before-task-start (fn inject-no-op-ch [event lifecycle]
@@ -154,15 +106,7 @@
     :metrics/buffer-capacity 10000
     :metrics/workflow-name "your-workflow-name"
     :metrics/sender-fn :onyx.lifecycle.metrics.timbre/timbre-sender
-    :lifecycle/doc "Instruments a task's metrics to timbre"}
-   #_{:lifecycle/task :in
-    :lifecycle/calls :onyx.plugin.bench-plugin-test/retry-calls}
-   #_{:lifecycle/task :all
-    :lifecycle/calls :onyx.plugin.bench-plugin-test/throughput-calls}
-   #_{:lifecycle/task :in
-    :lifecycle/calls :onyx.plugin.bench-plugin-test/latency-calls}
-   {:lifecycle/task :in
-    :lifecycle/calls :onyx.plugin.bench-plugin/reader-calls}])
+    :lifecycle/doc "Instruments a task's metrics to timbre"}])
 
 (onyx.api/submit-job
   peer-config
@@ -171,9 +115,7 @@
    :lifecycles lifecycles
    :task-scheduler :onyx.task-scheduler/balanced})
 
-(reset! total-segments 0)
 (Thread/sleep bench-length)
-(println "AVERAGE THROUGHPUT: " (float (* 1000 (/ @total-segments bench-length))))
 
 (doseq [v-peer v-peers]
   (onyx.api/shutdown-peer v-peer))
