@@ -9,9 +9,9 @@
                         "-Daeron.socket.so_rcvbuf=2097152" 
                         "-Daeron.rcv.buffer.length=16384" 
                         "-Daeron.rcv.initial.window.length=2097152" 
+                        "-Dagrona.disable.bounds.checks=true"
 
                         "-XX:+UnlockCommercialFeatures" "-XX:+FlightRecorder" "-XX:StartFlightRecording=duration=1080s,filename=myrecording.jfr" "-XX:+UnlockDiagnosticVMOptions" 
-                        ;"-Dagrona.disable.bounds.checks=true"
                         ; "-XX:+TraceClassLoading" "-XX:+LogCompilation" "-XX:+PrintAssembly"
                         ]
 
