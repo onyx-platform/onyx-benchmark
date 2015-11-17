@@ -2,7 +2,7 @@
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :java-opts ^:replace ["-server" 
-                        "-Xmx12g"
+                        "-Xmx20g"
                         "-XX:BiasedLockingStartupDelay=0" 
                         "-Daeron.mtu.length=16384" 
                         "-Daeron.socket.so_sndbuf=2097152" 
@@ -23,7 +23,7 @@
   :java-source-paths ["src/java"]
   :dependencies [[org.clojure/clojure "1.7.0"]
 		 [org.onyxplatform/onyx "0.8.1-SNAPSHOT"]
-		 [org.onyxplatform/onyx-metrics "0.8.0.4-20151116.133404-4"]
+		 [org.onyxplatform/onyx-metrics "0.8.0.4-20151117.094749-5"]
                  ;; TODO, bump to 0.4.1
 		 [riemann-clojure-client "0.3.2" :exclusions [io.netty/netty]]
 		 [cheshire "5.4.0"]])

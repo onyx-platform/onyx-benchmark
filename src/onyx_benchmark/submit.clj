@@ -75,11 +75,9 @@
 
                  {:onyx/name :no-op
                   :onyx/plugin :onyx.plugin.core-async/output
-                  :onyx/batch-size 1000
-                  :onyx/max-peers 1
+                  :onyx/batch-size batch-size
                   :onyx/type :output
                   :onyx/medium :core.async
-                  ;:onyx/batch-size batch-size
                   :onyx/doc "Drops messages on the floor"}]
         workflow [[:in :inc1] 
                   [:inc1 :inc2] 
