@@ -11,7 +11,9 @@
                         "-Daeron.rcv.initial.window.length=2097152" 
                         "-Dagrona.disable.bounds.checks=true"
 
-                        "-XX:+UnlockCommercialFeatures" "-XX:+FlightRecorder" "-XX:StartFlightRecording=duration=1080s,filename=myrecording.jfr" "-XX:+UnlockDiagnosticVMOptions" 
+                        "-XX:+UnlockCommercialFeatures" "-XX:+FlightRecorder" 
+                        "-XX:+UnlockDiagnosticVMOptions" 
+                        ;"-XX:StartFlightRecording=duration=1080s,filename=myrecording.jfr" 
                         ; "-XX:+TraceClassLoading" "-XX:+LogCompilation" "-XX:+PrintAssembly"
                         ]
 
@@ -25,5 +27,5 @@
 		 [org.onyxplatform/onyx "0.8.1-SNAPSHOT"]
 		 [org.onyxplatform/onyx-metrics "0.8.0.4-20151117.104014-7"]
                  ;; TODO, bump to 0.4.1
-		 [riemann-clojure-client "0.3.2" :exclusions [io.netty/netty]]
+		 [riemann-clojure-client "0.4.1" :exclusions [io.netty/netty]]
 		 [cheshire "5.4.0"]])
