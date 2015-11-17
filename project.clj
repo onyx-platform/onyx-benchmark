@@ -23,7 +23,7 @@
   :java-source-paths ["src/java"]
   :dependencies [[org.clojure/clojure "1.7.0"]
 		 [org.onyxplatform/onyx "0.8.1-SNAPSHOT"]
-		 [org.onyxplatform/onyx-metrics "0.8.0.3"]
+		 [org.onyxplatform/onyx-metrics "0.8.0.4-20151117.104014-7"]
                  ;; TODO, bump to 0.4.1
 		 [riemann-clojure-client "0.3.2" :exclusions [io.netty/netty]]
 		 [cheshire "5.4.0"]])
