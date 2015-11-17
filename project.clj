@@ -27,5 +27,5 @@
 		 [org.onyxplatform/onyx "0.8.1-SNAPSHOT"]
 		 [org.onyxplatform/onyx-metrics "0.8.0.4-20151117.104014-7"]
                  ;; TODO, bump to 0.4.1
-		 [riemann-clojure-client "0.4.1" :exclusions [io.netty/netty]]
+		 [riemann-clojure-client "0.4.1"]
 		 [cheshire "5.4.0"]])
