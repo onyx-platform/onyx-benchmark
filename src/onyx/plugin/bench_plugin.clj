@@ -3,6 +3,7 @@
             [onyx.peer.function :as function]
             [onyx.static.default-vals :refer [defaults]]
             [onyx.types :as t]
+            [clj-uuid :as uuid]
             [taoensso.timbre :refer [info warn trace fatal] :as timbre]
             [onyx.peer.pipeline-extensions :as p-ext]))
 
@@ -28,7 +29,7 @@
   {:n batch-index :data hundred-bytes})
 
 (defn new-grouping-segment [batch-index]
-  {:id (java.util.UUID/randomUUID) 
+  {:id (uuid/v1)
    :event-time (java.util.Date.)
    :group-key (rand-int 10000)
    :value (rand-int 500)})
@@ -47,15 +48,13 @@
           segments (->> (flush-swap! retry 
                                      #(take max-segments %)
                                      #(subvec % (min max-segments (count %))))
-                        (map (fn [m] (t/input (java.util.UUID/randomUUID) 
-                                              m))))
+                        (map (fn [m] (t/input (uuid/v1) m))))
           batch (loop [n (count segments) 
                        sgs segments]
                   (if (= n max-segments)
                     sgs
                     (recur (inc n)
-                           (conj sgs (t/input (java.util.UUID/randomUUID)
-                                              (new-segment-fn n))))))]
+                           (conj sgs (t/input (uuid/v1) (new-segment-fn n))))))]
       (doseq [m batch] 
         (swap! pending-messages assoc (:id m) (:message m)))
       {:onyx.core/batch batch}))

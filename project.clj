@@ -27,4 +27,5 @@
 		 [org.onyxplatform/onyx "0.8.1-SNAPSHOT"]
 		 [org.onyxplatform/onyx-metrics "0.8.0.4-20151117.104014-7"]
 		 [riemann-clojure-client "0.4.1"]
+                 [danlentz/clj-uuid "0.1.6"]
 		 [cheshire "5.4.0"]])
