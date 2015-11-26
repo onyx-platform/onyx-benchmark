@@ -30,7 +30,7 @@
                      :onyx.messaging.aeron/offer-idle-strategy :low-restart-latency
                      :onyx.messaging.aeron/poll-idle-strategy :low-restart-latency
                      :onyx.messaging.aeron/embedded-driver? false
-                     :onyx.messaging.aeron/subscriber-count 2
+                     :onyx.messaging.aeron/subscriber-count 4
                      ;; more accurate benching locally
                      :onyx.messaging/allow-short-circuit? (if local? false true)
                      :onyx.peer/join-failure-back-off 500
