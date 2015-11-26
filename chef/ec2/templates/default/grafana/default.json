@@ -69,8 +69,11 @@
           },
           "targets": [
             {
-              "target": "*.onyx-throughput",
+              "target": "sumSeries(*.*.1s_throughput, *)",
               "hide": false
+            },
+            {
+              "target": "*.*.max_complete_latency"
             }
           ],
           "aliasColors": {},
@@ -132,7 +135,7 @@
           },
           "targets": [
             {
-              "target": "*.onyx-retry"
+              "target": "*.*.1s_retry-segment-rate"
             }
           ],
           "aliasColors": {},
