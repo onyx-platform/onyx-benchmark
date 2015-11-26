@@ -27,10 +27,10 @@
                                                  (slurp "http://169.254.169.254/latest/meta-data/local-ipv4")) 
                      :onyx.messaging/peer-port 40000
                      :onyx.messaging.aeron/write-buffer-size 200000
-                     :onyx.messaging.aeron/offer-idle-strategy :high-restart-latency
-                     :onyx.messaging.aeron/poll-idle-strategy :high-restart-latency
+                     :onyx.messaging.aeron/offer-idle-strategy :low-restart-latency
+                     :onyx.messaging.aeron/poll-idle-strategy :low-restart-latency
                      :onyx.messaging.aeron/embedded-driver? false
-                     :onyx.messaging.aeron/subscriber-count 4
+                     :onyx.messaging.aeron/subscriber-count 2
                      ;; more accurate benching locally
                      :onyx.messaging/allow-short-circuit? (if local? false true)
                      :onyx.peer/join-failure-back-off 500
