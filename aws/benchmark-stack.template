@@ -423,6 +423,12 @@
 					"CidrIp" : "10.0.0.0/16"
 
 				},
+                                {
+					"IpProtocol" : "tcp",
+					"FromPort" : "3196",
+					"ToPort" : "3196",
+					"CidrIp" : "10.0.0.0/16"
+				},
 				{
 					"IpProtocol" : "tcp",
 					"FromPort" : "40000",
