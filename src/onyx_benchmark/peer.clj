@@ -18,8 +18,18 @@
 (defn my-inc [{:keys [n] :as segment}]
   (assoc segment :n (inc n)))
 
+(defn restartable? [e] 
+  true)
+
 (defn -main [zk-addr id n-peers messaging & args]
   (let [local? (= zk-addr "127.0.0.1:2189")
+
+        env-config {:onyx.bookkeeper/server? true
+                    :onyx/id id
+                    :zookeeper/address zk-addr
+                    :onyx.bookkeeper/local-quorum? local?
+                    :zookeeper/server? false}
+
         peer-config {:zookeeper/address zk-addr
                      :onyx/id id
                      :onyx.messaging/bind-addr (if local? 
@@ -30,7 +40,7 @@
                      :onyx.messaging.aeron/offer-idle-strategy :low-restart-latency
                      :onyx.messaging.aeron/poll-idle-strategy :low-restart-latency
                      :onyx.messaging.aeron/embedded-driver? false
-                     :onyx.messaging.aeron/subscriber-count 4
+                     :onyx.messaging.aeron/subscriber-count 2
                      ;; more accurate benching locally
                      :onyx.messaging/allow-short-circuit? (if local? false true)
                      :onyx.peer/join-failure-back-off 500
@@ -38,5 +48,6 @@
                      :onyx.messaging/impl (keyword messaging)}
         n-peers-parsed (Integer/parseInt n-peers)
         peer-group (onyx.api/start-peer-group peer-config)
+        env (onyx.api/start-env env-config)
         peers (onyx.api/start-peers n-peers-parsed peer-group)]
     (<!! (chan))))
