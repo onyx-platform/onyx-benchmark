@@ -1,4 +1,26 @@
 ---
+- name: Install Git
+  package:
+    name: git
+
+- name: Install add-apt-repostory
+  apt: name=software-properties-common state=latest
+
+- name: Add Oracle Java Repository
+  apt_repository: repo='ppa:webupd8team/java'
+
+- name: Accept Java 8 Licence
+  shell: echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | tee /etc/oracle-java-8-licence-acceptance | /usr/bin/debconf-set-selections
+  args:
+    creates: /etc/oracle-java-8-licence-acceptance
+
+- name: Install Oracle Java 8
+  apt: name={{item}} state=latest
+  with_items:
+    - oracle-java8-installer
+    - ca-certificates
+    - oracle-java8-set-default
+
 - name: Create the directory for Onyx-related repos
   file:
     path: /srv/onyx-repos
@@ -11,13 +33,15 @@
 - name: Clone Onyx core
   git:
     repo: https://github.com/onyx-platform/onyx.git
-    dest: /srv/onyx-repos
+    dest: /srv/onyx-repos/onyx
+    force: yes
     version: "{{ onyx_core_version }}"
 
 - name: Clone Onyx benchmark
   git:
     repo: https://github.com/onyx-platform/onyx-benchmark.git
-    dest: /srv/onyx-repos
+    dest: /srv/onyx-repos/onyx-benchmark
+    force: yes
     version: "{{ onyx_benchmark_version }}"
 
 - name: Ensure that Lein directory exists
@@ -40,7 +64,6 @@
     dest: /usr/bin/lein
     src: "/srv/leiningen-{{ lein_version }}/lein"
     state: link
-  sudo: yes
 
 - name: Install core version to local Maven repository
   shell: cd /srv/onyx-repos/onyx && lein install

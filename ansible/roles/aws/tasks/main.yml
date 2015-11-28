@@ -3,3 +3,4 @@
 - include: vpc.yml
 - include: metrics_ec2.yml
 - include: zookeeper_ec2.yml
+- include: onyx_peers_ec2.yml
