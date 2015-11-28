@@ -38,7 +38,7 @@ ZOOKEEPER_ADDR=$(cat /home/ubuntu/zookeeper.txt)
 
 ./tune-os.sh linux
 
-echo "lein run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $DEPLOYMENT_ID $VPEERS $MESSAGING"
+echo "lein run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $DEPLOYMENT_ID $VPEERS $MESSAGING" > args_run.txt
 
 export TIMBRE_LOG_LEVEL=$LOG_LEVEL
 
