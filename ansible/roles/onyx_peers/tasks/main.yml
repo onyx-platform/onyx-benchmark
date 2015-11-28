@@ -3,10 +3,6 @@
   package:
     name: git
 
-- name: Install Daemon
-  package:
-    name: daemon
-
 - name: Install add-apt-repostory
   apt: name=software-properties-common state=latest
 
@@ -76,4 +72,6 @@
     chdir: /srv/onyx-repos/onyx
 
 - name: Run the Aeron Media Driver
-  shell: daemon --name aeron-media-driver -- lein run -m onyx-benchmark.aeron-media-driver
+  shell: nohup lein run -m onyx-benchmark.aeron-media-driver &
+  become_user: "{{ remote_user }}"
+
