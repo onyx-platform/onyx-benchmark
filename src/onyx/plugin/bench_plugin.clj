@@ -48,7 +48,7 @@
     (let [_ (while (< (- max-pending 
                          (count @pending-messages)) 
                       batch-size)
-              (Thread/sleep 100))
+              (Thread/sleep 1))
           max-segments batch-size
           segments (->> (flush-swap! retry 
                                      #(take max-segments %)
