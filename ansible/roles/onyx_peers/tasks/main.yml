@@ -3,6 +3,10 @@
   package:
     name: git
 
+- name: Install Daemon
+  package:
+    name: daemon
+
 - name: Install add-apt-repostory
   apt: name=software-properties-common state=latest
 
@@ -71,7 +75,15 @@
   args:
     chdir: /srv/onyx-repos/onyx
 
+- name: Kill the Daemon processes
+  shell: killall -2 daemon
+
+- name: Export log level
+  shell: "export TIMBRE_LOG_LEVEL={{ onyx_log_level }}"
+
 - name: Run the Aeron Media Driver
-  shell: nohup lein run -m onyx-benchmark.aeron-media-driver &
+  shell: daemon -D /srv/onyx-repos/onyx-benchmark --name aeron-media-driver -- lein run -m onyx-benchmark.aeron-media-driver
   become_user: "{{ remote_user }}"
 
+- name: Run the Onyx Peers
+  shell: "daemon -D /srv/onyx-repos/onyx-benchmark --name onyx-peers -- onyx-benchmark.peer {{ groups.zookeeper | join(',') }} {{ onyx_deployment_id }} {{ onyx_n_virtual_peers }} {{ onyx_subscriber_count }} aeron"

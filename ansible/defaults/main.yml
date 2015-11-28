@@ -23,4 +23,9 @@ n_onyx_peer_machines: 1
 onyx_core_version: 0.8.0
 onyx_benchmark_version: b59c9c8a02d396fa760e730356708a2aece56fab
 
+onyx_n_virtual_peers: 4
+onyx_log_level: warn
+onyx_subscriber_count: 2
+onyx_deployment_id: onyx-benchmark
+
 lein_version: 2.5.2
