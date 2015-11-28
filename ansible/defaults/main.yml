@@ -1,0 +1,26 @@
+---
+aws_region: us-east-1
+aws_subnet_az: us-east-1b
+
+metrics_ec2_image_id: ami-9a562df2
+metrics_ec2_instance_type: c4.large
+metrics_spot_price: 0.05
+metrics_spot_type: one-time
+
+zookeeper_ec2_image_id: ami-9a562df2
+zookeeper_ec2_instance_type: c4.large
+zookeeper_spot_price: 0.05
+zookeeper_spot_type: one-time
+
+onyx_peer_ec2_image_id: ami-9a562df2
+onyx_peer_ec2_instance_type: c4.large
+onyx_peer_spot_price: 0.05
+onyx_peer_spot_type: one-time
+
+n_zookeeper_machines: 1
+n_onyx_peer_machines: 1
+
+onyx_core_version: HEAD
+onyx_benchmark_version: HEAD
+
+lein_version: 2.5.2

@@ -1,0 +1,49 @@
+- name: Create the VPC
+  ec2_vpc:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    state: present
+    cidr_block: 172.0.0.0/16
+    resource_tags: { "Name": "[{{ onyx_cluster_id }}] Onyx VPC", "Environment": "Onyx", "ClusterId": "{{ onyx_cluster_id }}"}
+    subnets:
+      - cidr: 172.0.1.0/24
+        az: "{{ aws_subnet_az }}"
+        resource_tags: { "Name": "[{{ onyx_cluster_id }}] Onyx Subnet", "Environment": "Onyx" }
+    internet_gateway: True
+    route_tables:
+      - subnets:
+          - 172.0.1.0/24
+        routes:
+          - dest: 0.0.0.0/0
+            gw: igw
+    region: "{{ aws_region }}"
+    wait: yes
+  register: vpc
+
+- name: Bind VPC subnet ID
+  set_fact:
+    vpc_subnet_id: "{{ vpc.subnets[0].id }}"
+
+- name: Create the public subnet security group
+  ec2_group:
+    name: "[{{ onyx_cluster_id }}] Onyx Public Subnet Security Group"
+    description: "Base Security group for Onyx"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    vpc_id: "{{ vpc.vpc_id }}"
+    region: "{{ aws_region }}"
+    purge_rules: yes
+    purge_rules_egress: yes
+    rules:
+      - proto: icmp
+        from_port: -1
+        to_port: -1
+        cidr_ip: "0.0.0.0/0"
+      - proto: tcp
+        from_port: 1
+        to_port: 65535
+        cidr_ip: "0.0.0.0/0"
+      - proto: udp
+        from_port: 1
+        to_port: 65535
+        cidr_ip: "0.0.0.0/0"

@@ -1,0 +1,18 @@
+---
+- name: Add Metrics hosts to inventory
+  add_host:
+    name: "{{ item }}"
+    groups: metrics
+  with_items: "{{ ('[' ~ onyx_cluster_id ~ '] metrics') | aws_nodes('onyx-metrics', aws_region, aws_access_key, aws_secret_key) }}"
+
+- name: Add ZooKeeper hosts to inventory
+  add_host:
+    name: "{{ item }}"
+    groups: zookeeper
+  with_items: "{{ ('[' ~ onyx_cluster_id ~ '] zookeeper') | aws_nodes('onyx-zookeeper', aws_region, aws_access_key, aws_secret_key) }}"
+
+- name: Add Onyx Peer hosts to inventory
+  add_host:
+    name: "{{ item }}"
+    groups: peer
+  with_items: "{{ ('[' ~ onyx_cluster_id ~ '] peer') | aws_nodes('onyx-peer', aws_region, aws_access_key, aws_secret_key) }}"

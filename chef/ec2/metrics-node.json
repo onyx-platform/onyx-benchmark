@@ -1,6 +1,0 @@
-{
-  "temp_dir":"/tmp",
-  "run_list": [
-      "recipe[onyx-benchmark::metrics]"
-  ]
-}

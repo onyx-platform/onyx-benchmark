@@ -1,0 +1,40 @@
+---
+- name: Launch the Metrics instance
+  register: metrics_ec2
+  ec2:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    assign_public_ip: yes
+    group: "[{{ onyx_cluster_id }}] Onyx Public Subnet Security Group"
+    zone: "{{ aws_subnet_az }}"
+    region: "{{ aws_region }}"
+    key_name: "{{ aws_key_name }}"
+    image: "{{ metrics_ec2_image_id }}"
+    instance_type: "{{ metrics_ec2_instance_type }}"
+    instance_tags:
+      Name: "[{{ onyx_cluster_id }}] metrics"
+      Role: onyx-metrics
+    vpc_subnet_id: "{{ vpc_subnet_id }}"
+    spot_price: "{{ metrics_spot_price }}"
+    spot_type: "{{ metrics_spot_type }}"
+    exact_count: 1
+    count_tag:
+      Name: "[{{ onyx_cluster_id }}] metrics"
+      Role: onyx-metrics
+    wait: yes
+    wait_timeout: 300
+
+- name: Wait for SSH on new Metrics machines
+  wait_for:
+    host: "{{ item.public_dns_name }}"
+    port: 22
+    delay: 60
+    timeout: 320
+    state: started
+  with_items: "{{ metrics_ec2.instances | rejectattr('state', 'equalto', 'terminated') | list }}"
+
+- name: Add public Metrics host to inventory
+  add_host:
+    name: "{{ item.public_dns_name }}"
+    groups: metrics
+  with_items: metrics_ec2.instances

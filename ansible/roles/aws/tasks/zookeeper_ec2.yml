@@ -1,0 +1,40 @@
+---
+- name: Launch the ZooKeeper instance
+  register: zookeeper_ec2
+  ec2:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    assign_public_ip: yes
+    group: "[{{ onyx_cluster_id }}] Onyx Public Subnet Security Group"
+    zone: "{{ aws_subnet_az }}"
+    region: "{{ aws_region }}"
+    key_name: "{{ aws_key_name }}"
+    image: "{{ zookeeper_ec2_image_id }}"
+    instance_type: "{{ zookeeper_ec2_instance_type }}"
+    instance_tags:
+      Name: "[{{ onyx_cluster_id }}] zookeeper"
+      Role: onyx-zookeeper
+    spot_price: "{{ zookeeper_spot_price }}"
+    spot_type: "{{ zookeeper_spot_type }}"
+    exact_count: "{{ n_zookeeper_machines }}"
+    count_tag:
+      Name: "[{{ onyx_cluster_id }}] zookeeper"
+      Role: onyx-zookeeper
+    vpc_subnet_id: "{{ vpc_subnet_id }}"
+    wait: yes
+    wait_timeout: 300
+
+- name: Wait for SSH on new ZooKeeper machines
+  wait_for:
+    host: "{{ item.public_dns_name }}"
+    port: 22
+    delay: 60
+    timeout: 320
+    state: started
+  with_items: "{{ zookeeper_ec2.instances | rejectattr('state', 'equalto', 'terminated') | list }}"
+
+- name: Add public ZooKeeper host to inventory
+  add_host:
+    name: "{{ item.public_dns_name }}"
+    groups: zookeeper
+  with_items: zookeeper_ec2.instances

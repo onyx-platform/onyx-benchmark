@@ -1,0 +1,46 @@
+---
+- name: Create the directory for Onyx-related repos
+  file:
+    path: /srv/onyx-repos
+    state: directory
+    mode: 0755
+    owner: "{{ remote_user }}"
+    group: "{{ remote_user }}"
+    recurse: yes
+
+- name: Clone Onyx core
+  git:
+    repo: https://github.com/onyx-platform/onyx.git
+    dest: /srv/onyx-repos
+    version: "{{ onyx_core_version }}"
+
+- name: Clone Onyx benchmark
+  git:
+    repo: https://github.com/onyx-platform/onyx-benchmark.git
+    dest: /srv/onyx-repos
+    version: "{{ onyx_benchmark_version }}"
+
+- name: Ensure that Lein directory exists
+  file:
+    path: "/srv/leiningen-{{ lein_version }}"
+    state: directory
+    mode: 0755
+    owner: "{{ remote_user }}"
+    group: "{{ remote_user }}"
+    recurse: yes
+
+- name: Download Leiningen
+  get_url:
+    url: "https://raw.github.com/technomancy/leiningen/{{ lein_version }}/bin/lein"
+    dest: "/srv/leiningen-{{ lein_version }}/lein"
+    mode: 0755
+
+- name: Link lein into user binaries
+  file:
+    dest: /usr/bin/lein
+    src: "/srv/leiningen-{{ lein_version }}/lein"
+    state: link
+  sudo: yes
+
+- name: Install core version to local Maven repository
+  shell: cd /srv/onyx-repos/onyx && lein install
