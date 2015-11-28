@@ -3,6 +3,10 @@
   package:
     name: git
 
+- name: Install Daemon
+  package:
+    name: daemon
+
 - name: Install add-apt-repostory
   apt: name=software-properties-common state=latest
 
@@ -59,11 +63,17 @@
     dest: "/srv/leiningen-{{ lein_version }}/lein"
     mode: 0755
 
-- name: Link lein into user binaries
+- name: Link Lein into user binaries
   file:
     dest: /usr/bin/lein
     src: "/srv/leiningen-{{ lein_version }}/lein"
     state: link
 
 - name: Install core version to local Maven repository
-  shell: cd /srv/onyx-repos/onyx && lein install
+  shell: lein install
+  become_user: "{{ remote_user }}"
+  args:
+    chdir: /srv/onyx-repos/onyx
+
+- name: Run the Aeron Media Driver
+  shell: daemon --name aeron-media-driver -- lein run -m onyx-benchmark.aeron-media-driver
