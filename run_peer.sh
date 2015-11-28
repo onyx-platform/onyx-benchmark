@@ -11,7 +11,8 @@ BENCHMARK_REV=$2
 RUN_ID=$3
 VPEERS=$4
 MESSAGING=$5
-LOG_LEVEL=$6
+SUBSCRIBER_COUNT=$6
+LOG_LEVEL=$7
 
 DEPLOYMENT_ID=$ONYX_REV"_"$BENCHMARK_REV"_"$RUN_ID
 
@@ -47,4 +48,4 @@ lein run -m onyx-benchmark.aeron-media-driver &
 
 #java -Xmx7g -server -Xbootclasspath/a:/home/ubuntu/.lein/self-installs/leiningen-2.5.1-standalone.jar -Dfile.encoding=UTF-8 -Dmaven.wagon.http.ssl.easy=false -Dmaven.wagon.rto=10000 -Dleiningen.original.pwd=/onyx-benchmark -Dleiningen.script=/usr/local/bin/lein -classpath /home/ubuntu/.lein/self-installs/leiningen-2.5.1-standalone.jar clojure.main -m leiningen.core.main run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $RIEMANN_ADDR $DEPLOYMENT_ID $VPEERS $MESSAGING &
 
-lein run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $DEPLOYMENT_ID $VPEERS $MESSAGING &
+lein run -m onyx-benchmark.peer $ZOOKEEPER_ADDR $DEPLOYMENT_ID $VPEERS $SUBSCRIBER_COUNT $MESSAGING &

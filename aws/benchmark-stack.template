@@ -53,6 +53,11 @@
 			"Type": "Number",
 			"Default": 4
 		},
+		"SubscriberCount" : {
+			"Description" : "Number of instances in the cluster",
+			"Type" : "Number",
+			"Default" : "4"
+		},
 		"BenchmarkGitCommit" : {
 			"Description" : "The git commit SHA for the benchmark code that should be run. Will be combined with the OnyxGitCommit and used as deployment id",
 			"Type": "String"
@@ -277,6 +282,7 @@
 										{ "Ref" : "BenchmarkGitCommit" }, " ",
 										{ "Ref" : "RunId" }, " ",
 										{ "Ref": "VirtualPeers" }, " ",
+										{ "Ref": "SubscriberCount" }, " ",
 										{ "Ref": "OnyxMessaging" }, " ",
 										{ "Ref": "OnyxLogLevel" }, " ",
 										">> /home/ubuntu/init-commands.txt 2>&1 "]]},
@@ -295,6 +301,8 @@
 				"ImageId" : { "Fn::FindInMap" : [ "AWSRegionalAMIs", { "Ref": "AWS::Region" }, "64HVM" ] },
 				"AssociatePublicIpAddress" : "true",
 				"SecurityGroups" : [ { "Ref" : "InstanceSecurityGroup" } ],
+				"BlockDeviceMappings": [{"DeviceName": "/dev/sda1",
+			 	                         "Ebs" : {"VolumeSize": "40"}}],
 				"UserData": {
 					"Fn::Base64" : {
 						"Fn::Join" : [

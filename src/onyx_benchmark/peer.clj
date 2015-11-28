@@ -21,7 +21,7 @@
 (defn restartable? [e] 
   true)
 
-(defn -main [zk-addr id n-peers messaging & args]
+(defn -main [zk-addr id n-peers subscriber-count messaging & args]
   (let [local? (= zk-addr "127.0.0.1:2189")
 
         env-config {:onyx.bookkeeper/server? true
@@ -40,7 +40,7 @@
                      :onyx.messaging.aeron/offer-idle-strategy :low-restart-latency
                      :onyx.messaging.aeron/poll-idle-strategy :low-restart-latency
                      :onyx.messaging.aeron/embedded-driver? false
-                     :onyx.messaging.aeron/subscriber-count 2
+                     :onyx.messaging.aeron/subscriber-count (Integer/parseInt subscriber-count)
                      ;; more accurate benching locally
                      :onyx.messaging/allow-short-circuit? (if local? false true)
                      :onyx.peer/join-failure-back-off 500
