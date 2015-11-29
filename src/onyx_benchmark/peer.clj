@@ -21,6 +21,9 @@
 (defn multi-segment-generator [n-new-segments {:keys [n] :as segment}]
   (map (fn [k] (assoc segment :n (+ n k))) (range n-new-segments)))
 
+(defn integer-grouping-fn [segment]
+  (mod (:n segment) 10))
+
 (defn restartable? [e] 
   true)
 
