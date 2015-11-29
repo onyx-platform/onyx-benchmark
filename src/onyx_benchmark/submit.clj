@@ -1,7 +1,6 @@
 (ns onyx-benchmark.submit
   (:require [clojure.core.async :refer [chan dropping-buffer <!!]]
             [onyx.peer.pipeline-extensions :as p-ext]
-            [clojure.core.async :refer [chan dropping-buffer <!!]]
             [onyx.plugin.bench-plugin]
             [onyx.plugin.core-async]
             [onyx.peer.operation :as op]
@@ -78,6 +77,7 @@
                   :onyx/batch-size batch-size
                   :onyx/type :output
                   :onyx/medium :core.async
+                  :core.async/allow-unsafe-concurrency? true
                   :onyx/doc "Drops messages on the floor"}]
         workflow [[:in :inc1] 
                   [:inc1 :inc2] 
@@ -93,5 +93,4 @@
                           :acker/percentage 20 
                           :acker/exempt-input-tasks? true
                           :task-scheduler :onyx.task-scheduler/balanced})
-    (println "Job successfully submitted")
-    (<!! (chan))))
+    (println "Job successfully submitted")))
