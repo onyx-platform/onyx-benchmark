@@ -26,7 +26,7 @@ onyx_benchmark_version: 13dad077538a7819c271f1485f5ae5e77e4e1b44
 onyx_n_virtual_peers: 4
 onyx_log_level: warn
 onyx_subscriber_count: 2
-onyx_deployment_id: onyx-benchmark-5
+onyx_deployment_id: onyx-benchmark
 onyx_batch_size: 20
 
 riemann_port: 5555

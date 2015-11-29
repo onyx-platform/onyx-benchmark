@@ -21,7 +21,11 @@ $ cd ansible
 $ ansible-playbook --private-key ~/.ssh/your-aws-key.pem -i "," -e remote_user="ubuntu" -e onyx_cluster_id=your-cluster-id -e aws_access_key="XXXXXX" -e aws_secret_key="YYYYYY" -e aws_key_name="your-aws-key-name" tasks/main.yml
 ```
 
-Running this will construct a private VPC in AWS with a cluster of machines. Software will be installed to support the entire Onyx cluster, including metrics. Override any variables in `defaults/main.yml` with your own value by specifying `-e key=value` on the command line run.
+Running this will construct a private VPC in AWS with a cluster of machines. Software will be installed to support the entire Onyx cluster, including metrics. Override any variables in `defaults/main.yml` with your own value by specifying `-e key=value` on the command line run. Note that security is **wide** open on these machines.
+
+### Ports
+
+Grafana: Metrics machine, port 3000
 
 ## License
 
