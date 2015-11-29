@@ -35,6 +35,7 @@
     recurse: yes
 
 - name: Clone Onyx core
+  become_user: "{{ remote_user }}"
   git:
     repo: https://github.com/onyx-platform/onyx.git
     dest: /srv/onyx-repos/onyx
@@ -42,6 +43,7 @@
     version: "{{ onyx_core_version }}"
 
 - name: Clone Onyx benchmark
+  become_user: "{{ remote_user }}"
   git:
     repo: https://github.com/onyx-platform/onyx-benchmark.git
     dest: /srv/onyx-repos/onyx-benchmark
@@ -75,15 +77,17 @@
   args:
     chdir: /srv/onyx-repos/onyx
 
-- name: Kill the Daemon processes
-  shell: killall -2 daemon
+- name: Kill the Aeron process
+  shell: daemon --name aeron-media-driver --stop || true
+
+- name: Kill the Peer process
+  shell: daemon --name onyx-peers --stop || true
 
 - name: Export log level
   shell: "export TIMBRE_LOG_LEVEL={{ onyx_log_level }}"
 
 - name: Run the Aeron Media Driver
-  shell: daemon -D /srv/onyx-repos/onyx-benchmark --name aeron-media-driver -- lein run -m onyx-benchmark.aeron-media-driver
-  become_user: "{{ remote_user }}"
+  shell: "daemon -D /srv/onyx-repos/onyx-benchmark --name aeron-media-driver -- su {{ remote_user }} -c \"lein run -m onyx-benchmark.aeron-media-driver\""
 
 - name: Run the Onyx Peers
-  shell: "daemon -D /srv/onyx-repos/onyx-benchmark --name onyx-peers -- onyx-benchmark.peer {{ groups.zookeeper | join(',') }} {{ onyx_deployment_id }} {{ onyx_n_virtual_peers }} {{ onyx_subscriber_count }} aeron"
+  shell: "daemon -D /srv/onyx-repos/onyx-benchmark --name onyx-peers -- su {{ remote_user }} -c \"lein run -m onyx-benchmark.peer {{ groups.zookeeper | join(',') }} {{ onyx_deployment_id }} {{ onyx_n_virtual_peers }} {{ onyx_subscriber_count }} aeron\""
