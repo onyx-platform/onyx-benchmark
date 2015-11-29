@@ -1,4 +1,4 @@
-(ns onyx-benchmark.submit-multi-gen
+(ns onyx-benchmark.submit-fan-out
   (:require [clojure.core.async :refer [chan dropping-buffer <!!]]
             [onyx.peer.pipeline-extensions :as p-ext]
             [onyx.plugin.bench-plugin]
@@ -47,31 +47,23 @@
                   :onyx/batch-size batch-size}
 
                  {:onyx/name :task-1
-                  :onyx/fn :onyx-benchmark.peer/multi-segment-generator
+                  :onyx/fn :onyx-benchmark.peer/my-inc
                   :onyx/type :function
-                  :bench/n-new-segments 5
-                  :onyx/params [:bench/n-new-segments]
                   :onyx/batch-size batch-size}
 
                  {:onyx/name :task-2
-                  :onyx/fn :onyx-benchmark.peer/multi-segment-generator
+                  :onyx/fn :onyx-benchmark.peer/my-inc
                   :onyx/type :function
-                  :bench/n-new-segments 5
-                  :onyx/params [:bench/n-new-segments]
                   :onyx/batch-size batch-size}
 
                  {:onyx/name :task-3
-                  :onyx/fn :onyx-benchmark.peer/multi-segment-generator
+                  :onyx/fn :onyx-benchmark.peer/my-inc
                   :onyx/type :function
-                  :bench/n-new-segments 5
-                  :onyx/params [:bench/n-new-segments]
                   :onyx/batch-size batch-size}
 
                  {:onyx/name :task-4
-                  :onyx/fn :onyx-benchmark.peer/multi-segment-generator
+                  :onyx/fn :onyx-benchmark.peer/my-inc
                   :onyx/type :function
-                  :bench/n-new-segments 5
-                  :onyx/params [:bench/n-new-segments]
                   :onyx/batch-size batch-size}
 
                  {:onyx/name :no-op
@@ -82,9 +74,12 @@
                   :core.async/allow-unsafe-concurrency? true
                   :onyx/doc "Drops messages on the floor"}]
         workflow [[:in :task-1]
-                  [:task-1 :task-2]
-                  [:task-2 :task-3]
-                  [:task-3 :task-4]
+                  [:in :task-2]
+                  [:in :task-3]
+                  [:in :task-4]
+                  [:task-1 :no-op]
+                  [:task-2 :no-op]
+                  [:task-3 :no-op]
                   [:task-4 :no-op]]
         lifecycles (build-lifecycles riemann-addr (Integer/parseInt riemann-port))]
 
