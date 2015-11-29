@@ -93,7 +93,7 @@
   shell: "daemon -D /srv/onyx-repos/onyx-benchmark --name onyx-peers -- su {{ remote_user }} -c \"lein run -m onyx-benchmark.peer {{ groups.zookeeper | join(',') }} {{ onyx_deployment_id }} {{ onyx_n_virtual_peers }} {{ onyx_subscriber_count }} aeron\""
 
 - name: Run the Onyx job to be benchmarked
-  shell: "lein run -m onyx-benchmark.submit {{ groups.zookeeper | join(',') }} {{ groups.metrics[0] }} {{ riemann_port }} {{ onyx_deployment_id }} {{ onyx_batch_size }}"
+  shell: "lein run -m onyx-benchmark.submit-linear {{ groups.zookeeper | join(',') }} {{ groups.metrics[0] }} {{ riemann_port }} {{ onyx_deployment_id }} {{ onyx_batch_size }}"
   args:
     chdir: /srv/onyx-repos/onyx-benchmark
   run_once: true

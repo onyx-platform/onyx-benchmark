@@ -1,4 +1,4 @@
-(ns onyx-benchmark.submit
+(ns onyx-benchmark.submit-linear
   (:require [clojure.core.async :refer [chan dropping-buffer <!!]]
             [onyx.peer.pipeline-extensions :as p-ext]
             [onyx.plugin.bench-plugin]
@@ -14,12 +14,6 @@
     :lifecycle/calls :onyx-benchmark.peer/no-op-calls}
    {:lifecycle/task :no-op
     :lifecycle/calls :onyx.plugin.core-async/writer-calls}
-   #_{:lifecycle/task :all ; or :task-name for an individual task
-    :lifecycle/calls :onyx.lifecycle.metrics.metrics/calls
-    :metrics/buffer-capacity 10000
-    :metrics/workflow-name "your-workflow-name"
-    :metrics/sender-fn :onyx.lifecycle.metrics.timbre/timbre-sender
-    :lifecycle/doc "Instruments a task's metrics to timbre"}
    {:lifecycle/task :all
     :lifecycle/calls :onyx.lifecycle.metrics.metrics/calls
     :metrics/buffer-capacity 10000

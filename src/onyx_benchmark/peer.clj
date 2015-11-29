@@ -18,6 +18,9 @@
 (defn my-inc [{:keys [n] :as segment}]
   (assoc segment :n (inc n)))
 
+(defn multi-segment-generator [n-new-segments {:keys [n] :as segment}]
+  (map (fn [k] (assoc segment :n (+ n k))) (range n-new-segments)))
+
 (defn restartable? [e] 
   true)
 
