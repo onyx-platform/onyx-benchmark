@@ -17,6 +17,8 @@
           - dest: 0.0.0.0/0
             gw: igw
     region: "{{ aws_region }}"
+    dns_hostnames: yes
+    dns_support: yes
     wait: yes
   register: vpc
 
