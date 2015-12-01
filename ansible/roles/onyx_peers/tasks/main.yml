@@ -96,4 +96,5 @@
   shell: "lein run -m onyx-benchmark.submit-linear {{ groups.zookeeper | join(',') }} {{ groups.metrics[0] }} {{ riemann_port }} {{ onyx_deployment_id }} {{ onyx_batch_size }}"
   args:
     chdir: /srv/onyx-repos/onyx-benchmark
+  become_user: "{{ remote_user }}"
   run_once: true

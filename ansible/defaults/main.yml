@@ -23,7 +23,7 @@ n_zookeeper_machines: 1
 n_onyx_peer_machines: 3
 
 onyx_core_version: 0.8.0
-onyx_benchmark_version: ed84326bd475b80d94a2b333646cba0e499cc423
+onyx_benchmark_version: 754a95d883384eccf4aababcdff3ddf64af43839
 
 onyx_n_virtual_peers: 4
 onyx_log_level: warn
