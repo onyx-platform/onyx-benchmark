@@ -32,12 +32,6 @@
                      :onyx.peer/join-failure-back-off 500
                      :onyx.peer/job-scheduler :onyx.job-scheduler/greedy
                      :onyx.messaging/impl :aeron}
-        env-config (assoc peer-config 
-                          :zookeeper/server? (= zk-addr "127.0.0.1:2189")
-                          :zookeeper.server/port 2189)
-        env (when (:zookeeper/server? env-config) 
-              (println "Starting env at " env-config)
-              (onyx.api/start-env env-config))
         catalog [{:onyx/name :in
                   :onyx/plugin :onyx.plugin.bench-plugin/generator
                   :onyx/type :input
