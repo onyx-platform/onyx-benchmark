@@ -81,4 +81,5 @@
                           :acker/percentage 20 
                           :acker/exempt-input-tasks? true
                           :task-scheduler :onyx.task-scheduler/balanced})
-    (println "Job successfully submitted")))
+    (println "Job successfully submitted")
+    (shutdown-agents)))
