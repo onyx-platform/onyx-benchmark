@@ -2,6 +2,8 @@
 aws_region: us-east-1
 aws_subnet_az: us-east-1b
 
+network_interface: eth0
+
 metrics_ec2_image_id: ami-d05e75b8
 metrics_ec2_instance_type: c4.large
 metrics_spot_price: 0.05

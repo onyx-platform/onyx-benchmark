@@ -13,6 +13,7 @@
   pre_tasks:
     - include_vars: ../defaults/main.yml
   roles:
+    - common
     - influx
     - grafana
     - riemann
@@ -24,6 +25,7 @@
   pre_tasks:
     - include_vars: ../defaults/main.yml
   roles:
+    - common
     - zookeeper
 
 - hosts: peer
@@ -33,4 +35,5 @@
   pre_tasks:
     - include_vars: ../defaults/main.yml
   roles:
+    - common
     - onyx_peers
