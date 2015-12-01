@@ -1,0 +1,39 @@
+---
+- hosts: localhost
+  remote_user: "{{ remote_user }}"
+  pre_tasks:
+    - include_vars: ../defaults/main.yml
+  roles:
+    - aws
+
+- hosts: metrics
+  remote_user: "{{ remote_user }}"
+  become: yes
+  become_method: sudo
+  pre_tasks:
+    - include_vars: ../defaults/main.yml
+  roles:
+    - common
+    - influx
+    - grafana
+    - riemann
+
+- hosts: zookeeper
+  remote_user: "{{ remote_user }}"
+  become: yes
+  become_method: sudo
+  pre_tasks:
+    - include_vars: ../defaults/main.yml
+  roles:
+    - common
+    - zookeeper
+
+- hosts: peer
+  remote_user: "{{ remote_user }}"
+  become: yes
+  become_method: sudo
+  pre_tasks:
+    - include_vars: ../defaults/main.yml
+  roles:
+    - common
+    - onyx_peers

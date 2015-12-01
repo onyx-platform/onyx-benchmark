@@ -18,6 +18,15 @@
 (defn my-inc [{:keys [n] :as segment}]
   (assoc segment :n (inc n)))
 
+(defn multi-segment-generator [n-new-segments {:keys [n] :as segment}]
+  (map (fn [k] (assoc segment :n (+ n k))) (range n-new-segments)))
+
+(defn integer-grouping-fn [segment]
+  (mod (:n segment) 10))
+
+(defn last-digit-passes? [event old-segment new-segment all-new n]
+  (>= (mod (:n new-segment) 10) n))
+
 (defn restartable? [e] 
   true)
 

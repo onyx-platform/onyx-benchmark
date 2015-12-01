@@ -12,3 +12,4 @@ onyx.log*
 inputs.json
 hs_err*
 *.jfr
+*.pyc
