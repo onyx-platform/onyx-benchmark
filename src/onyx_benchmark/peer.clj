@@ -3,6 +3,7 @@
             [onyx.lifecycle.metrics.metrics]
             [onyx.lifecycle.metrics.riemann]
             [onyx.lifecycle.metrics.timbre]
+            [onyx-benchmark.riemann :refer [monitoring-config start-riemann-sender]]
             [onyx.peer.pipeline-extensions :as p-ext]
             [taoensso.timbre :refer  [info warn trace fatal error] :as timbre]
             [onyx.plugin.bench-plugin]
@@ -27,11 +28,16 @@
 (defn last-digit-passes? [event old-segment new-segment all-new n]
   (>= (mod (:n new-segment) 10) n))
 
+(defn load-monitoring-config [riemann-host riemann-port]
+  (monitoring-config riemann-host riemann-port 10000))
+
 (defn restartable? [e] 
   true)
-
-(defn -main [zk-addr id n-peers subscriber-count messaging & args]
+(defn -main [zk-addr riemann-addr riemann-port id n-peers subscriber-count messaging & args]
   (let [local? (= zk-addr "127.0.0.1:2189")
+
+        m-cfg (load-monitoring-config riemann-addr riemann-port)
+        monitoring-thread (start-riemann-sender m-cfg)
 
         env-config {:onyx.bookkeeper/server? true
                     :onyx/id id
@@ -58,5 +64,5 @@
         n-peers-parsed (Integer/parseInt n-peers)
         peer-group (onyx.api/start-peer-group peer-config)
         env (onyx.api/start-env env-config)
-        peers (onyx.api/start-peers n-peers-parsed peer-group)]
+        peers (onyx.api/start-peers n-peers-parsed peer-group m-cfg)]
     (<!! (chan))))
