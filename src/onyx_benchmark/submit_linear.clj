@@ -13,7 +13,8 @@
    {:lifecycle/task :no-op
     :lifecycle/calls :onyx-benchmark.peer/no-op-calls}
    {:lifecycle/task :no-op
-    :lifecycle/calls :onyx.plugin.core-async/writer-calls}
+    :lifecycle/calls :onyx.plugin.core-async/writer-calls
+    :core.async/allow-unsafe-concurrency? true}
    {:lifecycle/task :all
     :lifecycle/calls :onyx.lifecycle.metrics.metrics/calls
     :metrics/buffer-capacity 10000
@@ -65,7 +66,6 @@
                   :onyx/batch-size batch-size
                   :onyx/type :output
                   :onyx/medium :core.async
-                  :core.async/allow-unsafe-concurrency? true
                   :onyx/doc "Drops messages on the floor"}]
         workflow [[:in :inc1] 
                   [:inc1 :inc2] 
