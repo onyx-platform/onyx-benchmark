@@ -22,8 +22,8 @@ onyx_peer_spot_type: one-time
 n_zookeeper_machines: 1
 n_onyx_peer_machines: 3
 
-onyx_core_version: 0.8.0
-onyx_benchmark_version: 1efb337446c4e601ab854f2f9c72026956c72daa
+onyx_core_version: 0d1dacaf571d443265ff8632dc92e230c27c85c9
+onyx_benchmark_version: fb30605984c360c8e6042767aa8c84781a28e1cc
 
 onyx_n_virtual_peers: 4
 onyx_log_level: warn
