@@ -1,6 +1,6 @@
 (ns onyx-benchmark.riemann
   (:require [clojure.core.async :refer [chan >!! <!!]]
-            [taoensso.timbre :refer [warn]]
+            [taoensso.timbre :refer [warn info]]
             [riemann.client :as r]))
 
 (defn zookeeper-write-log-entry [ch config {:keys [latency bytes]}]
