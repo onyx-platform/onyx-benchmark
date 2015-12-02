@@ -36,9 +36,6 @@
 (defn -main [zk-addr riemann-addr riemann-port id n-peers subscriber-count messaging & args]
   (let [local? (= zk-addr "127.0.0.1:2189")
 
-        m-cfg (load-monitoring-config riemann-addr (Integer/parseInt riemann-port))
-        monitoring-thread (start-riemann-sender m-cfg)
-
         env-config {:onyx.bookkeeper/server? true
                     :onyx/id id
                     :zookeeper/address zk-addr
@@ -64,5 +61,7 @@
         n-peers-parsed (Integer/parseInt n-peers)
         peer-group (onyx.api/start-peer-group peer-config)
         env (onyx.api/start-env env-config)
+        m-cfg (load-monitoring-config riemann-addr (Integer/parseInt riemann-port))
+        monitoring-thread (start-riemann-sender m-cfg)
         peers (onyx.api/start-peers n-peers-parsed peer-group m-cfg)]
     (<!! (chan))))
