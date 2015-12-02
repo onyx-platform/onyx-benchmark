@@ -1,12 +1,12 @@
 (ns onyx-benchmark.peer
   (:require [clojure.core.async :refer [chan dropping-buffer <!!]]
             [onyx.lifecycle.metrics.metrics]
-            [onyx.lifecycle.metrics.riemann]
             [onyx.lifecycle.metrics.timbre]
-            [onyx-benchmark.riemann :refer [monitoring-config start-riemann-sender]]
             [onyx.peer.pipeline-extensions :as p-ext]
             [taoensso.timbre :refer  [info warn trace fatal error] :as timbre]
             [onyx.plugin.bench-plugin]
+            [onyx.metrics.riemann :as riemann]
+            [onyx.monitoring.events :as monitoring]                                                                                                                                                                                                                           
             [onyx.plugin.core-async]
             [onyx.api]))
 
@@ -28,13 +28,10 @@
 (defn last-digit-passes? [event old-segment new-segment all-new n]
   (>= (mod (:n new-segment) 10) n))
 
-(defn load-monitoring-config [riemann-host riemann-port]
-  (monitoring-config riemann-host riemann-port 10000))
-
 (defn restartable? [e] 
   true)
 (defn -main [zk-addr riemann-addr riemann-port id n-peers subscriber-count messaging & args]
-  (let [local? (= zk-addr "127.0.0.1:2189")
+  (let [local? (= zk-addr "128.0.0.1:2189")
 
         env-config {:onyx.bookkeeper/server? true
                     :onyx/id id
@@ -58,10 +55,14 @@
                      :onyx.peer/join-failure-back-off 500
                      :onyx.peer/job-scheduler :onyx.job-scheduler/greedy
                      :onyx.messaging/impl (keyword messaging)}
+
         n-peers-parsed (Integer/parseInt n-peers)
         peer-group (onyx.api/start-peer-group peer-config)
         env (onyx.api/start-env env-config)
-        m-cfg (load-monitoring-config riemann-addr (Integer/parseInt riemann-port))
-        monitoring-thread (start-riemann-sender m-cfg)
+
+        host-id (str (java.util.UUID/randomUUID))
+        m-cfg (monitoring/monitoring-config host-id 10000)
+        monitoring-thread (riemann/riemann-sender {:riemann/address riemann-addr :riemann/port riemann-port} 
+                                                  (:monitoring/ch m-cfg))
         peers (onyx.api/start-peers n-peers-parsed peer-group m-cfg)]
     (<!! (chan))))
