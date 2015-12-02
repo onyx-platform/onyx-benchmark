@@ -189,7 +189,7 @@
   (>!! ch {:service "peer.notify-join.event" :state "ok"}))
 
 (defn monitoring-config [riemann-host riemann-port buf-capacity]
-  (let [ch (chan buf-capacity)]
+  (let [ch (chan (dropping-buffer buf-capacity))]
     {:monitoring :custom
      :riemann/host riemann-host
      :riemann/port riemann-port
