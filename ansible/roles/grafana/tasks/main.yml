@@ -61,3 +61,69 @@
     force_basic_auth: yes
     status_code: 200
     HEADER_Content-type: application/json
+
+- name: Load Linear Input dashboard
+  uri:
+    url: http://localhost:3000/api/dashboards/db
+    method: POST
+    user: admin
+    password: admin
+    body: "{{ lookup('file','linear_input.json') }}"
+    force_basic_auth: yes
+    status_code: 200
+    HEADER_Content-type: application/json
+
+- name: Load Linear Inc1 dashboard
+  uri:
+    url: http://localhost:3000/api/dashboards/db
+    method: POST
+    user: admin
+    password: admin
+    body: "{{ lookup('file','linear_inc1.json') }}"
+    force_basic_auth: yes
+    status_code: 200
+    HEADER_Content-type: application/json
+
+- name: Load Linear Inc2 dashboard
+  uri:
+    url: http://localhost:3000/api/dashboards/db
+    method: POST
+    user: admin
+    password: admin
+    body: "{{ lookup('file','linear_inc2.json') }}"
+    force_basic_auth: yes
+    status_code: 200
+    HEADER_Content-type: application/json
+
+- name: Load Linear Inc3 dashboard
+  uri:
+    url: http://localhost:3000/api/dashboards/db
+    method: POST
+    user: admin
+    password: admin
+    body: "{{ lookup('file','linear_inc3.json') }}"
+    force_basic_auth: yes
+    status_code: 200
+    HEADER_Content-type: application/json
+
+- name: Load Linear Inc4 dashboard
+  uri:
+    url: http://localhost:3000/api/dashboards/db
+    method: POST
+    user: admin
+    password: admin
+    body: "{{ lookup('file','linear_inc4.json') }}"
+    force_basic_auth: yes
+    status_code: 200
+    HEADER_Content-type: application/json
+
+- name: Load Linear No Op dashboard
+  uri:
+    url: http://localhost:3000/api/dashboards/db
+    method: POST
+    user: admin
+    password: admin
+    body: "{{ lookup('file','linear_no_op.json') }}"
+    force_basic_auth: yes
+    status_code: 200
+    HEADER_Content-type: application/json

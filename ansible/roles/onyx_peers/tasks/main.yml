@@ -77,11 +77,8 @@
   args:
     chdir: /srv/onyx-repos/onyx
 
-- name: Kill the Aeron process
-  shell: daemon --name aeron-media-driver --stop || true
-
-- name: Kill the Peer process
-  shell: daemon --name onyx-peers --stop || true
+- name: Kill the Java processes
+  shell: killall -2 java || true
 
 - name: Export log level
   shell: "export TIMBRE_LOG_LEVEL={{ onyx_log_level }}"
