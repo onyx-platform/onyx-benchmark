@@ -15,8 +15,8 @@ zookeeper_spot_price: 0.05
 zookeeper_spot_type: one-time
 
 onyx_peer_ec2_image_id: ami-d05e75b8
-onyx_peer_ec2_instance_type: c4.large
-onyx_peer_spot_price: 0.05
+onyx_peer_ec2_instance_type: c4.xlarge
+onyx_peer_spot_price: 0.07
 onyx_peer_spot_type: one-time
 
 n_zookeeper_machines: 1

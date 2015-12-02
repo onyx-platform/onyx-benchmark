@@ -227,6 +227,7 @@
      :peer-accept-join (partial peer-accept-join ch)}))
 
 (defn start-riemann-sender [{:keys [riemann/host riemann/port riemann/ch]}]
+  (info "Starting Riemann sender...")
   (future
     (let [client (r/tcp-client {:host host :port port})]
       (loop []
