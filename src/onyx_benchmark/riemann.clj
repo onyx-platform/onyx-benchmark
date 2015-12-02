@@ -1,5 +1,5 @@
 (ns onyx-benchmark.riemann
-  (:require [clojure.core.async :refer [chan >!! <!!]]
+  (:require [clojure.core.async :refer [chan >!! <!! dropping-buffer]]
             [taoensso.timbre :refer [warn info]]
             [riemann.client :as r]))
 
