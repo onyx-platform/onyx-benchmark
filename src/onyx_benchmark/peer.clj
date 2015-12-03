@@ -2,6 +2,7 @@
   (:require [clojure.core.async :refer [chan dropping-buffer <!!]]
             [onyx.lifecycle.metrics.metrics]
             [onyx.lifecycle.metrics.timbre]
+            [onyx.lifecycle.metrics.riemann]
             [onyx.peer.pipeline-extensions :as p-ext]
             [taoensso.timbre :refer  [info warn trace fatal error] :as timbre]
             [onyx.plugin.bench-plugin]
