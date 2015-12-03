@@ -40,8 +40,9 @@
                  *unchecked-math* :warn-on-boxed}
   :java-source-paths ["src/java"]
   :dependencies [[org.clojure/clojure "1.7.0"]
+		 ;[org.onyxplatform/onyx "0.8.2"]
 		 [org.onyxplatform/onyx "0.8.3-SNAPSHOT"]
-		 [org.onyxplatform/onyx-metrics "0.8.2.8-20151202.200426-3"]
+		 [org.onyxplatform/onyx-metrics "0.8.2.8-20151203.183241-6"]
 		 [riemann-clojure-client "0.4.1"]
                  [gnuplot "0.1.0"]
 		 [cheshire "5.4.0"]])
