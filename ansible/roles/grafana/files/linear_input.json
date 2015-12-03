@@ -68,7 +68,7 @@
                                 ],
                                 "groupBy": [
                                     {
-                                        "interval": "auto",
+                                        "interval": "1s",
                                         "type": "time"
                                     }
                                 ],
@@ -144,7 +144,7 @@
                                 ],
                                 "groupBy": [
                                     {
-                                        "interval": "auto",
+                                        "interval": "1s",
                                         "type": "time"
                                     }
                                 ],
@@ -220,7 +220,7 @@
                                 ],
                                 "groupBy": [
                                     {
-                                        "interval": "auto",
+                                        "interval": "1s",
                                         "type": "time"
                                     }
                                 ],
@@ -304,7 +304,7 @@
                                 ],
                                 "groupBy": [
                                     {
-                                        "interval": "auto",
+                                        "interval": "1s",
                                         "type": "time"
                                     }
                                 ],
@@ -380,7 +380,7 @@
                                 ],
                                 "groupBy": [
                                     {
-                                        "interval": "auto",
+                                        "interval": "1s",
                                         "type": "time"
                                     }
                                 ],
@@ -456,7 +456,7 @@
                                 ],
                                 "groupBy": [
                                     {
-                                        "interval": "auto",
+                                        "interval": "1s",
                                         "type": "time"
                                     }
                                 ],
@@ -532,7 +532,7 @@
                                 ],
                                 "groupBy": [
                                     {
-                                        "interval": "auto",
+                                        "interval": "1s",
                                         "type": "time"
                                     }
                                 ],
@@ -616,7 +616,7 @@
                                 ],
                                 "groupBy": [
                                     {
-                                        "interval": "auto",
+                                        "interval": "1s",
                                         "type": "time"
                                     }
                                 ],
@@ -692,7 +692,7 @@
                                 ],
                                 "groupBy": [
                                     {
-                                        "interval": "auto",
+                                        "interval": "1s",
                                         "type": "time"
                                     }
                                 ],
@@ -768,7 +768,7 @@
                                 ],
                                 "groupBy": [
                                     {
-                                        "interval": "auto",
+                                        "interval": "1s",
                                         "type": "time"
                                     }
                                 ],
@@ -844,7 +844,7 @@
                                 ],
                                 "groupBy": [
                                     {
-                                        "interval": "auto",
+                                        "interval": "1s",
                                         "type": "time"
                                     }
                                 ],
@@ -920,7 +920,7 @@
                                 ],
                                 "groupBy": [
                                     {
-                                        "interval": "auto",
+                                        "interval": "1s",
                                         "type": "time"
                                     }
                                 ],
@@ -996,7 +996,7 @@
                                 ],
                                 "groupBy": [
                                     {
-                                        "interval": "auto",
+                                        "interval": "1s",
                                         "type": "time"
                                     }
                                 ],
@@ -1072,7 +1072,7 @@
                                 ],
                                 "groupBy": [
                                     {
-                                        "interval": "auto",
+                                        "interval": "1s",
                                         "type": "time"
                                     }
                                 ],
