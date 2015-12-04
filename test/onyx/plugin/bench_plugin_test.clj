@@ -7,6 +7,7 @@
             [onyx.plugin.core-async]
 	    [onyx.lifecycle.metrics.timbre]
 	    [onyx.lifecycle.metrics.metrics]
+            [onyx.monitoring.events :as monitoring]                                                                                                                                                                                                                           
             [onyx.test-helper :refer [load-config]]
             [interval-metrics.core :as im]
             [onyx.api])
@@ -84,42 +85,45 @@
                [:inc4 :no-op]])
 
 (println "Starting Vpeers")
-(def v-peers (onyx.api/start-peers 6 peer-group))
+(let [host-id (str "thishost")
+      m-cfg (monitoring/monitoring-config host-id 10000)
+      monitoring-thread (onyx.lifecycle.metrics.timbre/timbre-sender {} (:monitoring/ch m-cfg))
+      v-peers (onyx.api/start-peers 6 peer-group m-cfg)]
 
-(println "Started vpeers")
-(def bench-length 120000)
+  (println "Started vpeers")
+  (def bench-length 120000)
 
-(Thread/sleep 10000)
+  (Thread/sleep 10000)
 
-(def in-calls 
-  {:lifecycle/before-task-start (fn inject-no-op-ch [event lifecycle]
-                                  {:core.async/chan (chan (dropping-buffer 1))})})
+  (def in-calls 
+    {:lifecycle/before-task-start (fn inject-no-op-ch [event lifecycle]
+                                    {:core.async/chan (chan (dropping-buffer 1))})})
 
-(def lifecycles
-  [{:lifecycle/task :no-op
-    :lifecycle/calls :onyx.plugin.bench-plugin-test/in-calls}
-   {:lifecycle/task :no-op
-    :lifecycle/calls :onyx.plugin.core-async/writer-calls}
+  (def lifecycles
+    [{:lifecycle/task :no-op
+      :lifecycle/calls :onyx.plugin.bench-plugin-test/in-calls}
+     {:lifecycle/task :no-op
+      :lifecycle/calls :onyx.plugin.core-async/writer-calls}
 
-   {:lifecycle/task :in ; or :task-name for an individual task
-    :lifecycle/calls :onyx.lifecycle.metrics.metrics/calls
-    :metrics/buffer-capacity 10000
-    :metrics/workflow-name "your-workflow-name"
-    :metrics/sender-fn :onyx.lifecycle.metrics.timbre/timbre-sender
-    :lifecycle/doc "Instruments a task's metrics to timbre"}])
+     {:lifecycle/task :in ; or :task-name for an individual task
+      :lifecycle/calls :onyx.lifecycle.metrics.metrics/calls
+      :metrics/buffer-capacity 10000
+      :metrics/workflow-name "your-workflow-name"
+      :metrics/sender-fn :onyx.lifecycle.metrics.timbre/timbre-sender
+      :lifecycle/doc "Instruments a task's metrics to timbre"}])
 
-(onyx.api/submit-job
-  peer-config
-  {:catalog catalog 
-   :workflow workflow
-   :lifecycles lifecycles
-   :task-scheduler :onyx.task-scheduler/balanced})
+  (onyx.api/submit-job
+    peer-config
+    {:catalog catalog 
+     :workflow workflow
+     :lifecycles lifecycles
+     :task-scheduler :onyx.task-scheduler/balanced})
 
-(Thread/sleep bench-length)
+  (Thread/sleep bench-length)
 
-(doseq [v-peer v-peers]
-  (onyx.api/shutdown-peer v-peer))
+  (doseq [v-peer v-peers]
+    (onyx.api/shutdown-peer v-peer))
 
-(onyx.api/shutdown-peer-group peer-group)
+  (onyx.api/shutdown-peer-group peer-group)
 
-(onyx.api/shutdown-env env)
+  (onyx.api/shutdown-env env))

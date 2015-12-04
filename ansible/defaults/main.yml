@@ -30,6 +30,7 @@ onyx_log_level: warn
 onyx_subscriber_count: 2
 onyx_deployment_id: onyx-benchmark
 onyx_batch_size: 20
+onyx_max_pending: 5000
 onyx_offer_idle_strategy: high-restart-latency
 onyx_poll_idle_strategy: high-restart-latency
 

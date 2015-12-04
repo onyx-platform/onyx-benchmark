@@ -24,8 +24,9 @@
     :riemann/port riemann-port
     :lifecycle/doc "Instruments a task's metrics and sends via riemann"}])
 
-(defn -main [zk-addr riemann-addr riemann-port id batch-size & args]
+(defn -main [zk-addr riemann-addr riemann-port id batch-size max-pending & args]
   (let [batch-size (Integer/parseInt batch-size)
+        max-pending (Integer/parseInt max-pending)
         peer-config {:zookeeper/address zk-addr
                      :onyx/id id
                      :onyx.messaging/bind-addr "127.0.0.1"
@@ -36,7 +37,7 @@
         catalog [{:onyx/name :in
                   :onyx/plugin :onyx.plugin.bench-plugin/generator
                   :onyx/type :input
-                  :onyx/max-pending 10000
+                  :onyx/max-pending max-pending
                   :benchmark/segment-generator :hundred-bytes
                   :onyx/medium :generator
                   :onyx/batch-size batch-size}
