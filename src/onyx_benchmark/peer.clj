@@ -31,8 +31,9 @@
 
 (defn restartable? [e] 
   true)
+
 (defn -main [zk-addr riemann-addr riemann-port id n-peers offer-idle-strategy poll-idle-strategy subscriber-count messaging & args]
-  (let [local? (= zk-addr "128.0.0.1:2189")
+  (let [local? (= zk-addr "127.0.0.1:2189")
 
         env-config {:onyx.bookkeeper/server? true
                     :onyx/id id
@@ -63,7 +64,8 @@
 
         host-id (str (java.util.UUID/randomUUID))
         m-cfg (monitoring/monitoring-config host-id 10000)
-        monitoring-thread (riemann/riemann-sender {:riemann/address riemann-addr :riemann/port riemann-port} 
-                                                  (:monitoring/ch m-cfg))
+        riemann-config {:riemann/address riemann-addr :riemann/port riemann-port} 
+        _ (info "Starting monitoring thread at:" riemann-config)
+        monitoring-thread (riemann/riemann-sender riemann-config (:monitoring/ch m-cfg))
         peers (onyx.api/start-peers n-peers-parsed peer-group m-cfg)]
     (<!! (chan))))
