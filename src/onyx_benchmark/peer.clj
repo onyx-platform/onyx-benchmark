@@ -63,7 +63,7 @@
         env (onyx.api/start-env env-config)
 
         host-id (str (java.util.UUID/randomUUID))
-        m-cfg (monitoring/monitoring-config host-id 10000)
+        m-cfg (monitoring/monitoring-config 10000)
         riemann-config {:riemann/address riemann-addr :riemann/port (Integer/parseInt riemann-port)} 
         monitoring-thread (riemann/riemann-sender riemann-config (:monitoring/ch m-cfg))
         peers (onyx.api/start-peers n-peers-parsed peer-group m-cfg)]
