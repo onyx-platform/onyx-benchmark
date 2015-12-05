@@ -11,9 +11,9 @@
                         "-Daeron.rcv.initial.window.length=2097152" 
                         "-Dagrona.disable.bounds.checks=true"
 
-                        "-XX:+UnlockCommercialFeatures" "-XX:+FlightRecorder" 
-                        "-XX:+UnlockDiagnosticVMOptions" 
-                        "-XX:StartFlightRecording=duration=1080s,filename=myrecording.jfr" 
+                        ;"-XX:+UnlockCommercialFeatures" "-XX:+FlightRecorder" 
+                        ;"-XX:+UnlockDiagnosticVMOptions" 
+                        ;"-XX:StartFlightRecording=duration=1080s,filename=myrecording.jfr" 
                         ; "-XX:+TraceClassLoading" "-XX:+LogCompilation" "-XX:+PrintAssembly"
                         ]
 
