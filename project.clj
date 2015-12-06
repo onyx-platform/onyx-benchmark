@@ -10,6 +10,7 @@
                         ;"-Daeron.rcv.buffer.length=16384" 
                         ;"-Daeron.rcv.initial.window.length=2097152" 
                         ;"-Dagrona.disable.bounds.checks=true"
+                        "-Daeron.client.liveness.timeout=20000000000"
 
                         ;"-XX:+UnlockCommercialFeatures" "-XX:+FlightRecorder" 
                         ;"-XX:+UnlockDiagnosticVMOptions" 
