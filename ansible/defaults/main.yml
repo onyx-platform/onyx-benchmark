@@ -33,6 +33,7 @@ onyx_batch_size: 20
 onyx_max_pending: 5000
 onyx_offer_idle_strategy: high-restart-latency
 onyx_poll_idle_strategy: high-restart-latency
+onyx_media_driver_mode: shared
 
 riemann_port: 5555
 

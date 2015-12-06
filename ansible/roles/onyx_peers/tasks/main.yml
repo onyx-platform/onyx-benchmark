@@ -84,7 +84,6 @@
   shell: "export TIMBRE_LOG_LEVEL={{ onyx_log_level }}"
 
 - name: Run the Aeron Media Driver
-  shell: "daemon -D /srv/onyx-repos/onyx-benchmark --name aeron-media-driver -- su {{ remote_user }} -c \"lein run -m onyx-benchmark.aeron-media-driver\""
 
 - name: Run the Onyx Peers
   shell: "daemon -D /srv/onyx-repos/onyx-benchmark --name onyx-peers -- su {{ remote_user }} -c \"lein run -m onyx-benchmark.peer {{ groups.zookeeper | join(',') }} {{ groups.metrics[0] }} {{ riemann_port }} {{ onyx_deployment_id }} {{ onyx_n_virtual_peers }} {{ onyx_offer_idle_strategy }} {{ onyx_poll_idle_strategy }} {{ onyx_subscriber_count }} aeron\""
