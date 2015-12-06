@@ -2,7 +2,9 @@
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :java-opts ^:replace ["-server" 
-                        "-Xmx20g"
+                        "-Xmx3g"
+                        "-XX:+UseG1GC"
+
                         ;"-XX:BiasedLockingStartupDelay=0" 
                         ;"-Daeron.mtu.length=16384" 
                         ;"-Daeron.socket.so_sndbuf=2097152" 
