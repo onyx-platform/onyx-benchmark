@@ -78,15 +78,23 @@
     chdir: /srv/onyx-repos/onyx
 
 - name: Kill the Java processes
-  shell: killall -2 java || true
+  shell: killall -9 java || true
 
 - name: Export log level
   shell: "export TIMBRE_LOG_LEVEL={{ onyx_log_level }}"
 
 - name: Run the Aeron Media Driver
+  shell: "daemon -D /srv/onyx-repos/onyx-benchmark --name aeron-media-driver -- lein with-profile production run -m onyx-benchmark.aeron-media-driver {{onyx_media_driver_mode}}"
+  environment:
+    JAVA_OPTS: "{{ media_driver_java_opts }}"
+  become_user: "{{ remote_user }}"
 
 - name: Run the Onyx Peers
-  shell: "daemon -D /srv/onyx-repos/onyx-benchmark --name onyx-peers -- su {{ remote_user }} -c \"lein run -m onyx-benchmark.peer {{ groups.zookeeper | join(',') }} {{ groups.metrics[0] }} {{ riemann_port }} {{ onyx_deployment_id }} {{ onyx_n_virtual_peers }} {{ onyx_offer_idle_strategy }} {{ onyx_poll_idle_strategy }} {{ onyx_subscriber_count }} aeron\""
+  environment:
+    JAVA_OPTS: "{{ peer_java_opts }}"
+    TIMBRE_LOG_LEVEL: "{{ onyx_log_level }}"
+  shell: "daemon -D /srv/onyx-repos/onyx-benchmark --name onyx-peers -- lein with-profile production run -m onyx-benchmark.peer {{ groups.zookeeper | join(',') }} {{ groups.metrics[0] }} {{ riemann_port }} {{ onyx_deployment_id }} {{ onyx_n_virtual_peers }} {{ onyx_offer_idle_strategy }} {{ onyx_poll_idle_strategy }} {{ onyx_subscriber_count }} aeron"
+  become_user: "{{ remote_user }}"
 
 - name: Run the Onyx job to be benchmarked
   shell: "lein run -m onyx-benchmark.submit-linear {{ groups.zookeeper | join(',') }} {{ groups.metrics[0] }} {{ riemann_port }} {{ onyx_deployment_id }} {{ onyx_batch_size }} {{ onyx_max_pending }}"
