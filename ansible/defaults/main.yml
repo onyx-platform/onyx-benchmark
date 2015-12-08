@@ -27,13 +27,11 @@ onyx_benchmark_version: fb30605984c360c8e6042767aa8c84781a28e1cc
 
 onyx_n_virtual_peers: 4
 onyx_log_level: warn
-onyx_subscriber_count: 2
 onyx_deployment_id: onyx-benchmark
 onyx_batch_size: 20
 onyx_max_pending: 5000
-onyx_offer_idle_strategy: high-restart-latency
-onyx_poll_idle_strategy: high-restart-latency
 onyx_media_driver_mode: shared
+onyx_aeron_short_circuit: yes
 
 media_driver_java_opts: "-server"
 peer_java_opts: "-server -XX:+UnlockCommercialFeatures -XX:+FlightRecorder -XX:+UnlockDiagnosticVMOptions -XX:StartFlightRecording=duration=1080s,filename=peer_recording.jfr"

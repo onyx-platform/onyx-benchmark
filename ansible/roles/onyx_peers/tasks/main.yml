@@ -34,6 +34,15 @@
     group: "{{ remote_user }}"
     recurse: yes
 
+- name: Create the directory for benchmarking config
+  file:
+    path: /srv/onyx-repos/benchmark-config
+    state: directory
+    mode: 0755
+    owner: "{{ remote_user }}"
+    group: "{{ remote_user }}"
+    recurse: yes
+
 - name: Clone Onyx core
   become_user: "{{ remote_user }}"
   git:
@@ -49,6 +58,14 @@
     dest: /srv/onyx-repos/onyx-benchmark
     force: yes
     version: "{{ onyx_benchmark_version }}"
+
+- name: Move peer config file onto target machine
+  template:
+    src: peer-config.edn.j2
+    dest: /srv/onyx-repos/benchmark-config/peer-config.edn
+    owner: "{{ remote_user }}"
+    group: "{{ remote_user }}"
+    mode: 0555
 
 - name: Ensure that Lein directory exists
   file:
@@ -93,7 +110,7 @@
   environment:
     JAVA_OPTS: "{{ peer_java_opts }}"
     TIMBRE_LOG_LEVEL: "{{ onyx_log_level }}"
-  shell: "daemon -D /srv/onyx-repos/onyx-benchmark --name onyx-peers -- lein with-profile production run -m onyx-benchmark.peer {{ groups.zookeeper | join(',') }} {{ groups.metrics[0] }} {{ riemann_port }} {{ onyx_deployment_id }} {{ onyx_n_virtual_peers }} {{ onyx_offer_idle_strategy }} {{ onyx_poll_idle_strategy }} {{ onyx_subscriber_count }} aeron"
+  shell: "daemon -D /srv/onyx-repos/onyx-benchmark --name onyx-peers -- lein with-profile production run -m onyx-benchmark.peer /srv/onyx-repos/benchmark-config/peer-config.edn {{ groups.metrics[0] }} {{ riemann_port }} {{ onyx_deployment_id }} {{ onyx_n_virtual_peers }}"
   become_user: "{{ remote_user }}"
 
 - name: Run the Onyx job to be benchmarked

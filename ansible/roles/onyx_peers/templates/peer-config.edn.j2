@@ -1,0 +1,12 @@
+{:zookeeper/address "{{ groups.zookeeper | join(',') }}"
+ :onyx/id "{{ onyx_deployment_id }}"
+ :onyx.messaging/peer-port 40000
+ :onyx.messaging.aeron/write-buffer-size 200000
+ :onyx.messaging.aeron/offer-idle-strategy :high-restart-latency
+ :onyx.messaging.aeron/poll-idle-strategy :high-restart-latency
+ :onyx.messaging.aeron/embedded-driver? false
+ :onyx.messaging.aeron/subscriber-count 2
+ :onyx.messaging/allow-short-circuit? "{{ onyx_aeron_short_circuit }}"
+ :onyx.peer/join-failure-back-off 500
+ :onyx.peer/job-scheduler :onyx.job-scheduler/greedy
+ :onyx.messaging/impl :aeron}
