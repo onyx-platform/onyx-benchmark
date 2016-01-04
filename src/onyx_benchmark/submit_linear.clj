@@ -81,6 +81,6 @@
                           :lifecycles lifecycles
                           :acker/percentage 20 
                           :acker/exempt-input-tasks? true
-                          :task-scheduler :onyx.task-scheduler/balanced})
+                          :task-scheduler :onyx.task-scheduler/colocated})
     (println "Job successfully submitted")
     (shutdown-agents)))

@@ -53,7 +53,7 @@
                      :onyx.messaging.aeron/embedded-driver? false
                      :onyx.messaging.aeron/subscriber-count (Integer/parseInt subscriber-count)
                      ;; more accurate benching locally
-                     :onyx.messaging/allow-short-circuit? (if local? false true)
+                     :onyx.messaging/allow-short-circuit? true
                      :onyx.peer/join-failure-back-off 500
                      :onyx.peer/job-scheduler :onyx.job-scheduler/greedy
                      :onyx.messaging/impl (keyword messaging)}
