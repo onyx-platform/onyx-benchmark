@@ -66,9 +66,3 @@
     dest: /usr/bin/lein
     src: "/srv/leiningen-{{ lein_version }}/lein"
     state: link
-
-- name: Install core version to local Maven repository
-  shell: lein install
-  become_user: "{{ remote_user }}"
-  args:
-    chdir: /srv/onyx-repos/onyx

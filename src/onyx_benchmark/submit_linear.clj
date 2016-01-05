@@ -10,11 +10,14 @@
 (defn build-lifecycles [riemann-host riemann-port]
   [{:lifecycle/task :in
     :lifecycle/calls :onyx.plugin.bench-plugin/reader-calls}
+
    {:lifecycle/task :no-op
     :lifecycle/calls :onyx-benchmark.peer/no-op-calls}
+
    {:lifecycle/task :no-op
     :lifecycle/calls :onyx.plugin.core-async/writer-calls
     :core.async/allow-unsafe-concurrency? true}
+
    {:lifecycle/task :all
     :lifecycle/calls :onyx.lifecycle.metrics.metrics/calls
     :metrics/buffer-capacity 10000
