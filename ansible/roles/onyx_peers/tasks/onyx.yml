@@ -63,11 +63,14 @@
     --name onyx-peers
     --
     lein with-profile production run -m onyx-benchmark.peer
+    {{ groups.zookeeper | join(',') }}
     /srv/onyx-repos/benchmark-config/peer-config.edn
     {{ groups.metrics[0] }}
     {{ riemann_port }}
     {{ onyx_deployment_id }}
     {{ onyx_n_virtual_peers }}
+  args:
+    chdir: /srv/onyx-repos/onyx-benchmark
   become_user: "{{ remote_user }}"
 
 - name: Run the Onyx job to be benchmarked
