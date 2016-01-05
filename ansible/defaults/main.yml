@@ -36,6 +36,7 @@ onyx_max_pending: 5000
 onyx_peer_join_back_off: 500
 onyx_peer_port: 40000
 onyx_job_scheduler: ":onyx.job-scheduler/greedy"
+onyx_task_scheduler: ":onyx.task-scheduler/colocated"
 
 onyx_aeron_media_driver_mode: shared
 onyx_aeron_embedded_driver: false
@@ -44,6 +45,9 @@ onyx_aeron_n_subscribers: 2
 onyx_aeron_write_buffer_size: 200000
 onyx_aeron_offer_idle_strategy: ":high-restart-latency"
 onyx_aeron_poll_idle_strategy: ":high-restart-latency"
+
+onyx_acker_percentage: 20
+onyx_acker_exempt_inputs: true
 
 media_driver_java_opts: "-server"
 

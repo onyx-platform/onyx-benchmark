@@ -24,16 +24,12 @@
     :riemann/port riemann-port
     :lifecycle/doc "Instruments a task's metrics and sends via riemann"}])
 
-(defn -main [zk-addr riemann-addr riemann-port id batch-size max-pending & args]
+(defn -main
+  [peer-config-file job-config-file zk-addr riemann-addr riemann-port id batch-size max-pending & args]
   (let [batch-size (Integer/parseInt batch-size)
         max-pending (Integer/parseInt max-pending)
-        peer-config {:zookeeper/address zk-addr
-                     :onyx/id id
-                     :onyx.messaging/bind-addr "127.0.0.1"
-                     :onyx.messaging/peer-port 40000
-                     :onyx.peer/join-failure-back-off 500
-                     :onyx.peer/job-scheduler :onyx.job-scheduler/greedy
-                     :onyx.messaging/impl :aeron}
+        peer-config (read-string (slurp peer-config-file))
+        job-config (read-string (slurp job-config-file))
         catalog [{:onyx/name :in
                   :onyx/plugin :onyx.plugin.bench-plugin/generator
                   :onyx/type :input
@@ -76,11 +72,10 @@
         lifecycles (build-lifecycles riemann-addr (Integer/parseInt riemann-port))]
 
     (onyx.api/submit-job peer-config
-                         {:catalog catalog 
-                          :workflow workflow
-                          :lifecycles lifecycles
-                          :acker/percentage 20 
-                          :acker/exempt-input-tasks? true
-                          :task-scheduler :onyx.task-scheduler/colocated})
+                         (merge
+                          {:catalog catalog 
+                           :workflow workflow
+                           :lifecycles lifecycles}
+                          job-config))
     (println "Job successfully submitted")
     (shutdown-agents)))

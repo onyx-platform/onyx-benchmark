@@ -1,0 +1,65 @@
+---
+- name: Move peer config file onto target machine
+  template:
+    src: peer-config.edn.j2
+    dest: /srv/onyx-repos/benchmark-config/peer-config.edn
+    owner: "{{ remote_user }}"
+    group: "{{ remote_user }}"
+    mode: 0555
+
+- name: Move job config file onto target machine
+  template:
+    src: job-config.edn.j2
+    dest: /srv/onyx-repos/benchmark-config/job-config.edn
+    owner: "{{ remote_user }}"
+    group: "{{ remote_user }}"
+    mode: 0555
+
+- name: Kill the Java processes
+  shell: killall -9 java || true
+
+- name: Export log level
+  shell: "export TIMBRE_LOG_LEVEL={{ onyx_log_level }}"
+
+- name: Run the Aeron Media Driver
+  shell: >
+    daemon -D /srv/onyx-repos/onyx-benchmark
+    --name aeron-media-driver
+    --
+    lein with-profile production run -m onyx-benchmark.aeron-media-driver
+    {{ onyx_aeron_media_driver_mode }}
+  environment:
+    JAVA_OPTS: "{{ media_driver_java_opts }}"
+  become_user: "{{ remote_user }}"
+
+- name: Run the Onyx Peers
+  environment:
+    JAVA_OPTS: "{{ peer_java_opts }}"
+    TIMBRE_LOG_LEVEL: "{{ onyx_log_level }}"
+  shell: >
+    daemon -D /srv/onyx-repos/onyx-benchmark
+    --name onyx-peers
+    --
+    lein with-profile production run -m onyx-benchmark.peer
+    /srv/onyx-repos/benchmark-config/peer-config.edn
+   {{ groups.metrics[0] }}
+   {{ riemann_port }}
+   {{ onyx_deployment_id }}
+   {{ onyx_n_virtual_peers }}
+  become_user: "{{ remote_user }}"
+
+- name: Run the Onyx job to be benchmarked
+  shell: >
+    lein run -m onyx-benchmark.submit-linear
+    /srv/onyx-repos/benchmark-config/peer-config.edn
+    /srv/onyx-repos/benchmark-config/job-config.edn
+    {{ groups.zookeeper | join(',') }}
+    {{ groups.metrics[0] }}
+    {{ riemann_port }}
+    {{ onyx_deployment_id }}
+    {{ onyx_batch_size }}
+    {{ onyx_max_pending }}
+  args:
+    chdir: /srv/onyx-repos/onyx-benchmark
+  become_user: "{{ remote_user }}"
+  run_once: true

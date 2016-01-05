@@ -1,0 +1,18 @@
+---
+- hosts: localhost
+  remote_user: "{{ remote_user }}"
+  pre_tasks:
+    - include_vars: ../defaults/main.yml
+  roles:
+    - aws
+
+- hosts: peer
+  remote_user: "{{ remote_user }}"
+  become: yes
+  become_method: sudo
+  pre_tasks:
+    - include_vars: ../defaults/main.yml
+  vars:
+    - prepare_onyx: no
+  roles:
+    - onyx_peers
