@@ -32,41 +32,28 @@
 (defn restartable? [e] 
   true)
 
-(defn -main [zk-addr riemann-addr riemann-port id n-peers offer-idle-strategy poll-idle-strategy subscriber-count messaging & args]
-  (let [local? (= zk-addr "127.0.0.1:2189")
-
-        env-config {:onyx.bookkeeper/server? true
-                    :onyx/id id
+(defn -main [zk-addr peer-config-file riemann-addr riemann-port id n-peers & args]
+  (let [env-config {:onyx/id id
+                    :onyx.bookkeeper/server? true
+                    :onyx.bookkeeper/local-quorum? (= zk-addr "127.0.0.1:2189")
                     :zookeeper/address zk-addr
-                    :onyx.bookkeeper/local-quorum? local?
                     :zookeeper/server? false}
 
-        peer-config {:zookeeper/address zk-addr
-                     :onyx/id id
-                     :onyx.messaging/bind-addr (if local? 
-                                                 "127.0.0.1"
-                                                 (slurp "http://169.254.169.254/latest/meta-data/local-ipv4")) 
-                     :onyx.messaging/peer-port 40000
-                     :onyx.messaging.aeron/write-buffer-size 200000
-                     :onyx.messaging.aeron/offer-idle-strategy (keyword offer-idle-strategy)
-                     :onyx.messaging.aeron/poll-idle-strategy (keyword poll-idle-strategy)
-                     :onyx.messaging.aeron/embedded-driver? false
-                     :onyx.messaging.aeron/subscriber-count (Integer/parseInt subscriber-count)
-                     ;; more accurate benching locally
-                     :onyx.messaging/allow-short-circuit? true
-                     :onyx.peer/join-failure-back-off 500
-                     :onyx.peer/job-scheduler :onyx.job-scheduler/greedy
-                     :onyx.messaging/impl (keyword messaging)}
+        peer-cfg (read-string (slurp peer-config-file))
+
+        peer-config (merge
+                     {:onyx.messaging/bind-addr
+                      (slurp "http://169.254.169.254/latest/meta-data/local-ipv4")}
+                     peer-cfg)
 
         n-peers-parsed (Integer/parseInt n-peers)
         peer-group (onyx.api/start-peer-group peer-config)
         env (onyx.api/start-env env-config)
 
-        host-id (str (java.util.UUID/randomUUID))
         m-cfg (monitoring/monitoring-config 10000)
         riemann-config {:riemann/address riemann-addr 
                         :riemann/batch-size 1
                         :riemann/port (Integer/parseInt riemann-port)} 
         monitoring-thread (riemann/riemann-sender riemann-config (:monitoring/ch m-cfg))
         peers (onyx.api/start-peers n-peers-parsed peer-group m-cfg)]
-    (<!! (chan))))
+    @(promise)))
