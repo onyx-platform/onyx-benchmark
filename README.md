@@ -23,9 +23,9 @@ $ ansible-playbook --private-key ~/.ssh/your-aws-key.pem -i "," -e remote_user="
 
 Running this will construct a private VPC in AWS with a cluster of machines. Software will be installed to support the entire Onyx cluster, including metrics. Override any variables in `defaults/main.yml` with your own value by specifying `-e key=value` on the command line run. Note that security is **wide** open on these machines.
 
-### Ports
+### Performance
 
-Grafana: Metrics machine, port 3000
+View the performance through Grafana at port 3000 on the metrics machine. The index page will prompt you for credentials - they are `admin` / `admin`. Use the various dashboards to view throughput, latency, CPU usage, etc.
 
 ## License
 
