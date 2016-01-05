@@ -15,6 +15,22 @@
     group: "{{ remote_user }}"
     mode: 0555
 
+- name: Clone Onyx core
+  become_user: "{{ remote_user }}"
+  git:
+    repo: https://github.com/onyx-platform/onyx.git
+    dest: /srv/onyx-repos/onyx
+    force: yes
+    version: "{{ onyx_core_version }}"
+
+- name: Clone Onyx benchmark
+  become_user: "{{ remote_user }}"
+  git:
+    repo: https://github.com/onyx-platform/onyx-benchmark.git
+    dest: /srv/onyx-repos/onyx-benchmark
+    force: yes
+    version: "{{ onyx_benchmark_version }}"
+
 - name: Kill the Java processes
   shell: killall -9 java || true
 
