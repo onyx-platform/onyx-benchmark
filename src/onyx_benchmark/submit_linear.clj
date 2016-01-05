@@ -32,6 +32,10 @@
   (let [batch-size (Integer/parseInt batch-size)
         max-pending (Integer/parseInt max-pending)
         peer-config (read-string (slurp peer-config-file))
+        peer-config (merge
+                     {:onyx.messaging/bind-addr
+                      (slurp "http://169.254.169.254/latest/meta-data/local-ipv4")}
+                     peer-config)
         job-config (read-string (slurp job-config-file))
         catalog [{:onyx/name :in
                   :onyx/plugin :onyx.plugin.bench-plugin/generator
