@@ -26,7 +26,7 @@ riemann_port: 5555
 lein_version: 2.5.2
 
 onyx_core_version: e7b6df874c100e92da44d9586f5eaeac89e3b1fc
-onyx_benchmark_version: 959a927aaa038389cdf52376ccca0fbc7ce0c867
+onyx_benchmark_version: f3c232f24fa40fd985fc91294fc77dc1250976e9
 
 onyx_n_virtual_peers: 4
 onyx_log_level: info
