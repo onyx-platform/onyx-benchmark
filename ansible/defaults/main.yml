@@ -22,6 +22,9 @@ onyx_peer_spot_type: one-time
 n_zookeeper_machines: 1
 n_onyx_peer_machines: 3
 
+riemann_port: 5555
+lein_version: 2.5.2
+
 onyx_core_version: 0d1dacaf571d443265ff8632dc92e230c27c85c9
 onyx_benchmark_version: fb30605984c360c8e6042767aa8c84781a28e1cc
 
@@ -30,12 +33,23 @@ onyx_log_level: warn
 onyx_deployment_id: onyx-benchmark
 onyx_batch_size: 20
 onyx_max_pending: 5000
-onyx_media_driver_mode: shared
-onyx_aeron_short_circuit: yes
+onyx_peer_join_back_off: 500
+onyx_peer_port: 40000
+onyx_job_scheduler: ":onyx.job-scheduler/greedy"
+
+onyx_aeron_media_driver_mode: shared
+onyx_aeron_embedded_driver: false
+onyx_aeron_short_circuit: true
+onyx_aeron_n_subscribers: 2
+onyx_aeron_write_buffer_size: 200000
+onyx_aeron_offer_idle_strategy: ":high-restart-latency"
+onyx_aeron_poll_idle_strategy: ":high-restart-latency"
 
 media_driver_java_opts: "-server"
-peer_java_opts: "-server -XX:+UnlockCommercialFeatures -XX:+FlightRecorder -XX:+UnlockDiagnosticVMOptions -XX:StartFlightRecording=duration=1080s,filename=peer_recording.jfr"
 
-riemann_port: 5555
-
-lein_version: 2.5.2
+peer_java_opts: >
+  -server
+  -XX:+UnlockCommercialFeatures
+  -XX:+FlightRecorder
+  -XX:+UnlockDiagnosticVMOptions
+  -XX:StartFlightRecording=duration=1080s,filename=peer_recording.jfr

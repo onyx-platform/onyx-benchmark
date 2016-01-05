@@ -1,12 +1,12 @@
-{:zookeeper/address "{{ groups.zookeeper | join(',') }}"
- :onyx/id "{{ onyx_deployment_id }}"
- :onyx.messaging/peer-port 40000
- :onyx.messaging.aeron/write-buffer-size 200000
- :onyx.messaging.aeron/offer-idle-strategy :high-restart-latency
- :onyx.messaging.aeron/poll-idle-strategy :high-restart-latency
- :onyx.messaging.aeron/embedded-driver? false
- :onyx.messaging.aeron/subscriber-count 2
+{:onyx/id "{{ onyx_deployment_id }}"
+ :zookeeper/address "{{ groups.zookeeper | join(',') }}"
+ :onyx.messaging.aeron/offer-idle-strategy "{{ onyx_aeron_offer_idle_strategy }}"
+ :onyx.messaging.aeron/poll-idle-strategy "{{ onyx_aeron_poll_idle_strategy }}"
+ :onyx.messaging.aeron/embedded-driver? "{{ onyx_aeron_embedded_driver }}"
+ :onyx.messaging.aeron/subscriber-count "{{ onyx_aeron_n_subscribers }}"
  :onyx.messaging/allow-short-circuit? "{{ onyx_aeron_short_circuit }}"
- :onyx.peer/join-failure-back-off 500
- :onyx.peer/job-scheduler :onyx.job-scheduler/greedy
+ :onyx.peer/job-scheduler "{{ onyx_job_scheduler }}"
+ :onyx.messaging/peer-port "{{ onyx_peer_port }}"
+ :onyx.messaging.aeron/write-buffer-size "{{ onyx_aeron_write_buffer_size }}"
+ :onyx.peer/join-failure-back-off "{{ onyx_peer_join_backoff }}"
  :onyx.messaging/impl :aeron}
