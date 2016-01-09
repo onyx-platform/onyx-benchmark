@@ -1,0 +1,16 @@
+---
+- name: Install collectd
+  package:
+    name: collectd
+
+- name: Install collectd-utils
+  package:
+    name: collectd-utils
+
+- name: Install collectd config
+  template:
+    src: collectd.conf.j2
+    dest: /etc/collectd/collectd.conf
+    owner: "{{ remote_user }}"
+    group: "{{ remote_user }}"
+    mode: 0555

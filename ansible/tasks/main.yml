@@ -17,6 +17,7 @@
     - influx
     - grafana
     - riemann
+    - collectd
 
 - hosts: zookeeper
   remote_user: "{{ remote_user }}"
@@ -27,6 +28,7 @@
   roles:
     - common
     - zookeeper
+    - collectd
 
 - hosts: peer
   remote_user: "{{ remote_user }}"
@@ -38,4 +40,5 @@
     - prepare_onyx: yes
   roles:
     - common
+    - collectd
     - onyx_peers

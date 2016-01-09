@@ -1,0 +1,49 @@
+# Config file for collectd(1).
+#
+# Some plugins need additional configuration and are disabled by default.
+# Please read collectd.conf(5) for details.
+#
+# You should also read /usr/share/doc/collectd/README.Debian.plugins before
+# enabling any more plugins.
+
+FQDNLookup true
+BaseDir "/var/lib/collectd"
+PluginDir "/usr/lib/collectd"
+TypesDB "/usr/share/collectd/types.db"
+Interval 10
+ReadThreads 5
+
+Include "/etc/collectd/thresholds.conf"
+
+LoadPlugin aggregation
+LoadPlugin cpu
+LoadPlugin df
+LoadPlugin entropy
+LoadPlugin interface
+LoadPlugin load
+LoadPlugin memory
+LoadPlugin processes
+LoadPlugin rrdtool
+LoadPlugin users
+LoadPlugin write_riemann
+LoadPlugin match_regex
+
+<Plugin interface>
+    Interface "eth0"
+    IgnoreSelected false
+</Plugin>
+
+<Plugin "write_riemann">
+    <Node "local">
+        Host "{{ groups.metrics[0] }}"
+        Port "{{ riemann_port }}"
+        Protocol TCP
+        StoreRates true
+        AlwaysAppendDS false
+    </Node>
+    Tag "collectd"
+</Plugin>
+
+<Target "write">
+    Plugin "write_riemann/local"
+</Target>
