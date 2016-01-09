@@ -25,3 +25,11 @@
 
 - name: Map internal IP to hostname
   shell: "patch-hosts-file {{ network_interface }}"
+
+- name: Update apt
+  apt:
+    update_cache: yes
+
+- name: Install htop
+  package:
+    name: htop
