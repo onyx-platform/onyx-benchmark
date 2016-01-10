@@ -78,6 +78,7 @@
                   [:inc4 :no-op]]
         lifecycles (build-lifecycles riemann-addr (Integer/parseInt riemann-port))]
 
+    (clojure.pprint/pprint job-config)
     (onyx.api/submit-job peer-config
                          (merge
                           {:catalog catalog 

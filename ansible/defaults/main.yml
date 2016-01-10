@@ -46,7 +46,7 @@ onyx_aeron_write_buffer_size: 200000
 onyx_aeron_offer_idle_strategy: ":high-restart-latency"
 onyx_aeron_poll_idle_strategy: ":high-restart-latency"
 
-onyx_acker_percentage: 20
+onyx_acker_percentage: 25
 onyx_acker_exempt_inputs: true
 
 media_driver_java_opts: "-server"
