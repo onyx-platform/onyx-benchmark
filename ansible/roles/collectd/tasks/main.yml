@@ -25,6 +25,7 @@
     - libprotobuf-c0-dev
     - protobuf-c-compiler
     - librrd-dev
+    - libltdl-dev
 
 - name: Download collectd
   unarchive:
