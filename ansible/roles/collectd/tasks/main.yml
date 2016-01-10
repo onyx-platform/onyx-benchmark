@@ -14,3 +14,16 @@
     owner: "{{ remote_user }}"
     group: "{{ remote_user }}"
     mode: 0555
+
+- name: Touch a config file needed for collectd
+  file:
+    path: /etc/collectd/thresholds.conf
+    state: touch
+    owner: "{{ remote_user }}"
+    group: "{{ remote_user }}"
+    mode: 0555
+
+- name: Start collectd
+  service:
+    name: collectd
+    state: started
