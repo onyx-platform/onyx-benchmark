@@ -14,6 +14,7 @@
   :onyx.messaging/allow-short-circuit? false
   :onyx.messaging/impl :aeron
   :onyx.messaging/peer-port 40200
-  :onyx.messaging/bind-addr "localhost"}
+  :onyx.messaging/bind-addr "localhost"
+  :onyx.task-scheduler.colocated/only-send-local? false}
 
  :logging {}}

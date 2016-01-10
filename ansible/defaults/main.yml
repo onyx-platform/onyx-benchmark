@@ -25,18 +25,18 @@ n_onyx_peer_machines: 3
 riemann_port: 5555
 lein_version: 2.5.2
 
-onyx_core_version: e7b6df874c100e92da44d9586f5eaeac89e3b1fc
-onyx_benchmark_version: 06cc0efab7352b55cde7ab1c94bc934eb6a5c97c
+onyx_core_version: 2f23bb9e4b6d6d79c38cfbc3d84e0c082a112d2a
+onyx_benchmark_version: 2eada11acd6b50a7e0fbbba1c28bd0de40666f09
 
-onyx_n_virtual_peers: 4
+onyx_n_virtual_peers: 6
 onyx_log_level: info
 onyx_deployment_id: onyx-benchmark-1
 onyx_batch_size: 20
-onyx_max_pending: 5000
+onyx_max_pending: 100000
 onyx_peer_join_backoff: 500
 onyx_peer_port: 40000
 onyx_job_scheduler: ":onyx.job-scheduler/greedy"
-onyx_task_scheduler: ":onyx.task-scheduler/balanced"
+onyx_task_scheduler: ":onyx.task-scheduler/colocated"
 
 onyx_aeron_media_driver_mode: shared
 onyx_aeron_embedded_driver: false
@@ -47,7 +47,7 @@ onyx_aeron_offer_idle_strategy: ":high-restart-latency"
 onyx_aeron_poll_idle_strategy: ":high-restart-latency"
 
 onyx_acker_percentage: 25
-onyx_acker_exempt_inputs: true
+onyx_acker_exempt_inputs: false
 
 media_driver_java_opts: "-server"
 
