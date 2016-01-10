@@ -1,11 +1,47 @@
 ---
-- name: Install collectd
-  package:
-    name: collectd
+- name: Create the directory for collectd
+  file:
+    path: /srv/collectd
+    state: directory
+    mode: 0755
+    owner: "{{ remote_user }}"
+    group: "{{ remote_user }}"
+    recurse: yes
 
-- name: Install collectd-utils
+- name: Create the config directory for collectd
+  file:
+    path: /etc/collectd
+    state: directory
+    mode: 0755
+    owner: "{{ remote_user }}"
+    group: "{{ remote_user }}"
+    recurse: yes
+
+- name: Download build-essential
   package:
-    name: collectd-utils
+    name: "{{ item }}"
+  with_items:
+    - build-essential
+    - libprotobuf-c0-dev
+    - protobuf-c-compiler
+    - librrd-dev
+
+- name: Download collectd
+  unarchive:
+    src: https://collectd.org/files/collectd-5.5.0.tar.gz
+    dest: /srv/collectd
+    copy: no
+
+- name: Configure collectd
+  shell: ./configure
+  args:
+    chdir: /srv/collectd/collectd-5.5.0
+
+- name: Install collectd
+  shell: make all install
+  args:
+    chdir: /srv/collectd/collectd-5.5.0
+  become: yes
 
 - name: Install collectd config
   template:
@@ -24,6 +60,5 @@
     mode: 0555
 
 - name: Start collectd
-  service:
-    name: collectd
-    state: started
+  shell: /opt/collectd/sbin/collectd -C /etc/collectd/collectd.conf
+  become: yes
