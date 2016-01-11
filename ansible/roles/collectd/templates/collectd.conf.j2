@@ -32,6 +32,16 @@ LoadPlugin match_regex
     ValuesPercentage true
 </Plugin>
 
+<Plugin "aggregation">
+  <Aggregation>
+    Plugin "cpu"
+    Type "percent"
+    GroupBy "Host"
+    GroupBy "TypeInstance"
+    CalculateAverage true
+  </Aggregation>
+</Plugin>
+
 <Plugin interface>
     Interface "eth0"
     IgnoreSelected false

@@ -60,6 +60,10 @@
     group: "{{ remote_user }}"
     mode: 0555
 
+- name: Restart collectd if possible
+  shell: killall -2 collectd || true
+  become: yes
+
 - name: Start collectd
   shell: /opt/collectd/sbin/collectd -C /etc/collectd/collectd.conf
   become: yes

@@ -40,6 +40,17 @@
     HEADER_Content-type: application/json
   when: matched_datasources != "1"
 
+- name: Load Executive Monitoring dashboard
+  uri:
+    url: http://localhost:3000/api/dashboards/db
+    method: POST
+    user: admin
+    password: admin
+    body: "{{ lookup('file','executive.json') }}"
+    force_basic_auth: yes
+    status_code: 200
+    HEADER_Content-type: application/json
+
 - name: Load Onyx ZooKeeper Monitoring dashboard
   uri:
     url: http://localhost:3000/api/dashboards/db
