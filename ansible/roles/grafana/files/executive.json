@@ -208,7 +208,7 @@
                         ]
                     },
                     {
-                        "title": "Panel Title",
+                        "title": "Pending Segments Count",
                         "error": false,
                         "span": 4,
                         "editable": true,
