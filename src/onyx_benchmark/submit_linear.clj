@@ -2,6 +2,7 @@
   (:require [clojure.core.async :refer [chan dropping-buffer <!!]]
             [onyx.peer.pipeline-extensions :as p-ext]
             [onyx.plugin.bench-plugin]
+            [aero.core :refer [read-config]]
             [onyx.plugin.core-async]
             [onyx.peer.operation :as op]
             [onyx-benchmark.peer]
@@ -28,15 +29,16 @@
     :lifecycle/doc "Instruments a task's metrics and sends via riemann"}])
 
 (defn -main
-  [peer-config-file job-config-file zk-addr riemann-addr riemann-port id batch-size max-pending & args]
-  (let [batch-size (Integer/parseInt batch-size)
-        max-pending (Integer/parseInt max-pending)
-        peer-config (read-string (slurp peer-config-file))
-        peer-config (merge
-                     {:onyx.messaging/bind-addr
-                      (slurp "http://169.254.169.254/latest/meta-data/local-ipv4")}
-                     peer-config)
-        job-config (read-string (slurp job-config-file))
+  []
+  (let [n-peers 5
+        {:keys [riemann-config
+                env-config
+                peer-config]}(read-config (clojure.java.io/resource "config.edn")
+                                          {:profile :default})
+
+        batch-size 20
+        max-pending 5000
+
         catalog [{:onyx/name :in
                   :onyx/plugin :onyx.plugin.bench-plugin/generator
                   :onyx/type :input
@@ -71,19 +73,29 @@
                   :onyx/type :output
                   :onyx/medium :core.async
                   :onyx/doc "Drops messages on the floor"}]
-        workflow [[:in :inc1] 
-                  [:inc1 :inc2] 
+        workflow [[:in :inc1]
+                  [:inc1 :inc2]
                   [:inc2 :inc3]
                   [:inc3 :inc4]
                   [:inc4 :no-op]]
-        lifecycles (build-lifecycles riemann-addr (Integer/parseInt riemann-port))]
+        lifecycles (build-lifecycles "riemann-intake"
+                                     (Integer/parseInt "5555"))]
 
-    (spit "onyx-job.edn" job-config)
-    (onyx.api/submit-job peer-config
-                         (merge
-                          {:catalog catalog 
-                           :workflow workflow
-                           :lifecycles lifecycles}
-                          job-config))
-    (println "Job successfully submitted")
-    (shutdown-agents)))
+
+    (-> (:job-id (onyx.api/submit-job
+
+                  peer-config
+                  (merge
+                   {:catalog catalog
+                    :workflow workflow
+                    :lifecycles lifecycles
+                    :task-scheduler :onyx.task-scheduler/balanced}
+
+                   )))
+        (println "Job successfully submitted"))
+                                        ;(shutdown-agents)
+    ))
+(-main)
+
+#_(read-config (clojure.java.io/resource "config.edn")
+               {:profile :default})

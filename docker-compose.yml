@@ -1,0 +1,65 @@
+config-container:
+  image: onyxplatform/config-container:latest
+
+influxdb:
+  image: tutum/influxdb:0.9
+  environment:
+    PRE_CREATE_DB: grafana # create a riemann db on startup
+  ports:
+    - "8083:8083"
+    - "8086:8086"
+    - "8086:8086/udp"
+## For now dont worry about persisting the data
+
+grafana:
+  image: grafana/grafana
+  environment:
+    GF_SECURITY_ADMIN_PASSWORD: admin
+    GF_SECURITY_ADMIN_USER: admin
+    GF_DASHBOARDS_JSON_PATH: "/config/grafana/dashboards"
+    GF_DASHBOARDS_JSON_ENABLED: "true"
+  ports:
+    - "3000:3000"
+  volumes_from:
+    - config-container
+  links:
+    - influxdb
+
+riemann:
+  image: onyxplatform/riemann:latest
+  ports:
+    - "5555:5555"
+    - "5555:5555/udp"
+    - "5556:5556"
+  volumes_from:
+    - config-container
+  links:
+    - influxdb
+
+zookeeper:
+  image: onyxplatform/zookeeper-exhibitor:latest
+  ports:
+    - '2181:2181'
+    - '2888:2888'
+    - '3888:3888'
+    - '8181:8181'
+  environment:
+    HOSTNAME: "zookeeper"
+
+onyx-peer:
+  image: onyxplatform/onyx-benchmark:0.0.1
+  privileged: yes
+  environment:
+    ONYX_ID: "mycluster"
+    NPEERS: 5
+    #ZOOKEEPER
+    #RIEMANN_ADDR
+    #BIND_ADDR:
+    MEDIA_DRIVER_JAVA_OPTS: "-server"
+    PEER_JAVA_OPTS: >
+      -server
+      -Xmx2g
+      -XX:+UnlockDiagnosticVMOptions
+  links:
+    - riemann
+    - zookeeper

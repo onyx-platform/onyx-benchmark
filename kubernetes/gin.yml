@@ -1,0 +1,205 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-dashboard
+  labels:
+    app: benchmark
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 3000
+    name: grafana
+  selector:
+    component: monitoring
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: riemann-intake
+  labels:
+    app: benchmark
+    component: monitoring
+spec:
+  ports:
+  - port: 5555
+    name: tcp
+  - port: 5555
+    name: udp
+    protocol: UDP
+  - port: 5556
+    name: ws
+  selector:
+    component: monitoring
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zookeeper
+  labels:
+    app: benchmark
+    component: zookeeper
+spec:
+  ports:
+    - port: 2181
+      name: comm
+    - port: 2888
+      name: in
+    - port: 3888
+      name: out
+    - port: 8181
+      name: exhibitor
+  selector:
+    component: zookeeper
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: monitoring
+  labels:
+    tier: backend
+    app: benchmark
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: benchmark
+        component: monitoring
+    spec:
+      volumes:
+      - name: config-volume
+        gitRepo:
+          repository: "https://github.com/gardnervickers/config-container.git"
+          revision: "dcc82328e0dc432b7f9069e6409fa1905748f5ff"
+      containers:
+      ### InfluxDB ###
+      - name: influxdb
+        image: tutum/influxdb:0.9
+        env:
+        - name: PRE_CREATE_DB
+          value: grafana
+        ports:
+        - containerPort: 8083
+        - containerPort: 8086
+        - containerPort: 8086
+          protocol: UDP
+      ### Grafana ###
+      - name: grafana
+        image: grafana/grafana
+        volumeMounts:
+        - mountPath: /config
+          name: config-volume
+        env:
+        - name: GF_SECURITY_ADMIN_PASSWORD
+          value: admin
+        - name: GF_SECURITY_ADMIN_USER
+          value: admin
+        - name: GF_DASHBOARDS_JSON_PATH
+          value: "/config/config-container/grafana/dashboards"
+        - name: GF_DASHBOARDS_JSON_ENABLED
+          value: "true"
+        ports:
+        - containerPort: 3000
+          name: grafana
+        ### Riemann ###
+      - name: riemann
+        image: onyxplatform/riemann:kube
+        volumeMounts:
+        - mountPath: /config
+          name: config-volume
+        ports:
+        - containerPort: 5555
+        - containerPort: 5555
+          protocol: UDP
+        - containerPort: 5556
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: zookeeper
+  labels:
+    app: benchmark
+    component: zookeeper
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: benchmark
+        component: zookeeper
+    spec:
+      containers:
+        - name: zookeeper
+          image: onyxplatform/zookeeper-exhibitor:latest
+          ports:
+            - containerPort: 2181
+            - containerPort: 2888
+            - containerPort: 3888
+            - containerPort: 8181
+          env:
+          - name: HOSTNAME
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: onyx-peer
+  labels:
+    app: benchmark
+    component: onyx-peer
+spec:
+  replicas: 5
+  template:
+    metadata:
+      labels:
+        app: benchmark
+        component: onyx-peer
+    spec:
+      volumes:
+        - name: aeron
+          emptyDir:
+            medium: "Memory"
+      containers:
+        - name: onyx-peer
+          imagePullPolicy: Always
+          image: onyxplatform/onyx-benchmark:latest
+          volumeMounts:
+            - mountPath: /dev/shm
+              name: aeron
+          ports:
+            - containerPort: 40200
+            - containerPort: 40200
+              protocol: UDP
+            - containerPort: 3196
+            - containerPort: 3197
+            - containerPort: 3198
+          env:
+            - name: NPEERS
+              value: "2"
+            - name: ONYX_ID
+              value: "mycluster"
+            - name: RIEMANN_ADDR
+              value: "riemann-intake"
+            - name: PEER_JAVA_OPTS
+              value: >
+                 -server
+                 -Xmx3g
+                 -XX:BiasedLockingStartupDelay=0
+                 -Daeron.mtu.length=16384
+                 -Daeron.socket.so_sndbuf=2097152
+                 -Daeron.socket.so_rcvbuf=2097152
+                 -Daeron.rcv.buffer.length=16384
+                 -Daeron.rcv.initial.window.length=2097152
+                 -Dagrona.disable.bounds.checks=true
+
+            - name: MEDIA_DRIVER_JAVA_OPTS
+              value: "-server"
+            - name: ZOOKEEPER
+              value: "zookeeper"
+            - name: BIND_ADDR
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
