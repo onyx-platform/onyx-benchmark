@@ -33,7 +33,7 @@
   true)
 
 (defn -main [zk-addr peer-config-file riemann-addr riemann-port id n-peers & args]
-  (let [env-config {:onyx/id id
+  (let [env-config {:onyx/tenancy-id id
                     :onyx.bookkeeper/server? true
                     :onyx.bookkeeper/local-quorum? (= zk-addr "127.0.0.1:2189")
                     :zookeeper/address zk-addr

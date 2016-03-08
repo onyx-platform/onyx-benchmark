@@ -1,4 +1,4 @@
-{:onyx/id "{{ onyx_deployment_id }}"
+{:onyx/tenancy-id "{{ onyx_deployment_id }}"
  :zookeeper/address "{{ groups.zookeeper | join(',') }}"
  :onyx.messaging.aeron/offer-idle-strategy {{ onyx_aeron_offer_idle_strategy }}
  :onyx.messaging.aeron/poll-idle-strategy {{ onyx_aeron_poll_idle_strategy }}

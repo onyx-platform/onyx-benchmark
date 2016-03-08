@@ -27,7 +27,7 @@
 (defn -main [zk-addr riemann-addr riemann-port id batch-size min-peers & args]
   (let [batch-size (Integer/parseInt batch-size)
         peer-config {:zookeeper/address zk-addr
-                     :onyx/id id
+                     :onyx/tenancy-id id
                      :onyx.messaging/bind-addr "127.0.0.1"
                      :onyx.messaging/peer-port 40000
                      :onyx.peer/join-failure-back-off 500

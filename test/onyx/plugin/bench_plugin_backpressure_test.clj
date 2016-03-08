@@ -21,7 +21,7 @@
   {:zookeeper/address "127.0.0.1:2189"
    :zookeeper/server? true
    :zookeeper.server/port 2189
-   :onyx/id id
+   :onyx/tenancy-id id
    :onyx.log/config {:appenders {:standard-out {:enabled? false}
                                  :spit {:enabled? false}
                                  :rotor {:min-level :trace
@@ -37,7 +37,7 @@
 
 (def peer-config
   {:zookeeper/address "127.0.0.1:2189"
-   :onyx/id id
+   :onyx/tenancy-id id
    ;:onyx.peer/backpressure-check-interval 1000000
    ;:onyx.peer/backpressure-low-water-pct 300
    ;:onyx.peer/backpressure-high-water-pct 600
@@ -72,8 +72,8 @@
 
 (def catalog
   [{:onyx/name :in
-    :onyx/ident :onyx.plugin.bench-plugin/generator
-    ;:onyx/ident :onyx.plugin.RandomInputPlugin
+    :onyx/tenancy-ident :onyx.plugin.bench-plugin/generator
+    ;:onyx/tenancy-ident :onyx.plugin.RandomInputPlugin
     :onyx/type :input
     :onyx/medium :generator
     :onyx/max-pending 500000
@@ -109,7 +109,7 @@
     :onyx/batch-size batch-size}
 
    {:onyx/name :no-op
-    :onyx/ident :onyx.plugin.core-async/output
+    :onyx/tenancy-ident :onyx.plugin.core-async/output
     :onyx/type :output
     :onyx/medium :core.async
     :onyx/batch-timeout batch-timeout

@@ -19,8 +19,8 @@
 
 (def config (load-config))
 
-(def env-config (assoc (:env-config config) :onyx/id id))
-(def peer-config (assoc (:peer-config config) :onyx/id id
+(def env-config (assoc (:env-config config) :onyx/tenancy-id id))
+(def peer-config (assoc (:peer-config config) :onyx/tenancy-id id
                         ;:onyx.peer/state-log-impl :none
                         ;:onyx.peer/state-filter-impl :set
                         ;:onyx.bookkeeper/port 3196
