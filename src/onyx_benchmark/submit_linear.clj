@@ -30,14 +30,13 @@
 
 (defn -main
   []
-  (let [n-peers 5
-        {:keys [riemann-config
+  (let [{:keys [riemann-config
                 env-config
                 peer-config]}(read-config (clojure.java.io/resource "config.edn")
                                           {:profile :default})
 
-        batch-size 20
-        max-pending 5000
+        batch-size 50
+        max-pending 10000
 
         catalog [{:onyx/name :in
                   :onyx/plugin :onyx.plugin.bench-plugin/generator

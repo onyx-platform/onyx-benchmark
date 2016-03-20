@@ -34,7 +34,6 @@ workerInstanceType: c4.xlarge
 #workerRootVolumeSize: 30
 
 # Price (Dollars) to bid for spot instances. Omit for on-demand instances.
-# workerSpotPrice: "0.05"
 
 # Location of kube-aws artifacts used to deploy a new
 # Kubernetes cluster. The necessary artifacts are already

@@ -151,7 +151,7 @@ metadata:
     app: benchmark
     component: onyx-peer
 spec:
-  replicas: 5
+  replicas: 6
   template:
     metadata:
       labels:
@@ -178,7 +178,7 @@ spec:
             - containerPort: 3198
           env:
             - name: NPEERS
-              value: "2"
+              value: "1"
             - name: ONYX_ID
               value: "mycluster"
             - name: RIEMANN_ADDR
@@ -186,7 +186,7 @@ spec:
             - name: PEER_JAVA_OPTS
               value: >
                  -server
-                 -Xmx3g
+                 -Xmx1g
                  -XX:BiasedLockingStartupDelay=0
                  -Daeron.mtu.length=16384
                  -Daeron.socket.so_sndbuf=2097152
