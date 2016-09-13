@@ -11,7 +11,7 @@
             [onyx.test-helper :refer [load-config]]
             [interval-metrics.core :as im]
             [onyx.api])
-  (:import [onyx.plugin RandomInputPlugin]))
+  #_(:import [onyx.plugin RandomInputPlugin]))
 
 (def id (java.util.UUID/randomUUID))
 

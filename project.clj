@@ -20,7 +20,10 @@
                         ; "-XX:+TraceClassLoading" "-XX:+LogCompilation" "-XX:+PrintAssembly"
                         ]
 
-  :profiles {:bench {:dependencies [[org.onyxplatform/onyx "0.0.0-BENCH"]]
+  :profiles {:bench {:dependencies [; Custom installed dependency for this bench run
+                                    ; Modify onyx's version to 0.0.0-BENCH and lein install.
+                                    ; This is done automatically by some of the bench scripts
+                                    [org.onyxplatform/onyx "0.0.0-BENCH"]]
                      :java-opts ^:replace ["-server" 
                                            "-Xmx6g"
                                            "-XX:BiasedLockingStartupDelay=0" 
@@ -41,10 +44,10 @@
   :global-vars  {*warn-on-reflection* true 
                  *assert* false
                  *unchecked-math* :warn-on-boxed}
-  :java-source-paths ["src/java"]
-  :dependencies [[org.clojure/clojure "1.7.0"]
-                 [org.onyxplatform/onyx "0.8.4-SNAPSHOT"]
-                 [org.onyxplatform/onyx-metrics "0.8.2.8-20151206.105300-18"]
+  ;:java-source-paths ["src/java"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
+                 [org.onyxplatform/onyx "0.9.10-beta4"]
+                 [org.onyxplatform/onyx-metrics "0.9.10.0-beta4"]
                  [riemann-clojure-client "0.4.1"]
                  [gnuplot "0.1.0"]
                  [cheshire "5.4.0"]])

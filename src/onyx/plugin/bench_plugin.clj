@@ -1,7 +1,7 @@
 (ns onyx.plugin.bench-plugin
   (:require [clojure.core.async :refer [chan >!! <!! close! alts!! timeout]]
             [onyx.peer.function :as function]
-            [onyx.static.default-vals :refer [defaults]]
+            [onyx.static.default-vals :refer [arg-or-default]]
             [onyx.types :as t]
             [taoensso.timbre :refer [info warn trace fatal] :as timbre]
             [onyx.peer.pipeline-extensions :as p-ext]))
@@ -86,7 +86,7 @@
 
 (defn generator [pipeline-data]
   (let [task-map (:onyx.core/task-map pipeline-data)
-        max-pending (or (:onyx/max-pending task-map) (:onyx/max-pending defaults))
+        max-pending (arg-or-default :onyx/max-pending task-map)
         batch-size (:onyx/batch-size task-map)
         segment-generator-fn (case (:benchmark/segment-generator task-map)
                                :hundred-bytes new-segment-small
