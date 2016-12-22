@@ -1,7 +1,6 @@
 (ns onyx.plugin.bench-plugin-test
   (:require [clojure.core.async :refer [chan dropping-buffer put! >! <! <!! go >!!]]
             [taoensso.timbre :refer [info warn trace fatal] :as timbre]
-            [onyx.peer.pipeline-extensions :as p-ext]
             [onyx.plugin.bench-plugin]
             [onyx.static.logging-configuration :as log-config]
             [onyx.plugin.core-async]
@@ -41,7 +40,6 @@
     :onyx/type :input
     :onyx/medium :generator
     :benchmark/segment-generator :hundred-bytes
-    :onyx/max-pending 10000
     :onyx/batch-timeout batch-timeout
     :onyx/batch-size batch-size}
 
@@ -86,9 +84,9 @@
 
 (println "Starting Vpeers")
 (let [host-id (str "thishost")
-      m-cfg (monitoring/monitoring-config host-id 10000)
-      monitoring-thread (onyx.lifecycle.metrics.timbre/timbre-sender {} (:monitoring/ch m-cfg))
-      v-peers (onyx.api/start-peers 6 peer-group m-cfg)]
+      ;m-cfg (monitoring/monitoring-config host-id 10000)
+      ;monitoring-thread (onyx.lifecycle.metrics.timbre/timbre-sender {} (:monitoring/ch m-cfg))
+      v-peers (onyx.api/start-peers 6 peer-group #_m-cfg)]
 
   (println "Started vpeers")
   (def bench-length 120000)
@@ -102,13 +100,9 @@
   (def lifecycles
     [{:lifecycle/task :no-op
       :lifecycle/calls :onyx.plugin.bench-plugin-test/in-calls}
-     {:lifecycle/task :no-op
-      :lifecycle/calls :onyx.plugin.core-async/writer-calls}
-
      {:lifecycle/task :in ; or :task-name for an individual task
       :lifecycle/calls :onyx.lifecycle.metrics.metrics/calls
       :metrics/buffer-capacity 10000
-      :metrics/workflow-name "your-workflow-name"
       :metrics/sender-fn :onyx.lifecycle.metrics.timbre/timbre-sender
       :lifecycle/doc "Instruments a task's metrics to timbre"}])
 

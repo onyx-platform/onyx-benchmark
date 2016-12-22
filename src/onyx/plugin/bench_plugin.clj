@@ -1,31 +1,23 @@
 (ns onyx.plugin.bench-plugin
-  (:require [clojure.core.async :refer [chan >!! <!! close! alts!! timeout]]
-            [onyx.peer.function :as function]
+  (:require [onyx.plugin.protocols.input :as i]
+            [onyx.plugin.protocols.output :as o]
+            [onyx.plugin.protocols.plugin :as p]
             [onyx.static.default-vals :refer [arg-or-default]]
             [onyx.types :as t]
-            [taoensso.timbre :refer [info warn trace fatal] :as timbre]
-            [onyx.peer.pipeline-extensions :as p-ext]))
+            [taoensso.timbre :refer [info warn trace fatal] :as timbre]))
 
 (def hundred-bytes 
   (into-array Byte/TYPE (range 100)))
 
-(defn flush-swap! [a f-read f-swap]
-  (loop []
-    (let [v (deref a)]
-      (if (compare-and-set! a v (f-swap v))
-        (f-read v)
-        (recur)))))
-
 (defn inject-reader
   [event lifecycle]
-  (let [pipeline (:onyx.core/pipeline event)] 
-    {:generator/pending-messages (:pending-messages pipeline)}))
+  {})
 
 (def reader-calls
   {:lifecycle/before-task-start inject-reader})
 
-(defn new-segment-small [batch-index]
-  {:n batch-index :data hundred-bytes})
+(defn new-segment-small []
+  {:n (rand-int 10000) :data hundred-bytes})
 
 ;; Backported so we can test old versions of onyx
 (defn random-uuid []
@@ -33,62 +25,46 @@
     (java.util.UUID. (.nextLong local-random)
                      (.nextLong local-random))))
 
-(defn new-grouping-segment [batch-index]
+(defn new-grouping-segment []
   {:id (random-uuid)
    :event-time (java.util.Date.)
    :group-key (rand-int 10000)
    :value (rand-int 500)})
 
-(defrecord BenchmarkInput [pending-messages retry max-pending batch-size new-segment-fn]
-  p-ext/Pipeline
-  (write-batch [this event]
-    (function/write-batch event))
+(defrecord BenchmarkInput [segment-generator-fn]
+  p/Plugin
 
-  (read-batch [_ event]
-    (let [_ (while (< (- max-pending 
-                         (count @pending-messages)) 
-                      batch-size)
-              (Thread/sleep 1))
-          max-segments batch-size
-          segments (->> (flush-swap! retry 
-                                     #(take max-segments %)
-                                     #(subvec % (min max-segments (count %))))
-                        (map (fn [m] (t/input (random-uuid) m))))
-          batch (loop [n (count segments) 
-                       sgs segments]
-                  (if (= n max-segments)
-                    sgs
-                    (recur (inc n)
-                           (conj sgs (t/input (random-uuid) (new-segment-fn n))))))]
-      (doseq [m batch] 
-        (swap! pending-messages assoc (:id m) (:message m)))
-      {:onyx.core/batch batch}))
+  (start [this event]
+    this)
 
-  (seal-resource [this event])
+  (stop [this event] 
+    this)
 
-  p-ext/PipelineInput
-  (ack-segment [_ _ segment-id]
-    (swap! pending-messages dissoc segment-id))
+  i/Input
 
-  (retry-segment 
-    [_ _ segment-id]
-    (when-let [msg (get @pending-messages segment-id)]
-      (swap! retry conj msg)
-      (swap! pending-messages dissoc segment-id)))
+  (checkpoint [this]
+    nil)
 
-  (pending?
-    [_ _ segment-id]
-    (get @pending-messages segment-id))
+  (recover [this _ checkpoint]
+    this)
 
-  (drained?
-    [_ _]
+  (segment [this]
+    (segment-generator-fn))
+
+  (synced? [this epoch]
+    [true this])
+
+  (next-state [this _]
+    this)
+
+  (completed? [this]
     false))
 
-(defn generator [pipeline-data]
-  (let [task-map (:onyx.core/task-map pipeline-data)
-        max-pending (arg-or-default :onyx/max-pending task-map)
-        batch-size (:onyx/batch-size task-map)
-        segment-generator-fn (case (:benchmark/segment-generator task-map)
+(defn input [event]
+  (map->BenchmarkInput {:event event}))
+
+(defn generator [{:keys [onyx.core/task-map] :as event}]
+  (let [segment-generator-fn (case (:benchmark/segment-generator task-map)
                                :hundred-bytes new-segment-small
                                :grouping-fn new-grouping-segment)]
-    (->BenchmarkInput (atom {}) (atom []) max-pending batch-size segment-generator-fn))) 
+    (->BenchmarkInput segment-generator-fn))) 
