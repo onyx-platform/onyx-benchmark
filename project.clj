@@ -20,7 +20,7 @@
                         ; "-XX:+TraceClassLoading" "-XX:+LogCompilation" "-XX:+PrintAssembly"
                         ]
 
-  :profiles {:bench {:dependencies [[org.onyxplatform/onyx "0.10.0-SNAPSHOT"]]
+  :profiles {:bench {:dependencies [[org.onyxplatform/onyx "0.10.0-technical-preview-4"]]
                      :java-opts ^:replace ["-server" 
                                            "-Xmx6g"
                                            "-XX:BiasedLockingStartupDelay=0" 
@@ -43,8 +43,8 @@
                  *unchecked-math* :warn-on-boxed}
   ;:java-source-paths ["src/java"]
   :dependencies [[org.clojure/clojure "1.8.0"]
-                 [org.onyxplatform/onyx "0.10.0-SNAPSHOT"]
-                 [org.onyxplatform/onyx-metrics "0.9.10.0-beta4"]
+                 [org.onyxplatform/onyx "0.10.0-technical-preview-4"]
+                 [org.onyxplatform/onyx-metrics "0.10.0.0-technical-preview-4"]
                  [riemann-clojure-client "0.4.1"]
                  [gnuplot "0.1.0"]
                  [cheshire "5.4.0"]])

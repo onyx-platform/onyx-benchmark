@@ -17,7 +17,8 @@
   {:lifecycle/before-task-start inject-reader})
 
 (defn new-segment-small []
-  {:n (rand-int 10000) :data hundred-bytes})
+  {:start-time (System/nanoTime)
+   :n (rand-int 10000) :data hundred-bytes})
 
 ;; Backported so we can test old versions of onyx
 (defn random-uuid []
@@ -45,17 +46,18 @@
   (checkpoint [this]
     nil)
 
-  (recover [this _ checkpoint]
+  (checkpointed! [this cp-epoch])
+
+  (recover! [this _ checkpoint]
     this)
 
-  (segment [this]
+  (poll! [this _]
+    ; (when (zero? (rand-int 10000))
+    ;   (Thread/sleep 500))
     (segment-generator-fn))
 
   (synced? [this epoch]
-    [true this])
-
-  (next-state [this _]
-    this)
+    true)
 
   (completed? [this]
     false))
